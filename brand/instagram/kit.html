@@ -107,10 +107,12 @@ body {
 /* =========================================================
    1. Аватар
    ========================================================= */
+#avatar::before, .hl::before { display: none; }
+
 #avatar .ring {
   position: absolute;
-  inset: 56px;
-  border: 3px solid rgba(216, 255, 62, 0.35);
+  inset: 62px;
+  border: 12px solid rgba(216, 255, 62, 0.42);
   border-radius: 50%;
 }
 #avatar .mark {
@@ -120,11 +122,11 @@ body {
   place-items: center;
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: 560px;
+  font-size: 640px;
   line-height: 1;
   letter-spacing: -0.06em;
   color: var(--acid);
-  padding-bottom: 40px;
+  padding-bottom: 46px;
 }
 /* =========================================================
    2. Обкладинки highlights (кружок — працює лише центр)
@@ -132,12 +134,12 @@ body {
 .hl { display: grid; place-items: center; }
 .hl .ring {
   position: absolute;
-  inset: 70px;
-  border: 2px solid var(--rule);
+  inset: 72px;
+  border: 8px solid rgba(242, 239, 232, 0.16);
   border-radius: 50%;
 }
-.hl svg { position: relative; width: 380px; height: 380px; }
-.hl svg * { fill: none; stroke: var(--acid); stroke-width: 20; stroke-linecap: round; stroke-linejoin: round; }
+.hl svg { position: relative; width: 420px; height: 420px; }
+.hl svg * { fill: none; stroke: var(--acid); stroke-width: 26; stroke-linecap: round; stroke-linejoin: round; }
 
 /* =========================================================
    3. Пост-послуга
