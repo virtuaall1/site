@@ -36,6 +36,7 @@ window.SITE = (() => {
     {
       year: '2026',
       link: 'https://virtuaall1.github.io/site/cases/orbita/',
+      shot: 'img/cases/orbita.jpg',
       uk: {
         name: 'Орбіта — облік замовлень майстерні',
         desc: 'Демо вебзастосунку з адмінкою. Одні й ті самі заявки показані трьома ролями: менеджер веде всі й переводить статуси, майстер бачить лише свої наряди з чек-листом і без сум, власник — виторг за тижнями та частку кожного майстра. Підсумки рахуються з тих самих записів, а не намальовані наперед.',
@@ -50,6 +51,7 @@ window.SITE = (() => {
     {
       year: '2026',
       link: 'https://virtuaall1.github.io/site/cases/plitkarka/',
+      shot: 'img/cases/plitkarka.jpg',
       uk: {
         name: 'Сайт кав’ярні «Пліткарка»',
         desc: 'Односторінковий сайт кав’ярні в Косові. Оформлення взяте з косівської кераміки: зелена полива, тепла глина, вохра, наскрізна форма — арка з гравірованим контуром. Перемикач «що в чашці» міняє знімок і тон світла за ним. Тексти й меню зібрані з реального профілю закладу.',
@@ -64,6 +66,7 @@ window.SITE = (() => {
     {
       year: '2026',
       link: 'https://virtuaall1.github.io/site/cases/shop-bot/',
+      shot: 'img/cases/shop-bot.jpg',
       uk: {
         name: 'Telegram-бот магазину',
         desc: 'Каталог за категоріями, кошик, оформлення замовлення в три кроки і сповіщення адміну про кожну покупку. Ціни зберігаються в копійках, а назва й ціна фіксуються на момент покупки — зміна каталогу не переписує старі замовлення. Бота можна пройти прямо в браузері: замовлення, яке ти оформиш, одразу зʼявиться в панелі власника поруч.',
@@ -80,6 +83,7 @@ window.SITE = (() => {
   const SERVICES = [
     {
       id: 'landing',
+      caseLink: 'https://virtuaall1.github.io/site/cases/plitkarka/',
       example: {
         uk: 'Приклад: сторінка стоматології. Один екран із цінами, форма запису — заявка одразу падає в Telegram власнику.',
         en: "Example: a page for a dental clinic. One screen with prices and a booking form — each request lands straight in the owner's Telegram."
@@ -98,6 +102,7 @@ window.SITE = (() => {
     },
     {
       id: 'shop-bot',
+      caseLink: 'https://virtuaall1.github.io/site/cases/shop-bot/',
       example: {
         uk: 'Приклад: магазин кави. Клієнт обирає обсяг і помел, оплачує карткою в боті, ти бачиш замовлення з адресою в адмінці.',
         en: "Example: a coffee shop. The buyer picks grind and weight, pays by card inside the bot, and you see the order with its address in the admin panel."
@@ -134,6 +139,7 @@ window.SITE = (() => {
     },
     {
       id: 'webapp',
+      caseLink: 'https://virtuaall1.github.io/site/cases/orbita/',
       example: {
         uk: 'Приклад: облік замовлень для майстерні. Менеджер веде заявки, майстер бачить лише свої, власник — виторг за місяць.',
         en: "Example: an order tracker for a workshop. Managers handle requests, each technician sees only their own, the owner sees monthly revenue."
@@ -305,6 +311,7 @@ window.SITE = (() => {
     uk: {
       'meta.title': 'v.studio — сайти, сервіси і Telegram-боти на Python, Java, Spring',
       'meta.desc': 'Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.',
+      'nav.cases': 'Кейси',
       'nav.services': 'Послуги',
       'nav.process': 'Як працюємо',
       'nav.work': 'Кейси',
@@ -320,6 +327,10 @@ window.SITE = (() => {
       'hero.cta': 'Обговорити задачу',
       'hero.cta2': 'Код на GitHub',
       'hero.figures': ['Вихідники твої', 'Фіксована ціна', 'Місяць підтримки'],
+      'cases.kicker': 'Можна відкрити',
+      'cases.title': 'Живі кейси',
+      'cases.lead': 'Не картинки, а робочі сторінки: бота можна пройти до кінця, а в застосунку перемкнути роль.',
+      'cases.open': 'Відкрити',
       'services.kicker': 'Що замовляють',
       'services.title': 'Послуги та ціни',
       'services.lead': 'Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаємо після короткої розмови.',
@@ -328,6 +339,7 @@ window.SITE = (() => {
       'services.order': 'Замовити',
       'services.featured': 'хіт',
       'services.example': 'Приклад',
+      'services.case': 'Живий кейс',
       'services.orderText': 'Вітаю! Цікавить: {name}. Розкажіть, будь ласка, про строки та ціну.',
       'process.kicker': 'Як це влаштовано',
       'process.title': 'Чотири кроки до запуску',
@@ -340,7 +352,8 @@ window.SITE = (() => {
       'work.all': 'Увесь профіль',
       'stack.kicker': 'Інструменти',
       'stack.title': 'Чим пишемо',
-      'stack.lead': 'Мови пораховані за нашими публічними репозиторіями, решта — те, з чим працюємо щодня.',
+      'stack.lead': 'Це те, з чим працюємо щодня.',
+      'stack.langs': 'Мови пораховані за нашими публічними репозиторіями на GitHub.',
       'studio.kicker': 'Студія',
       'studio.title': 'Три речі, про які варто домовитись на березі',
       'studio.1.t': 'Фіксована ціна, а не години',
@@ -361,6 +374,7 @@ window.SITE = (() => {
     en: {
       'meta.title': 'v.studio — web apps, backends and Telegram bots',
       'meta.desc': 'Web applications, Java and Spring Boot backends, landing pages, Telegram bots and automation. Fixed price, source code included, a month of support.',
+      'nav.cases': 'Cases',
       'nav.services': 'Services',
       'nav.process': 'Process',
       'nav.work': 'Work',
@@ -376,6 +390,10 @@ window.SITE = (() => {
       'hero.cta': 'Discuss your project',
       'hero.cta2': 'Code on GitHub',
       'hero.figures': ['You own the code', 'Fixed price', 'A month of support'],
+      'cases.kicker': 'You can open these',
+      'cases.title': 'Live cases',
+      'cases.lead': 'Not screenshots but working pages: you can run the bot to the end and switch roles inside the app.',
+      'cases.open': 'Open',
       'services.kicker': 'What people order',
       'services.title': 'Services and pricing',
       'services.lead': 'These are starting prices — the final one depends on scope. We quote exactly after a short conversation.',
@@ -384,6 +402,7 @@ window.SITE = (() => {
       'services.order': 'Order',
       'services.featured': 'top',
       'services.example': 'Example',
+      'services.case': 'Live case',
       'services.orderText': 'Hi! I am interested in: {name}. Could you tell me about the timeline and price?',
       'process.kicker': 'How it works',
       'process.title': 'Four steps to launch',
@@ -396,7 +415,8 @@ window.SITE = (() => {
       'work.all': 'Full profile',
       'stack.kicker': 'Tools',
       'stack.title': 'What we build with',
-      'stack.lead': 'Languages are counted from our public repositories; the rest is what we work with day to day.',
+      'stack.lead': 'This is what we work with day to day.',
+      'stack.langs': 'Languages are counted from our public repositories on GitHub.',
       'studio.kicker': 'Studio',
       'studio.title': 'Three things worth settling up front',
       'studio.1.t': 'A fixed price, not hours',
