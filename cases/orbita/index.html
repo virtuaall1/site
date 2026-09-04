@@ -5,110 +5,138 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Орбіта — облік замовлень майстерні</title>
 <meta name="description" content="Демонстрація вебзастосунку для майстерні: заявки, ролі, виторг. Одні дані, три ролі — менеджер, майстер і власник бачать різне.">
-<meta name="theme-color" content="#0c2436">
+<meta name="theme-color" content="#ededea">
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230c2436'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%236fd7ff' stroke-width='2'/%3E%3Ccircle cx='16' cy='7' r='2.6' fill='%236fd7ff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23232322'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23c6f24d' stroke-width='2.6'/%3E%3Ccircle cx='16' cy='8' r='2.6' fill='%23c6f24d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Literata:ital,opsz,wght@1,7..72,400&family=Onest:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_ui/ui.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<a class="skip" href="#sheet">Перейти до вмісту</a>
+<a class="skip" href="#app">Перейти до демо</a>
 
-<div class="sheet" id="sheet">
-  <div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<header class="head">
+  <a class="logo" href="#top">Ор<i>біта</i></a>
+  <p class="head-note">Облік замовлень майстерні · демо</p>
+  <a class="round head-cta" href="../../" aria-label="До студії">↗</a>
+</header>
+
+<main>
 
   <!-- ================= ШАПКА ================= -->
-  <header class="head">
-    <div class="ident">
-      <p class="stamp">Демо · вебзастосунок з адмінкою</p>
-      <h1 class="title">Орбіта</h1>
-      <p class="sub">Облік замовлень майстерні. Одні й ті самі дані — три ролі бачать різне.</p>
-    </div>
+  <section class="wrap band" id="top">
+    <div class="arch hero">
+      <p class="chip">Вебзастосунок з адмінкою</p>
 
-    <div class="roles" role="tablist" aria-label="Роль">
-      <button type="button" class="role is-on" role="tab" aria-selected="true" data-role="manager">
-        <span class="role-k">01</span><span class="role-n">Менеджер</span><span class="role-d">веде заявки</span>
-      </button>
-      <button type="button" class="role" role="tab" aria-selected="false" data-role="master">
-        <span class="role-k">02</span><span class="role-n">Майстер</span><span class="role-d">бачить лише свої</span>
-      </button>
-      <button type="button" class="role" role="tab" aria-selected="false" data-role="owner">
-        <span class="role-k">03</span><span class="role-n">Власник</span><span class="role-d">виторг за місяць</span>
-      </button>
-    </div>
-  </header>
+      <h1 class="duo">
+        <b>Одні дані —</b>
+        <i>три ролі бачать різне</i>
+      </h1>
 
-  <!-- ================= МЕНЕДЖЕР ================= -->
-  <section class="view" id="view-manager">
-    <div class="bar">
-      <div class="filters" id="filters" role="group" aria-label="Фільтр за статусом"></div>
-      <p class="hint">Клік по статусу — заявка йде далі по колу</p>
-    </div>
+      <p class="lede">
+        Менеджер веде всі заявки й переводить статуси. Майстер бачить лише
+        свої наряди й не бачить сум. Власник бачить гроші. Перемкни роль —
+        і подивись, як змінюється те саме замовлення.
+      </p>
 
-    <div class="table-wrap">
-      <table class="grid">
-        <caption class="visually-hidden">Заявки майстерні</caption>
-        <thead>
-          <tr>
-            <th scope="col">№</th>
-            <th scope="col">Клієнт</th>
-            <th scope="col">Пристрій і робота</th>
-            <th scope="col">Майстер</th>
-            <th scope="col">Строк</th>
-            <th scope="col">Статус</th>
-            <th scope="col" class="num">Сума</th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
-
-    <dl class="totals" id="totals"></dl>
-  </section>
-
-  <!-- ================= МАЙСТЕР ================= -->
-  <section class="view" id="view-master" hidden>
-    <div class="bar">
-      <div class="who">
-        <span class="who-label">Увійшла як</span>
-        <b class="who-name">Мирослава Д.</b>
-        <span class="who-role">пайка, мікросхеми</span>
+      <div class="roles" role="tablist" aria-label="Роль">
+        <button type="button" class="pill pill-dark pill-sm role is-on" role="tab" aria-selected="true" data-role="manager">Менеджер</button>
+        <button type="button" class="pill pill-line pill-sm role" role="tab" aria-selected="false" data-role="master">Майстер</button>
+        <button type="button" class="pill pill-line pill-sm role" role="tab" aria-selected="false" data-role="owner">Власник</button>
       </div>
-      <p class="hint">Чужих заявок і сум у цій ролі немає — їх не віддає сервер</p>
     </div>
-    <ul class="jobs" id="jobs"></ul>
   </section>
 
-  <!-- ================= ВЛАСНИК ================= -->
-  <section class="view" id="view-owner" hidden>
-    <dl class="kpi" id="kpi"></dl>
+  <!-- ================= ДЕМО ================= -->
+  <section class="wrap band-tight" id="app">
 
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Виторг за тижнями</h2>
-        <p class="hint">Зараховуємо тільки закриті наряди</p>
+    <!-- менеджер -->
+    <div class="view" id="view-manager">
+      <div class="bar">
+        <div class="filters" id="filters" role="group" aria-label="Фільтр за статусом"></div>
+        <p class="hint">Клік по статусу — заявка йде далі по колу</p>
       </div>
-      <div class="chart-wrap" id="chart"></div>
+
+      <div class="card table-card">
+        <div class="table-wrap">
+          <table class="grid">
+            <caption class="visually-hidden">Заявки майстерні</caption>
+            <thead>
+              <tr>
+                <th scope="col">№</th>
+                <th scope="col">Клієнт</th>
+                <th scope="col">Пристрій і робота</th>
+                <th scope="col">Майстер</th>
+                <th scope="col">Строк</th>
+                <th scope="col">Статус</th>
+                <th scope="col" class="num">Сума</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <dl class="tiles" id="totals"></dl>
     </div>
 
-    <div class="panel">
-      <div class="panel-head"><h2>Майстри за місяць</h2></div>
-      <ul class="bars" id="bars"></ul>
+    <!-- майстер -->
+    <div class="view" id="view-master" hidden>
+      <div class="bar">
+        <p class="who"><span>Увійшла як</span> <b>Мирослава Д.</b> <i>пайка, мікросхеми</i></p>
+        <p class="hint">Чужих заявок і сум тут немає — їх не віддає сервер</p>
+      </div>
+      <ul class="jobs" id="jobs"></ul>
+    </div>
+
+    <!-- власник -->
+    <div class="view" id="view-owner" hidden>
+      <dl class="tiles" id="kpi"></dl>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Виторг за тижнями</h2>
+          <p class="hint">Зараховуємо тільки закриті наряди</p>
+        </div>
+        <div class="chart-wrap" id="chart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Майстри за місяць</h2></div>
+        <ul class="bars" id="bars"></ul>
+      </div>
     </div>
   </section>
 
-  <!-- ================= ШТАМП ================= -->
-  <footer class="titleblock">
-    <div><span>Проєкт</span><b>Орбіта · облік замовлень</b></div>
-    <div><span>Стек</span><b>HTML · CSS · JS</b></div>
-    <div><span>Роль</span><b id="tbRole">Менеджер</b></div>
-    <div><span>Аркуш</span><b>1 / 1</b></div>
-    <div class="tb-brand"><span>Зробила</span><b>v<i>.</i>studio</b></div>
-  </footer>
-</div>
+  <!-- ================= ЩО ВСЕРЕДИНІ ================= -->
+  <section class="wrap band" id="notes">
+    <h2 class="duo"><b>Що всередині</b><i>і чому саме так</i></h2>
+
+    <div class="acc">
+      <details open>
+        <summary>Ролі — це не приховані кнопки</summary>
+        <div class="acc-body">Майстер не бачить сум не тому, що їх сховали в інтерфейсі, а тому, що сервер їх не віддає. Інакше будь-хто відкриє консоль і подивиться.</div>
+      </details>
+      <details>
+        <summary>Підсумки рахуються з тих самих записів</summary>
+        <div class="acc-body">Переведи заявку в «Готово» у менеджера — виторг у власника зміниться. Жодна цифра не намальована наперед.</div>
+      </details>
+      <details>
+        <summary>Прострочення видно одразу</summary>
+        <div class="acc-body">Строк порівнюється з поточною датою, і рядок підсвічується. Це дешевше за будь-які нагадування: менеджер бачить проблему, щойно відкрив список.</div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span>Демонстраційний проєкт · дані вигадані</span>
+  <a class="foot-mark" href="../../">v<i>.</i>studio</a>
+</footer>
 
 <script src="js/data.js" defer></script>
 <script src="js/app.js" defer></script>

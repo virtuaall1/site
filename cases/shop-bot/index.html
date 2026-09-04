@@ -5,130 +5,141 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Магазин у Telegram — кейс v.studio</title>
 <meta name="description" content="Демонстрація Telegram-бота магазину: каталог, кошик, оформлення в три кроки і замовлення, яке одразу з'являється в адмінці. Бота можна пройти прямо тут.">
-<meta name="theme-color" content="#f4f4f1">
+<meta name="theme-color" content="#ededea">
 <meta name="robots" content="noindex">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23141414'/%3E%3Cpath d='M7 12h18v11H14l-5 5v-5H7z' fill='%23ff4d2e'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23232322'/%3E%3Cpath d='M7 11h18v11H14l-5 5v-5H7z' fill='%23c6f24d'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500&family=JetBrains+Mono:wght@400;500;700&family=Onest:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Literata:ital,opsz,wght@1,7..72,400&family=Onest:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_ui/ui.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <a class="skip" href="#demo">Перейти до демо</a>
 
-<header class="top">
-  <a class="back" href="../../">v<i>.</i>studio</a>
-  <p class="crumb">Кейс · Telegram-бот з оплатою</p>
+<header class="head">
+  <a class="logo" href="#top">Зер<i>но</i></a>
+  <p class="head-note">Магазин кави в Telegram · демо</p>
+  <a class="round head-cta" href="../../" aria-label="До студії">↗</a>
 </header>
 
-<!-- ================= ШАПКА ================= -->
-<section class="lead">
-  <div class="lead-text">
-    <h1>Магазин,<br>що живе<br>в переписці</h1>
-    <p class="dek">
-      Клієнт не ставить застосунок і не реєструється: відкриває чат,
-      вибирає зерно, платить. Нижче — той самий бот, тільки в браузері.
-      Пройди його до кінця й подивись, як замовлення впаде в адмінку.
-    </p>
-    <p class="run"><span class="run-dot" aria-hidden="true"></span>Демо працює тут, у вкладці. Нічого нікуди не йде.</p>
-  </div>
+<main>
 
-  <dl class="spec">
-    <div><dt>Стек</dt><dd>Python · aiogram 3 · SQLite</dd></div>
-    <div><dt>Перевірено</dt><dd>тестами на кошик, ціни й фіксацію суми</dd></div>
-    <div><dt>Що вміє</dt><dd>каталог, кошик, оформлення, адмінка</dd></div>
-  </dl>
-</section>
+  <!-- ================= ШАПКА ================= -->
+  <section class="wrap band" id="top">
+    <div class="arch hero">
+      <p class="chip">Telegram-бот з оплатою</p>
 
-<!-- ================= ДЕМО ================= -->
-<main class="stage" id="demo">
+      <h1 class="duo">
+        <b>Магазин,</b>
+        <i>що живе в переписці</i>
+      </h1>
 
-  <!-- телефон -->
-  <div class="phone-wrap">
-    <div class="phone">
-      <div class="phone-bar">
-        <span class="phone-av" aria-hidden="true">З</span>
-        <span class="phone-who">
-          <b>Зерно · магазин</b>
-          <i id="botState">бот</i>
-        </span>
+      <p class="lede">
+        Клієнт не ставить застосунок і не реєструється: відкриває чат,
+        вибирає зерно, платить. Нижче той самий бот, тільки в браузері —
+        пройди його до кінця й подивись, як замовлення впаде в адмінку.
+      </p>
+
+      <p class="run"><span class="run-dot" aria-hidden="true"></span>Демо працює тут, у вкладці. Нічого нікуди не йде.</p>
+    </div>
+  </section>
+
+  <!-- ================= ДЕМО ================= -->
+  <section class="wrap band-tight" id="demo">
+    <div class="stage">
+
+      <div class="phone-col">
+        <div class="phone">
+          <div class="phone-bar">
+            <span class="phone-av" aria-hidden="true">З</span>
+            <span class="phone-who">
+              <b>Зерно · магазин</b>
+              <i id="botState">бот</i>
+            </span>
+          </div>
+
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Переписка з ботом"></div>
+
+          <form class="say" id="say" autocomplete="off">
+            <input id="input" type="text" placeholder="Написати боту…" aria-label="Повідомлення боту" disabled>
+            <button type="submit" id="send" aria-label="Надіслати" disabled>↑</button>
+          </form>
+        </div>
+
+        <button class="pill pill-line pill-sm" type="button" id="restart">Почати спочатку</button>
       </div>
 
-      <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Переписка з ботом"></div>
+      <aside class="admin card">
+        <div class="card-head">
+          <h2>Адмінка власника</h2>
+          <p class="hint">Той самий запис, лише з іншого боку</p>
+        </div>
 
-      <form class="say" id="say" autocomplete="off">
-        <input id="input" type="text" placeholder="Написати боту…" aria-label="Повідомлення боту" disabled>
-        <button type="submit" id="send" aria-label="Надіслати" disabled>↑</button>
-      </form>
+        <div class="admin-body" id="orders">
+          <p class="empty" id="empty">Замовлень поки немає. Оформи його в чаті — з’явиться тут.</p>
+        </div>
+
+        <dl class="tiles" id="adminSum"></dl>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ================= РІШЕННЯ ================= -->
+  <section class="wrap band" id="notes">
+    <h2 class="duo"><b>Що всередині</b><i>і чому саме так</i></h2>
+
+    <div class="acc">
+      <details open>
+        <summary>Ціни в копійках, цілими числами</summary>
+        <div class="acc-body">
+          Дробові гроші у float рано чи пізно дають <code>0.1 + 0.2 = 0.30000000000000004</code>.
+          Тому в базі лежать копійки, вся арифметика йде в них, а кома зʼявляється лише на екрані.
+        </div>
+      </details>
+      <details>
+        <summary>Замовлення памʼятає свою ціну</summary>
+        <div class="acc-body">
+          У рядок замовлення записуються назва й ціна на момент покупки. Підняли прайс
+          або прибрали позицію з каталогу — старі чеки лишаються такими, якими були.
+          Інакше вчорашня звітність переписується сама собою.
+        </div>
+      </details>
+      <details>
+        <summary>Оформлення трьома кроками</summary>
+        <div class="acc-body">
+          Імʼя, телефон, адреса — по одному питанню за раз, із перевіркою. Одна довга
+          форма в чаті не працює: людина відповідає на останнє питання й губить решту.
+        </div>
+      </details>
+      <details>
+        <summary>Власник дізнається одразу</summary>
+        <div class="acc-body">
+          Щойно клієнт підтвердив, адмін отримує повідомлення зі складом замовлення
+          й контактами. Не треба заходити в панель і перевіряти, чи не зʼявилось нове.
+        </div>
+      </details>
     </div>
 
-    <button class="restart" type="button" id="restart">Почати спочатку</button>
-  </div>
+    <dl class="spec">
+      <div><dt>Стек</dt><dd>Python · aiogram 3 · SQLite</dd></div>
+      <div><dt>Перевірено</dt><dd>тестами на кошик, ціни й фіксацію суми</dd></div>
+      <div><dt>Що вміє</dt><dd>каталог, кошик, оформлення, адмінка</dd></div>
+    </dl>
 
-  <!-- те, що бачить власник -->
-  <aside class="admin">
-    <div class="admin-head">
-      <h2>Адмінка власника</h2>
-      <p>Той самий запис, лише з іншого боку.</p>
+    <div class="cta">
+      <a class="pill pill-dark" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer">
+        Замовити такого бота <span aria-hidden="true">↗</span>
+      </a>
     </div>
+  </section>
 
-    <div class="admin-body" id="orders">
-      <p class="empty" id="empty">Замовлень поки немає. Оформи його в чаті — з’явиться тут.</p>
-    </div>
-
-    <dl class="admin-sum" id="adminSum"></dl>
-  </aside>
 </main>
 
-<!-- ================= РІШЕННЯ ================= -->
-<section class="notes">
-  <h2 class="notes-h">Що всередині</h2>
-
-  <ol class="cards">
-    <li>
-      <p class="k">Гроші</p>
-      <h3>Ціни в копійках, цілими числами</h3>
-      <p>
-        Дробові гроші у float рано чи пізно дають
-        <code>0.1 + 0.2 = 0.30000000000000004</code>. Тому в базі лежать
-        копійки, вся арифметика йде в них, а кома з’являється лише на екрані.
-      </p>
-    </li>
-    <li>
-      <p class="k">Історія</p>
-      <h3>Замовлення пам’ятає свою ціну</h3>
-      <p>
-        У рядок замовлення записуються назва й ціна на момент покупки.
-        Підняли прайс або прибрали позицію з каталогу — старі чеки
-        лишаються такими, якими були. Інакше вчорашня звітність
-        переписується сама собою.
-      </p>
-    </li>
-    <li>
-      <p class="k">Оформлення</p>
-      <h3>Три кроки, кожен окремо</h3>
-      <p>
-        Імʼя, телефон, адреса — по одному питанню за раз, із перевіркою.
-        Одна довга форма в чаті не працює: людина відповідає на
-        останнє питання й губить решту.
-      </p>
-    </li>
-    <li>
-      <p class="k">Власник</p>
-      <h3>Сповіщення приходить одразу</h3>
-      <p>
-        Щойно клієнт підтвердив, адмін отримує повідомлення зі складом
-        замовлення й контактами. Не треба заходити в панель і перевіряти,
-        чи не з’явилось нове.
-      </p>
-    </li>
-  </ol>
-</section>
-
 <footer class="foot">
-  <span>Демонстраційний проєкт · v<i>.</i>studio</span>
-  <a class="tg" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer">Замовити такого бота ↗</a>
+  <span>Демонстраційний проєкт · товари й ціни вигадані</span>
+  <a class="foot-mark" href="../../">v<i>.</i>studio</a>
 </footer>
 
 <script src="js/shop.js" defer></script>

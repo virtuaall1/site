@@ -1,461 +1,129 @@
 /* =========================================================
-   Пліткарка — кав'ярня в Косові.
-
-   Стрижень оформлення — світло. Тло, текст і акцент повільно
-   переходять від ранкового фарфору до вечірньої кімнати, поки
-   гортаєш сторінку. Кольори задає JS однією змінною на :root,
-   тому все, що з них зроблено, змінюється разом.
+   Пліткарка — кейс на спільній системі cases/_ui/ui.css.
+   Своє тут лише пастельний колір і кілька розкладок.
    ========================================================= */
 
-:root {
-  /* значення нижче — стан «ранок»; далі їх переписує скрипт */
-  --bg:     #eceeeb;
-  --ink:    #191a17;
-  --muted:  #6c6f69;
-  --accent: #b3455e;
-  --rule:   rgba(25, 26, 23, 0.16);
-  --veil:   rgba(25, 26, 23, 0.05);
+:root { --pastel: #f7d6c2; }
 
-  --f-head: 'Literata', Georgia, serif;
-  --f-ui: 'Manrope', system-ui, sans-serif;
-  --f-time: 'Oswald', 'Arial Narrow', sans-serif;
+/* --- шапка сторінки --- */
+.hero { display: grid; justify-items: center; gap: 0; }
+.hero .duo { margin-top: 20px; }
+.hero-btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
 
-  --pad: clamp(20px, 5vw, 80px);
-  --ease: cubic-bezier(0.22, 0.68, 0.24, 1);
-}
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--f-ui);
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  transition: background 220ms linear, color 220ms linear;
-}
-
-img { display: block; max-width: 100%; }
-a { color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-
-.skip {
-  position: absolute; left: -9999px; top: 0; z-index: 40;
-  background: var(--accent); color: var(--bg); padding: 11px 17px; font-weight: 600;
-}
-.skip:focus { left: 12px; top: 12px; }
-
-/* =========================================================
-   Смуга дня
-   ========================================================= */
-.daybar {
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: 2px;
-  z-index: 30;
-  background: var(--veil);
-}
-.daybar i { display: block; height: 100%; width: 0; background: var(--accent); }
-
-/* =========================================================
-   Шапка
-   ========================================================= */
-.bar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: baseline;
-  gap: clamp(14px, 3vw, 36px);
-  flex-wrap: wrap;
-  padding: 18px var(--pad);
-  background: var(--bg);
-  border-bottom: 1px solid var(--rule);
-  transition: background 220ms linear, border-color 220ms linear;
-}
-
-.mark {
-  font-family: var(--f-head);
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-  margin-inline-end: auto;
-}
-
-.nav { display: flex; gap: clamp(12px, 2vw, 26px); flex-wrap: wrap; }
-.nav a {
-  font-size: 13px;
-  text-decoration: none;
-  color: var(--muted);
-  padding-bottom: 2px;
-  border-bottom: 1px solid transparent;
-  transition: color 200ms var(--ease), border-color 200ms var(--ease);
-}
-.nav a:hover { color: var(--ink); border-bottom-color: var(--accent); }
-
-.clock {
-  margin: 0;
-  font-family: var(--f-time);
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* =========================================================
-   Шапка сторінки
-   ========================================================= */
-.hero { padding: clamp(46px, 9vw, 120px) var(--pad) clamp(40px, 6vw, 80px); }
-
-.tag {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 26px;
-  font-family: var(--f-time);
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.tag-mark { width: 9px; height: 9px; background: var(--accent); }
-
-.huge {
-  margin: 0;
-  font-family: var(--f-head);
-  font-weight: 700;
-  font-size: clamp(38px, 7.4vw, 104px);
-  line-height: 1.02;
-  letter-spacing: -0.032em;
-  text-wrap: balance;
-}
-
-.hero-foot {
-  display: grid;
-  gap: 26px;
-  align-items: end;
-  margin-top: clamp(32px, 5vw, 56px);
-  padding-top: 26px;
-  border-top: 1px solid var(--rule);
-}
-@media (min-width: 860px) {
-  .hero-foot { grid-template-columns: minmax(0, 1fr) auto; gap: 48px; }
-}
-
-.lede { margin: 0; max-width: 52ch; color: var(--muted); font-size: 17px; }
-
-/* =========================================================
-   Кнопки
-   ========================================================= */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 24px;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-family: var(--f-ui);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background 240ms var(--ease), color 240ms var(--ease);
-}
-.btn span { transition: translate 240ms var(--ease); }
-.btn:hover { background: var(--accent); color: var(--bg); }
-.btn:hover span { translate: 0 3px; }
-
-.btn-fill { background: var(--accent); color: var(--bg); }
-.btn-fill:hover { background: none; color: var(--accent); }
-.btn-fill:hover span { translate: 3px -3px; }
-
-/* =========================================================
-   Дія: мітка часу зліва, вміст поруч
-   ========================================================= */
-.act {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
-  padding: clamp(46px, 8vw, 108px) var(--pad);
-  border-top: 1px solid var(--rule);
-}
-@media (min-width: 900px) {
-  .act { grid-template-columns: 132px minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); }
-}
-
-.hour {
-  margin: 0;
-  font-family: var(--f-time);
-  font-size: 13px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-@media (min-width: 900px) {
-  .hour { position: sticky; top: 96px; align-self: start; }
-}
-
-.head {
-  margin: 0 0 14px;
-  font-family: var(--f-head);
-  font-weight: 700;
-  font-size: clamp(28px, 4.2vw, 54px);
-  line-height: 1.04;
-  letter-spacing: -0.028em;
-  text-wrap: balance;
-}
-
-.note { margin: 0 0 26px; color: var(--muted); font-size: 14px; }
-.note.wide { max-width: 46ch; font-size: 16px; margin-bottom: 34px; }
-
-/* =========================================================
-   Меню напоїв
-   ========================================================= */
-.cup-grid { display: grid; gap: clamp(28px, 4vw, 52px); }
-@media (min-width: 1000px) {
-  .cup-grid { grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.75fr); align-items: start; }
-}
-
-.menu { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
-
-.menu button {
-  display: grid;
-  grid-template-columns: auto auto minmax(24px, 1fr) auto;
-  gap: 14px;
-  align-items: baseline;
-  width: 100%;
-  padding: 17px 0;
-  border: 0;
-  border-bottom: 1px solid var(--rule);
-  background: none;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: padding-left 260ms var(--ease), color 260ms var(--ease);
-}
-.menu button:hover,
-.menu button[aria-current="true"] { padding-left: 14px; }
-.menu button[aria-current="true"] .m-name { color: var(--accent); }
-
-.m-name { font-family: var(--f-head); font-size: clamp(18px, 2vw, 23px); letter-spacing: -0.015em; }
-.m-note { font-size: 13px; color: var(--muted); }
-.m-price {
-  font-family: var(--f-time);
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-  color: var(--muted);
-}
-
-/* лідери з крапок між назвою і ціною — як у паперовому меню */
-.m-lead {
-  align-self: end;
-  height: 1px;
-  margin-bottom: 6px;
-  background-image: radial-gradient(circle, var(--muted) 1px, transparent 1px);
-  background-size: 6px 2px;
-  background-repeat: repeat-x;
-  opacity: 0.55;
-}
-
-/* =========================================================
-   Знімок
-   ========================================================= */
-.shot { margin: 0; position: sticky; top: 104px; }
-.shot-img {
+.hero-shot { margin: clamp(28px, 4vw, 44px) 0 0; width: min(420px, 100%); }
+.hero-shot img {
   width: 100%;
   height: auto;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  transition: opacity 260ms var(--ease);
-}
-.shot.is-swap .shot-img { opacity: 0; }
-.shot-cap {
-  margin-top: 12px;
-  font-family: var(--f-time);
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
+  border-radius: 999px 999px var(--r) var(--r);
 }
 
-/* =========================================================
-   З печі
-   ========================================================= */
-.bakes {
+/* --- меню --- */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  justify-content: center;
+  margin: clamp(24px, 3vw, 36px) 0 clamp(20px, 3vw, 30px);
+}
+
+.menu-grid {
   list-style: none;
-  margin: 0 0 40px;
+  margin: 0;
   padding: 0;
   display: grid;
-  gap: clamp(16px, 2.4vw, 28px);
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--gap);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
-.bakes li { display: grid; gap: 0; align-content: start; }
-.bakes img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; align-self: start; }
-.bakes .b-row {
+
+.item { display: grid; align-content: start; }
+.item img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--r);
+  align-self: start;
+}
+.item-row {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  align-items: baseline;
-  margin-top: 14px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--rule);
+  margin-top: 16px;
+  min-height: 46px;
 }
-.bakes .b-name { font-family: var(--f-head); font-size: 18px; letter-spacing: -0.015em; }
-.bakes .b-price { font-family: var(--f-time); font-size: 14px; letter-spacing: 0.06em; color: var(--muted); }
-.bakes .b-note { margin-top: 7px; font-size: 12.5px; color: var(--muted); }
-
-.syrups { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.syrups li {
-  padding: 7px 14px;
-  border: 1px solid var(--rule);
+.item-name { flex: 1; font-family: var(--f-caps); font-weight: 700; font-size: 17px; line-height: 1.25; }
+.item-note { margin: 5px 0 0; font-size: 13.5px; color: var(--muted); }
+.item-price {
+  flex: none;
+  padding: 6px 14px;
+  border-radius: var(--pill);
+  background: var(--lime);
   font-size: 13px;
-  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
 }
-.syrups li::before { content: 'Loft · '; color: var(--accent); }
+.item-price.is-empty { background: var(--sand-2); color: var(--muted); }
 
-/* Вечір приходить не плавним перетіканням, а окремими діями.
-   Лінійний перехід світлого тла в темне проходить через сіру
-   середину, де текст перестає читатися, тож два останні розділи
-   просто мають власну темну палітру. */
-.act-dusk {
-  --bg:     #1e1712;
-  --ink:    #f2ebe1;
-  --muted:  #a29485;
-  --accent: #e88aa0;
-  --rule:   rgba(242, 235, 225, 0.18);
-  background: var(--bg);
-  color: var(--ink);
-  border-top-color: rgba(242, 235, 225, 0.18);
-}
-
-/* =========================================================
-   Афіша
-   ========================================================= */
-.bill { list-style: none; margin: 0; padding: 0; counter-reset: bill; }
-.bill li {
-  counter-increment: bill;
-  position: relative;
-  padding: clamp(22px, 3vw, 34px) 0 clamp(22px, 3vw, 34px) clamp(40px, 5vw, 64px);
-  border-top: 1px solid var(--rule);
-}
-.bill li:last-child { border-bottom: 1px solid var(--rule); }
-.bill li::before {
-  content: counter(bill, decimal-leading-zero);
-  position: absolute;
-  left: 0;
-  top: clamp(22px, 3vw, 34px);
-  font-family: var(--f-time);
-  font-size: 14px;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-}
-.bill .e-kind {
-  margin: 0;
-  font-family: var(--f-time);
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.bill h3 {
-  margin: 9px 0 0;
-  font-family: var(--f-head);
-  font-weight: 700;
-  font-size: clamp(20px, 2.4vw, 28px);
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-}
-.bill p { margin: 9px 0 0; color: var(--muted); max-width: 48ch; }
-.bill .e-when { margin-top: 14px; font-size: 13px; color: var(--ink); }
-
-/* =========================================================
-   Дві точки
-   ========================================================= */
-.spots-grid { display: grid; gap: clamp(28px, 4vw, 56px); align-items: start; }
-@media (min-width: 960px) {
-  .spots-grid { grid-template-columns: minmax(0, 1fr) minmax(300px, 0.95fr); }
-}
-
-.facts { display: grid; margin: 26px 0 30px; }
-.facts > div {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--rule);
-}
-@media (min-width: 600px) {
-  .facts > div { grid-template-columns: 148px minmax(0, 1fr); gap: 16px; align-items: baseline; }
-}
-.facts dt {
-  font-family: var(--f-time);
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.facts dd { margin: 0; }
-.link { text-underline-offset: 3px; }
-.link:hover { color: var(--accent); }
-
-.scheme { margin: 0; }
-.scheme svg { width: 100%; height: auto; }
-.scheme .street { stroke: var(--ink); stroke-width: 2; }
-.scheme .tick line { stroke: var(--rule); stroke-width: 2; }
-.scheme .stop circle { fill: var(--accent); }
-.scheme .stop line { stroke: var(--accent); stroke-width: 1; }
-.scheme .stop text {
-  fill: var(--ink);
-  font-family: 'Literata', Georgia, serif;
+/* сиропи — просто капсули */
+.menu-grid.is-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.menu-grid.is-chips li {
+  padding: 13px 22px;
+  border-radius: var(--pill);
+  background: var(--white);
   font-size: 15px;
 }
-.scheme .stop text.sub {
-  fill: var(--muted);
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.menu-grid.is-chips li b { font-weight: 600; }
+.menu-grid.is-chips li span { color: var(--muted); }
+
+.menu-note {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--faint);
 }
-.scheme .place rect { fill: none; stroke: var(--rule); stroke-width: 1.5; }
-.scheme .place text {
-  fill: var(--muted);
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.scheme .street-name {
-  fill: var(--muted);
-  font-family: 'Oswald', sans-serif;
-  font-size: 11px;
+
+/* --- афіша --- */
+.acc { margin-top: clamp(24px, 3vw, 36px); }
+.ev-kind {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-}
-.scheme figcaption { margin-top: 14px; font-size: 12.5px; color: var(--muted); }
-
-/* =========================================================
-   Підвал
-   ========================================================= */
-.foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  flex-wrap: wrap;
-  padding: 24px var(--pad);
-  border-top: 1px solid var(--rule);
-  font-size: 12px;
   color: var(--muted);
 }
-.foot i { font-style: normal; color: var(--accent); }
+.ev-when { margin: 14px 0 0; font-weight: 500; color: var(--ink); }
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: 1ms !important; }
+/* --- де ми --- */
+.where-arch { display: grid; justify-items: center; }
+
+.spots {
+  list-style: none;
+  margin: clamp(24px, 3vw, 34px) 0 26px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  width: min(560px, 100%);
+}
+.spots li {
+  background: var(--white);
+  border-radius: var(--r-sm);
+  padding: 16px 22px;
+  text-align: left;
+}
+.spots b { display: block; font-family: var(--f-caps); font-weight: 700; font-size: 16px; }
+.spots span { font-size: 14px; color: var(--muted); }
+
+.where-note { margin: 14px 0 0; font-size: 13.5px; color: var(--muted); }
+
+.where-shot { margin: clamp(28px, 4vw, 40px) 0 0; width: min(360px, 100%); }
+.where-shot img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 999px 999px var(--r) var(--r);
 }

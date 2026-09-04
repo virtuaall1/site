@@ -38,12 +38,12 @@
       $$('.role').forEach(b => {
         const on = b === btn;
         b.classList.toggle('is-on', on);
+        b.classList.toggle('pill-dark', on);
+        b.classList.toggle('pill-line', !on);
         b.setAttribute('aria-selected', String(on));
       });
 
       Object.entries(views).forEach(([name, node]) => { node.hidden = name !== role; });
-      $('#tbRole').textContent = btn.querySelector('.role-n').textContent;
-
       if (role === 'owner') drawOwner();
     });
   });
@@ -58,7 +58,7 @@
     const make = (key, text) => {
       const b = document.createElement('button');
       b.type = 'button';
-      b.className = 'chip';
+      b.className = 'filter';
       b.setAttribute('aria-pressed', String(filter === key));
       b.append(document.createTextNode(text));
 
