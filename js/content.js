@@ -176,8 +176,8 @@ window.SITE = (() => {
     {
       id: 'custom',
       example: {
-        uk: 'Приклад: старий сайт на чужому коді гальмував і падав. Розібрав, полагодив, переніс на новий сервер — сторінки відкриваються вчетверо швидше.',
-        en: "Example: an inherited site kept stalling and crashing. I dug in, fixed it and moved it to a new server — pages now open four times faster."
+        uk: 'Приклад: старий сайт на чужому коді гальмував і падав. Розібрали, полагодили, перенесли на новий сервер — сторінки відкриваються вчетверо швидше.',
+        en: "Example: an inherited site kept stalling and crashing. We dug in, fixed it and moved it to a new server — pages now open four times faster."
       },
       price: '?',
       uk: {
@@ -195,20 +195,20 @@ window.SITE = (() => {
 
   const PROCESS = [
     {
-      uk: { title: 'Розбір задачі', desc: 'Зідзвонюємось або листуємось, я ставлю питання і фіксую, що саме має вміти проєкт.' },
-      en: { title: 'Understanding the task', desc: 'We talk it through, I ask questions and write down exactly what the project has to do.' }
+      uk: { title: 'Розбір задачі', desc: 'Зідзвонюємось або листуємось, ставимо питання і фіксуємо, що саме має вміти проєкт.' },
+      en: { title: 'Understanding the task', desc: 'We talk it through, ask questions and write down exactly what the project has to do.' }
     },
     {
-      uk: { title: 'Кошторис і строки', desc: 'Надсилаю фіксовану ціну й дату здачі. Передоплата — половина, решта після приймання.' },
+      uk: { title: 'Кошторис і строки', desc: 'Надсилаємо фіксовану ціну й дату здачі. Передоплата — половина, решта після приймання.' },
       en: { title: 'Quote and timeline', desc: 'You get a fixed price and a delivery date. Half up front, the rest once you accept the work.' }
     },
     {
       uk: { title: 'Розробка', desc: 'Показую проміжні версії, щоб правки не накопичувались до самого кінця.' },
-      en: { title: 'Development', desc: 'I show work in progress, so changes get caught early instead of piling up at the end.' }
+      en: { title: 'Development', desc: 'We show work in progress, so changes get caught early instead of piling up at the end.' }
     },
     {
-      uk: { title: 'Запуск і підтримка', desc: 'Розгортаю на сервері, віддаю вихідники і місяць правлю баги безкоштовно.' },
-      en: { title: 'Launch and support', desc: 'I deploy it, hand over the source code and fix bugs free of charge for a month.' }
+      uk: { title: 'Запуск і підтримка', desc: 'Розгортаємо на сервері, віддаємо вихідники і місяць правимо баги безкоштовно.' },
+      en: { title: 'Launch and support', desc: 'We deploy it, hand over the source code and fix bugs free of charge for a month.' }
     }
   ];
 
@@ -216,11 +216,11 @@ window.SITE = (() => {
     {
       uk: {
         q: 'Скільки триває розробка?',
-        a: 'Лендинг або простий бот — 3–5 днів. Магазин з оплатою — від півтора тижня. Вебзастосунок з адмінкою та бекендом — від трьох тижнів. Точний строк називаю після розбору завдання і фіксую в домовленості.'
+        a: 'Лендинг або простий бот — 3–5 днів. Магазин з оплатою — від півтора тижня. Вебзастосунок з адмінкою та бекендом — від трьох тижнів. Точний строк називаємо після розбору завдання і фіксуємо в домовленості.'
       },
       en: {
         q: 'How long does it take?',
-        a: 'A landing page or a simple bot takes 3–5 days. A shop with payments starts at a week and a half. A web app with an admin panel and backend starts at three weeks. I give you an exact date after we scope the task, and it stays fixed.'
+        a: 'A landing page or a simple bot takes 3–5 days. A shop with payments starts at a week and a half. A web app with an admin panel and backend starts at three weeks. We give you an exact date after we scope the task, and it stays fixed.'
       }
     },
     {
@@ -256,7 +256,7 @@ window.SITE = (() => {
     {
       uk: {
         q: 'Де все це працюватиме?',
-        a: 'Розгортаю на твоєму сервері або підбираю недорогий VPS: домен, SSL, автозапуск, логи та перезапуск при падінні. Доступи лишаються в тебе.'
+        a: 'Розгортаємо на твоєму сервері або підбираємо недорогий VPS: домен, SSL, автозапуск, логи та перезапуск при падінні. Доступи лишаються в тебе.'
       },
       en: {
         q: 'Where does it run?',
@@ -289,26 +289,26 @@ window.SITE = (() => {
 
   const I18N = {
     uk: {
-      'meta.title': 'Розробка сайтів, сервісів і Telegram-ботів — Python, Java, Spring',
+      'meta.title': 'v.studio — сайти, сервіси і Telegram-боти на Python, Java, Spring',
       'meta.desc': 'Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.',
       'nav.services': 'Послуги',
-      'nav.process': 'Як працюю',
+      'nav.process': 'Як працюємо',
       'nav.work': 'Роботи',
       'nav.faq': 'Питання',
       'nav.contact': 'Контакти',
       'nav.order': 'Написати',
       'nav.theme': 'Змінити тему',
-      'hero.status': 'Беру замовлення',
+      'hero.status': 'Беремо замовлення',
       'hero.title.1': 'Сайти, сервіси',
       'hero.title.2': 'і боти, які',
       'hero.title.3': 'працюють за вас',
-      'hero.lead': 'Пишу вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.',
+      'hero.lead': 'Пишемо вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.',
       'hero.cta': 'Обговорити задачу',
       'hero.cta2': 'Код на GitHub',
       'hero.figures': ['Вихідники твої', 'Фіксована ціна', 'Місяць підтримки'],
       'services.kicker': 'Що замовляють',
       'services.title': 'Послуги та ціни',
-      'services.lead': 'Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаю після короткої розмови.',
+      'services.lead': 'Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаємо після короткої розмови.',
       'services.from': 'від',
       'services.custom': 'ціна за задачею',
       'services.order': 'Замовити',
@@ -325,20 +325,20 @@ window.SITE = (() => {
       'work.updated': 'оновлено',
       'work.all': 'Увесь профіль',
       'stack.kicker': 'Інструменти',
-      'stack.title': 'Чим пишу',
-      'stack.lead': 'Мови пораховані за моїми публічними репозиторіями, решта — те, з чим працюю щодня.',
+      'stack.title': 'Чим пишемо',
+      'stack.lead': 'Мови пораховані за нашими публічними репозиторіями, решта — те, з чим працюємо щодня.',
       'faq.kicker': 'Без сюрпризів',
       'faq.title': 'Часті питання',
       'contact.kicker': 'Далі',
       'contact.title': 'Розкажи, що треба автоматизувати',
-      'contact.lead': 'Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.',
+      'contact.lead': 'Опиши задачу в двох словах — відповімо, чи реально це, скільки коштуватиме і скільки триватиме.',
       'contact.tg': 'Написати в Telegram',
       'contact.tgText': 'Вітаю! Хочу обговорити проєкт.',
       'contact.mail': 'Пошта',
       'footer.rights': 'Зібрано вручну, без конструкторів.'
     },
     en: {
-      'meta.title': 'Web apps, backends and Telegram bots — Python, Java, Spring',
+      'meta.title': 'v.studio — web apps, backends and Telegram bots',
       'meta.desc': 'Web applications, Java and Spring Boot backends, landing pages, Telegram bots and automation. Fixed price, source code included, a month of support.',
       'nav.services': 'Services',
       'nav.process': 'Process',
@@ -351,13 +351,13 @@ window.SITE = (() => {
       'hero.title.1': 'Sites, services',
       'hero.title.2': 'and bots that',
       'hero.title.3': 'work for you',
-      'hero.lead': 'I build web apps, backends and Telegram bots: Python, Java, Spring Boot, databases, third-party API integrations. Fixed price, source code included, a month of support after launch.',
+      'hero.lead': 'We build web apps, backends and Telegram bots: Python, Java, Spring Boot, databases, third-party API integrations. Fixed price, source code included, a month of support after launch.',
       'hero.cta': 'Discuss your project',
       'hero.cta2': 'Code on GitHub',
       'hero.figures': ['You own the code', 'Fixed price', 'A month of support'],
       'services.kicker': 'What people order',
       'services.title': 'Services and pricing',
-      'services.lead': 'These are starting prices — the final one depends on scope. I quote exactly after a short conversation.',
+      'services.lead': 'These are starting prices — the final one depends on scope. We quote exactly after a short conversation.',
       'services.from': 'from',
       'services.custom': 'quoted per project',
       'services.order': 'Order',
@@ -374,13 +374,13 @@ window.SITE = (() => {
       'work.updated': 'updated',
       'work.all': 'Full profile',
       'stack.kicker': 'Tools',
-      'stack.title': 'What I build with',
-      'stack.lead': 'Languages are counted from my public repositories; the rest is what I work with day to day.',
+      'stack.title': 'What we build with',
+      'stack.lead': 'Languages are counted from our public repositories; the rest is what we work with day to day.',
       'faq.kicker': 'No surprises',
       'faq.title': 'Frequently asked',
       'contact.kicker': 'Next',
-      'contact.title': 'Tell me what needs automating',
-      'contact.lead': 'Describe the task in a couple of sentences — I will tell you if it is doable, what it costs and how long it takes.',
+      'contact.title': 'Tell us what needs automating',
+      'contact.lead': 'Describe the task in a couple of sentences — we will tell you if it is doable, what it costs and how long it takes.',
       'contact.tg': 'Message on Telegram',
       'contact.tgText': 'Hi! I would like to discuss a project.',
       'contact.mail': 'Email',
