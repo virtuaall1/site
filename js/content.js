@@ -356,8 +356,7 @@ window.SITE = (() => {
       'contact.lead': 'Опиши задачу в двох словах — відповімо, чи реально це, скільки коштуватиме і скільки триватиме.',
       'contact.tg': 'Написати в Telegram',
       'contact.tgText': 'Вітаю! Хочу обговорити проєкт.',
-      'contact.mail': 'Пошта',
-      'footer.rights': 'Зібрано вручну, без конструкторів.'
+      'contact.mail': 'Пошта'
     },
     en: {
       'meta.title': 'v.studio — web apps, backends and Telegram bots',
@@ -413,8 +412,7 @@ window.SITE = (() => {
       'contact.lead': 'Describe the task in a couple of sentences — we will tell you if it is doable, what it costs and how long it takes.',
       'contact.tg': 'Message on Telegram',
       'contact.tgText': 'Hi! I would like to discuss a project.',
-      'contact.mail': 'Email',
-      'footer.rights': 'Hand-built, no page builders.'
+      'contact.mail': 'Email'
     }
   };
 

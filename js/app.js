@@ -496,6 +496,8 @@
 
     if (profile.status === 'fulfilled') {
       const u = profile.value;
+      const statsRow = $('#statsRow');
+      if (statsRow) statsRow.hidden = false;
       setStat('repos', u.public_repos || 0);
       setStat('followers', u.followers || 0, true);
       const years = (Date.now() - new Date(u.created_at).getTime()) / (365.25 * 24 * 3600 * 1000);
