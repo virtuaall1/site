@@ -179,6 +179,29 @@ body {
 }
 
 /* =========================================================
+   3b. Хто ми
+   ========================================================= */
+.creed { list-style: none; padding: 0; display: grid; margin-top: 44px; }
+.creed li {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 22px;
+  align-items: baseline;
+  padding: 26px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 32px;
+  line-height: 1.25;
+}
+.creed li:last-child { border-bottom: 1px solid var(--rule); }
+.creed b {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: 0.06em;
+  color: var(--acid);
+}
+
+/* =========================================================
    4. Кейс
    ========================================================= */
 .steps { list-style: none; padding: 0; display: grid; margin-top: 40px; }
@@ -341,6 +364,31 @@ body {
           <p class="price">$250</p>
         </div>
         <p style="font-size:28px;color:#f2efe8"><span class="wordmark">v.studio</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ: ХТО МИ ============ -->
+<div class="slot">
+  <p class="caption">Пост · хто ми · 1080×1350</p>
+  <div class="board size-4x5" id="post-about">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Хто ми</p>
+      <h1 class="display" style="font-size:100px;margin-top:32px">Пишемо те,<br>що працює<br>за вас<span class="dot-mark"></span></h1>
+      <p style="font-size:31px;line-height:1.45;color:#cfccc4;margin-top:34px;max-width:840px">
+        Студія розробки. Telegram-боти, сайти й вебзастосунки на Python,
+        Java та Spring Boot — від брифу до запуску.
+      </p>
+      <ol class="creed">
+        <li><b>01</b><span>Фіксована ціна, а не години</span></li>
+        <li><b>02</b><span>Код і доступи — твої</span></li>
+        <li><b>03</b><span>Місяць підтримки після запуску</span></li>
+      </ol>
+      <div class="foot" style="margin-top:auto">
+        <span class="wordmark" style="color:#f2efe8">v.studio</span>
+        <b>@virtuaall01</b>
       </div>
     </div>
   </div>

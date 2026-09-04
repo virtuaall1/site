@@ -22,7 +22,7 @@ const SCALE = 3;
 const BOARDS = [
   'avatar',
   'hl-bots', 'hl-sites', 'hl-price', 'hl-cases', 'hl-about', 'hl-contact',
-  'post-service', 'post-case', 'post-quote',
+  'post-about', 'post-service', 'post-case', 'post-quote',
   'carousel-1', 'carousel-2', 'carousel-3',
   'story'
 ];
