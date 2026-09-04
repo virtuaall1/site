@@ -10,14 +10,7 @@
 .hero .duo { margin-top: 20px; }
 .hero-btns { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 28px; }
 
-.hero-shot { margin: clamp(28px, 4vw, 44px) 0 0; width: min(420px, 100%); }
-.hero-shot img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 999px 999px var(--r) var(--r);
-}
+.hero-shot { margin: clamp(28px, 4vw, 44px) 0 0; width: min(360px, 100%); }
 
 /* --- меню --- */
 .tabs {
@@ -69,14 +62,7 @@
 
 /* сиропи — просто капсули */
 .menu-grid.is-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.menu-grid.is-chips li {
-  padding: 13px 22px;
-  border-radius: var(--pill);
-  background: var(--white);
-  font-size: 15px;
-}
-.menu-grid.is-chips li b { font-weight: 600; }
-.menu-grid.is-chips li span { color: var(--muted); }
+.menu-grid.is-chips { padding-top: 6px; }
 
 .menu-note {
   margin: 22px 0 0;
@@ -117,13 +103,6 @@
 .spots b { display: block; font-family: var(--f-caps); font-weight: 700; font-size: 16px; }
 .spots span { font-size: 14px; color: var(--muted); }
 
-.where-note { margin: 14px 0 0; font-size: 13.5px; color: var(--muted); }
+.where-arch .nest { margin-bottom: 14px; }
 
-.where-shot { margin: clamp(28px, 4vw, 40px) 0 0; width: min(360px, 100%); }
-.where-shot img {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 999px 999px var(--r) var(--r);
-}
+.where-shot { margin: clamp(28px, 4vw, 40px) 0 0; width: min(320px, 100%); }

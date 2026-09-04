@@ -64,11 +64,8 @@
       grid.className = 'menu-grid is-chips';
       CAFE.syrups.forEach(s => {
         const li = document.createElement('li');
-        const b = document.createElement('b');
-        b.textContent = s;
-        const tail = document.createElement('span');
-        tail.textContent = ' · Loft';
-        li.append(b, tail);
+        li.className = 'tag';
+        li.textContent = s;
         grid.append(li);
       });
       note.textContent = 'Додаємо в лате й раф без доплати за перший сироп.';
