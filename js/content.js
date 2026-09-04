@@ -36,7 +36,65 @@ window.SITE = (() => {
 
   const SERVICES = [
     {
+      id: 'landing',
+      example: {
+        uk: 'Приклад: сторінка стоматології. Один екран із цінами, форма запису — заявка одразу падає в Telegram власнику.',
+        en: "Example: a page for a dental clinic. One screen with prices and a booking form — each request lands straight in the owner's Telegram."
+      },
+      price: '$150+',
+      uk: {
+        name: 'Сайт-візитка та лендинг',
+        desc: 'Швидка сторінка під послугу або товар: адаптив, форми заявок, підключення аналітики.',
+        bullets: ['Адаптив під телефон', 'Форма заявки', 'Швидкість і SEO', 'Запуск за 3–5 днів']
+      },
+      en: {
+        name: 'Landing page',
+        desc: 'A fast page for one product or service: responsive layout, lead forms, analytics wired up.',
+        bullets: ['Mobile-first layout', 'Lead form', 'Speed and SEO', 'Live in 3–5 days']
+      }
+    },
+    {
+      id: 'shop-bot',
+      example: {
+        uk: 'Приклад: магазин кави. Клієнт обирає обсяг і помел, оплачує карткою в боті, ти бачиш замовлення з адресою в адмінці.',
+        en: "Example: a coffee shop. The buyer picks grind and weight, pays by card inside the bot, and you see the order with its address in the admin panel."
+      },
+      price: '$250+',
+      uk: {
+        name: 'Telegram-бот з оплатою',
+        desc: 'Каталог, кошик, приймання платежів, сповіщення про замовлення та адмінка для керування товарами.',
+        bullets: ['Каталог і категорії', 'Оплата карткою / крипта', 'Адмінпанель', 'Вивантаження замовлень']
+      },
+      en: {
+        name: 'Telegram shop bot',
+        desc: 'Catalogue, cart, payments, order notifications and an admin panel to manage the products.',
+        bullets: ['Catalogue and categories', 'Card / crypto payments', 'Admin panel', 'Order exports']
+      }
+    },
+    {
+      id: 'bot',
+      example: {
+        uk: 'Приклад: бот стоматології нагадує про візит за добу і збирає відгуки, а нових у чаті зустрічає капча.',
+        en: "Example: a clinic bot reminds patients a day before the visit and collects reviews, while a captcha meets newcomers in the chat."
+      },
+      price: '$120+',
+      uk: {
+        name: 'Бот: розсилки, заявки, модерація',
+        desc: 'Від автовідповідача до міні-CRM із сегментами, відкладеним постингом і антиспамом у чаті.',
+        bullets: ['Заявки власнику', 'Розсилки по базі', 'Капча й антиспам', 'Статистика']
+      },
+      en: {
+        name: 'Bot: broadcasts, leads, moderation',
+        desc: 'From a simple auto-reply to a mini CRM with segments, scheduled posts and chat anti-spam.',
+        bullets: ['Leads to your inbox', 'Broadcasts', 'Captcha and anti-spam', 'Statistics']
+      }
+    },
+    {
       id: 'webapp',
+      example: {
+        uk: 'Приклад: облік замовлень для майстерні. Менеджер веде заявки, майстер бачить лише свої, власник — виторг за місяць.',
+        en: "Example: an order tracker for a workshop. Managers handle requests, each technician sees only their own, the owner sees monthly revenue."
+      },
       price: '$400+',
       featured: true,
       uk: {
@@ -52,6 +110,10 @@ window.SITE = (() => {
     },
     {
       id: 'backend',
+      example: {
+        uk: 'Приклад: API для мобільного застосунку. Реєстрація, кошик і історія замовлень — фронтенд просто звертається до готових методів.',
+        en: "Example: an API for a mobile app. Sign-up, cart and order history — the frontend just calls ready-made endpoints."
+      },
       price: '$350+',
       uk: {
         name: 'Бекенд і API',
@@ -65,49 +127,11 @@ window.SITE = (() => {
       }
     },
     {
-      id: 'landing',
-      price: '$150+',
-      uk: {
-        name: 'Сайт-візитка та лендинг',
-        desc: 'Швидка сторінка під послугу або товар: адаптив, форми заявок, підключення аналітики.',
-        bullets: ['Адаптив під телефон', 'Форма заявки', 'Швидкість і SEO', 'Запуск за 3–5 днів']
-      },
-      en: {
-        name: 'Landing page',
-        desc: 'A fast page for one product or service: responsive layout, lead forms, analytics wired up.',
-        bullets: ['Mobile-first layout', 'Lead form', 'Speed and SEO', 'Live in 3–5 days']
-      }
-    },
-    {
-      id: 'shop-bot',
-      price: '$250+',
-      uk: {
-        name: 'Telegram-бот з оплатою',
-        desc: 'Каталог, кошик, приймання платежів, сповіщення про замовлення та адмінка для керування товарами.',
-        bullets: ['Каталог і категорії', 'Оплата карткою / крипта', 'Адмінпанель', 'Вивантаження замовлень']
-      },
-      en: {
-        name: 'Telegram shop bot',
-        desc: 'Catalogue, cart, payments, order notifications and an admin panel to manage the products.',
-        bullets: ['Catalogue and categories', 'Card / crypto payments', 'Admin panel', 'Order exports']
-      }
-    },
-    {
-      id: 'bot',
-      price: '$120+',
-      uk: {
-        name: 'Бот: розсилки, заявки, модерація',
-        desc: 'Від автовідповідача до міні-CRM із сегментами, відкладеним постингом і антиспамом у чаті.',
-        bullets: ['Заявки власнику', 'Розсилки по базі', 'Капча й антиспам', 'Статистика']
-      },
-      en: {
-        name: 'Bot: broadcasts, leads, moderation',
-        desc: 'From a simple auto-reply to a mini CRM with segments, scheduled posts and chat anti-spam.',
-        bullets: ['Leads to your inbox', 'Broadcasts', 'Captcha and anti-spam', 'Statistics']
-      }
-    },
-    {
       id: 'automation',
+      example: {
+        uk: 'Приклад: стеження за цінами конкурентів. Щоранку збирає прайси у таблицю і пише в Telegram, якщо щось подешевшало.',
+        en: "Example: competitor price tracking. Every morning it collects prices into a spreadsheet and pings Telegram when something drops."
+      },
       price: '$120+',
       uk: {
         name: 'Парсинг і автоматизація',
@@ -122,6 +146,10 @@ window.SITE = (() => {
     },
     {
       id: 'custom',
+      example: {
+        uk: 'Приклад: старий сайт на чужому коді гальмував і падав. Розібрав, полагодив, переніс на новий сервер — сторінки відкриваються вчетверо швидше.',
+        en: "Example: an inherited site kept stalling and crashing. I dug in, fixed it and moved it to a new server — pages now open four times faster."
+      },
       price: '?',
       uk: {
         name: 'Нестандартне завдання',
@@ -240,6 +268,7 @@ window.SITE = (() => {
       'nav.faq': 'Питання',
       'nav.contact': 'Контакти',
       'nav.order': 'Написати',
+      'nav.theme': 'Змінити тему',
       'hero.status': 'Беру замовлення',
       'hero.title.1': 'Сайти, сервіси',
       'hero.title.2': 'і боти, які',
@@ -255,6 +284,7 @@ window.SITE = (() => {
       'services.custom': 'ціна за задачею',
       'services.order': 'Замовити',
       'services.featured': 'хіт',
+      'services.example': 'Приклад',
       'services.orderText': 'Вітаю! Цікавить: {name}. Розкажіть, будь ласка, про строки та ціну.',
       'process.kicker': 'Як це влаштовано',
       'process.title': 'Чотири кроки до запуску',
@@ -287,6 +317,7 @@ window.SITE = (() => {
       'nav.faq': 'FAQ',
       'nav.contact': 'Contact',
       'nav.order': 'Get in touch',
+      'nav.theme': 'Switch theme',
       'hero.status': 'Available for work',
       'hero.title.1': 'Sites, services',
       'hero.title.2': 'and bots that',
@@ -302,6 +333,7 @@ window.SITE = (() => {
       'services.custom': 'quoted per project',
       'services.order': 'Order',
       'services.featured': 'top',
+      'services.example': 'Example',
       'services.orderText': 'Hi! I am interested in: {name}. Could you tell me about the timeline and price?',
       'process.kicker': 'How it works',
       'process.title': 'Four steps to launch',

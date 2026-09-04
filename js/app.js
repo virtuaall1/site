@@ -66,6 +66,28 @@
   let skipReveal = false;
   const t = key => (I18N[lang] && I18N[lang][key]) || I18N.uk[key] || key;
 
+  /* =======================================================
+     Тема: тёмная по умолчанию, светлая — по выбору или системной
+     ======================================================= */
+  const root = document.documentElement;
+
+  function detectTheme() {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+    } catch (e) { /* приватный режим */ }
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+
+  function applyTheme(next) {
+    const theme = next === 'light' ? 'light' : 'dark';
+    root.dataset.theme = theme;
+    try { localStorage.setItem('theme', theme); } catch (e) { /* noop */ }
+
+    const btn = $('#themeBtn');
+    if (btn) btn.setAttribute('aria-pressed', String(theme === 'light'));
+  }
+
   /** Ссылка на Telegram с уже готовым текстом сообщения */
   function tgLink(text) {
     return `${LINKS.telegram}?text=${encodeURIComponent(text)}`;
@@ -130,6 +152,7 @@
     const list = $('#priceList');
     if (!list) return;
     list.textContent = '';
+    let isFirstExample = true;
 
     SERVICES.forEach(service => {
       const copy = service[lang] || service.uk;
@@ -161,7 +184,47 @@
       const bullets = el('ul', { class: 'price-bullets' });
       copy.bullets.forEach(b => bullets.append(el('li', { text: b })));
 
-      list.append(el('li', { class: revealCls('price-row') }, inner, bullets));
+      const head = el('div', { class: 'price-head' }, inner, bullets);
+      const row = el('li', { class: revealCls('price-row') }, head);
+
+      // пример того, что получится: макет плюс короткое описание
+      const example = service.example && (service.example[lang] || service.example.uk);
+      const mock = document.getElementById(`mock-${service.id}`);
+
+      if (example && mock) {
+        const panelId = `example-${service.id}`;
+
+        const toggle = el('button', {
+          class: 'price-toggle',
+          type: 'button',
+          'aria-expanded': 'false',
+          'aria-controls': panelId
+        }, el('span', { text: t('services.example') }), el('span', { class: 'toggle-sign', 'aria-hidden': 'true' }));
+
+        const figure = el('div', { class: 'ex-mock' });
+        figure.append(mock.content.cloneNode(true));
+
+        const panel = el('div', { class: 'price-example', id: panelId },
+          el('div', {}, el('div', { class: 'ex-body' }, figure, el('p', { class: 'ex-text', text: example })))
+        );
+
+        toggle.addEventListener('click', () => {
+          const open = row.classList.toggle('open');
+          toggle.setAttribute('aria-expanded', String(open));
+        });
+
+        inner.querySelector('.price-right').prepend(toggle);
+        row.append(panel);
+
+        // первый пример открыт сразу — чтобы было видно, что это вообще есть
+        if (isFirstExample) {
+          row.classList.add('open');
+          toggle.setAttribute('aria-expanded', 'true');
+          isFirstExample = false;
+        }
+      }
+
+      list.append(row);
     });
   }
 
@@ -530,6 +593,8 @@
       ctx.clearRect(0, 0, w, h);
 
       const seconds = now / 1000;
+      const light = root.dataset.theme === 'light';
+      const dot = light ? '20, 20, 15' : '242, 239, 232';
 
       // старые волны выбрасываем, чтобы массив не рос
       for (let i = waves.length - 1; i >= 0; i--) {
@@ -574,9 +639,11 @@
         const alpha = 0.13 + energy * 0.72;
 
         if (energy > 0.4) {
-          ctx.fillStyle = `rgba(216, 255, 62, ${alpha})`;
+          ctx.fillStyle = light
+            ? `rgba(79, 107, 0, ${alpha})`
+            : `rgba(216, 255, 62, ${alpha})`;
         } else {
-          ctx.fillStyle = `rgba(242, 239, 232, ${alpha})`;
+          ctx.fillStyle = `rgba(${dot}, ${alpha})`;
         }
         ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
       }
@@ -591,7 +658,9 @@
         s.x += s.vx;
         s.y += s.vy;
         s.vy -= 0.03;                      // подъём с ускорением
-        ctx.fillStyle = `rgba(216, 255, 62, ${(1 - age / 1.1) * 0.75})`;
+        ctx.fillStyle = light
+          ? `rgba(79, 107, 0, ${(1 - age / 1.1) * 0.7})`
+          : `rgba(216, 255, 62, ${(1 - age / 1.1) * 0.75})`;
         ctx.fillText(s.char, s.x, s.y);
       }
 
@@ -857,6 +926,13 @@
       btn.addEventListener('click', () => applyLang(btn.dataset.lang));
     });
 
+    const themeBtn = $('#themeBtn');
+    if (themeBtn) {
+      themeBtn.addEventListener('click', () => {
+        applyTheme(root.dataset.theme === 'light' ? 'dark' : 'light');
+      });
+    }
+
     const year = $('#year');
     if (year) year.textContent = String(new Date().getFullYear());
 
@@ -875,6 +951,7 @@
      Старт
      ======================================================= */
   function boot() {
+    applyTheme(detectTheme());
     applyLang(lang);
     initChrome();
     initGrid();
