@@ -3,7 +3,10 @@
    Своє: пастель, вікно чату й панель власника.
    ========================================================= */
 
-:root { --pastel: #c9e8d4; }
+:root {
+  --pastel: #cdeacf;
+  --pastel-2: #e4f0ac;
+}
 
 .hero { display: grid; justify-items: center; }
 .hero .duo { margin-top: 20px; }
@@ -35,7 +38,7 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: clamp(500px, 72vh, 620px);
-  background: var(--ink);
+  background: linear-gradient(168deg, #34342f 0%, var(--ink) 55%);
   color: #f0efec;
   border-radius: var(--r);
   overflow: hidden;
@@ -81,7 +84,7 @@
 }
 .msg-me {
   align-self: flex-end;
-  background: var(--lime);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
   color: var(--ink);
   border-radius: 18px 18px 6px 18px;
   padding: 11px 16px;
@@ -102,7 +105,12 @@
   transition: background 0.18s var(--ease), border-color 0.18s var(--ease), color 0.18s var(--ease);
 }
 .key:hover { background: #3a3a35; }
-.key-main { background: var(--lime); border-color: var(--lime); color: var(--ink); font-weight: 500; }
+.key-main {
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  border-color: var(--lime-2);
+  color: var(--ink);
+  font-weight: 500;
+}
 .key-main:hover { background: #b6e341; border-color: #b6e341; }
 
 .say { display: flex; border-top: 1px solid #33332f; }
@@ -178,7 +186,7 @@
   margin-top: 14px;
   padding: 6px 14px;
   border-radius: var(--pill);
-  background: var(--lime);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
   font-size: 12px;
   font-weight: 500;
 }

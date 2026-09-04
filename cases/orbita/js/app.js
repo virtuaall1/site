@@ -306,6 +306,23 @@
       return node;
     };
 
+    // градієнти для стовпчиків — плоска заливка виглядала порожньою
+    const defs = document.createElementNS(NS, 'defs');
+    [['gBar', 'bar-a', 'bar-b'], ['gBarLast', 'bar-c', 'bar-d']].forEach(([id, a, b]) => {
+      const g = document.createElementNS(NS, 'linearGradient');
+      g.setAttribute('id', id);
+      g.setAttribute('x1', '0'); g.setAttribute('y1', '0');
+      g.setAttribute('x2', '0'); g.setAttribute('y2', '1');
+      [['0%', a], ['100%', b]].forEach(([offset, cls]) => {
+        const stop = document.createElementNS(NS, 'stop');
+        stop.setAttribute('offset', offset);
+        stop.setAttribute('class', cls);
+        g.append(stop);
+      });
+      defs.append(g);
+    });
+    svg.append(defs);
+
     // базова лінія
     el('line', { class: 'axis', x1: padL, y1: padT + plotH, x2: W - padR, y2: padT + plotH });
 

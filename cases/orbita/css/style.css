@@ -3,7 +3,10 @@
    Своє: пастель, таблиця заявок, картки нарядів і графік.
    ========================================================= */
 
-:root { --pastel: #bfc9f7; }
+:root {
+  --pastel: #c6cef9;
+  --pastel-2: #b6e2f0;
+}
 
 .hero { display: grid; justify-items: center; }
 .hero .duo { margin-top: 20px; }
@@ -83,7 +86,7 @@
 .st-new  { background: var(--sand-2); color: var(--muted); }
 .st-work { background: var(--pastel); color: #23306b; }
 .st-wait { background: #f7e6a8; color: #6b5410; }
-.st-done { background: var(--lime); color: var(--ink); }
+.st-done { background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%); color: var(--ink); }
 
 /* --- плитки з підсумками --- */
 .tiles {
@@ -152,14 +155,14 @@
   transform: scale(0);
   transition: transform 0.2s var(--ease);
 }
-.job-checks input:checked + .box { background: var(--lime); border-color: var(--lime); }
+.job-checks input:checked + .box { background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%); border-color: var(--lime-2); }
 .job-checks input:checked + .box::after { transform: scale(1); }
 .job-checks input:checked ~ .txt { color: var(--faint); text-decoration: line-through; }
 .job-checks input:focus-visible + .box { outline: 3px solid var(--ink); outline-offset: 2px; }
 
 .job-progress { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
 .job-track { flex: 1; height: 6px; border-radius: var(--pill); background: var(--sand-2); overflow: hidden; }
-.job-fill { display: block; height: 100%; background: var(--lime); transition: width 0.3s var(--ease); }
+.job-fill { display: block; height: 100%; background: linear-gradient(90deg, var(--lime) 0%, var(--lime-2) 100%); transition: width 0.3s var(--ease); }
 
 /* --- панелі власника --- */
 .card { margin-top: 16px; }
@@ -176,8 +179,12 @@
 .chart-wrap { overflow-x: auto; }
 .chart { display: block; width: 100%; min-width: 460px; height: auto; }
 .chart .axis { stroke: var(--rule); stroke-width: 1; }
-.chart .bar { fill: var(--pastel); }
-.chart .bar-last { fill: var(--lime); }
+.chart .bar { fill: url(#gBar); }
+.chart .bar-last { fill: url(#gBarLast); }
+.chart .bar-a { stop-color: #d5daff; }
+.chart .bar-b { stop-color: #9fb0ec; }
+.chart .bar-c { stop-color: #a6f95c; }
+.chart .bar-d { stop-color: #6fd60e; }
 .chart .lbl { fill: #9d9d97; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
 .chart .val { fill: #232322; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; }
 
@@ -193,7 +200,7 @@
 .bars li:last-child { border-bottom: 0; }
 .bars .name { font-size: 14.5px; white-space: nowrap; }
 .bars .track { height: 10px; border-radius: var(--pill); background: var(--sand-2); overflow: hidden; }
-.bars .fill { display: block; height: 100%; background: var(--pastel); }
+.bars .fill { display: block; height: 100%; background: linear-gradient(90deg, var(--pastel) 0%, var(--pastel-2) 100%); }
 .bars .sum { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; font-size: 14px; }
 
 .acc { margin-top: clamp(24px, 3vw, 36px); }

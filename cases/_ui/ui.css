@@ -20,7 +20,9 @@
   --rule:    rgba(35, 35, 34, 0.12);
 
   --lime:    #8ef224;
-  --pastel:  #bfc9f7;          /* кейс перевизначає */
+  --lime-2:  #6fd60e;
+  --pastel:   #bfc9f7;         /* кейс перевизначає обидва */
+  --pastel-2: #b9e3f0;
 
   --r:       28px;
   --r-sm:    18px;
@@ -119,14 +121,18 @@ section[id] { scroll-margin-top: 92px; }
   flex: none;
   border: 0;
   border-radius: 50%;
-  background: var(--ink);
+  background: linear-gradient(150deg, #35352f 0%, var(--ink) 70%);
   color: var(--white);
   font-size: 19px;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.round:hover { background: var(--lime); color: var(--ink); transform: translateY(-2px); }
+.round:hover {
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
 .round-sm { width: 40px; height: 40px; font-size: 16px; }
 
 /* =========================================================
@@ -150,10 +156,16 @@ section[id] { scroll-margin-top: 92px; }
 }
 .pill:hover { transform: translateY(-2px); }
 
-.pill-dark { background: var(--ink); color: var(--white); }
-.pill-dark:hover { background: var(--lime); color: var(--ink); }
+.pill-dark {
+  background: linear-gradient(150deg, #35352f 0%, var(--ink) 70%);
+  color: var(--white);
+}
+.pill-dark:hover { background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%); color: var(--ink); }
 
-.pill-lime { background: var(--lime); color: var(--ink); }
+.pill-lime {
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  color: var(--ink);
+}
 .pill-lime:hover { background: var(--ink); color: var(--white); }
 
 .pill-line { background: none; border-color: var(--rule); color: var(--ink); }
@@ -213,12 +225,19 @@ section[id] { scroll-margin-top: 92px; }
   padding: clamp(20px, 3vw, 32px);
 }
 
-.card-dark { background: var(--ink); color: var(--white); }
+.card-dark {
+  background: linear-gradient(158deg, #34342f 0%, var(--ink) 62%);
+  color: var(--white);
+}
 .card-dark .muted { color: #a4a49e; }
 
-/* велика пастельна арка */
+/* Велика пастельна арка. Два шари: м'яке світло згори й перехід
+   між спорідненими відтінками — плоска заливка на такому розмірі
+   виглядає порожньою. */
 .arch {
-  background: var(--pastel);
+  background:
+    radial-gradient(72% 46% at 50% 6%, rgba(255, 255, 255, 0.62), transparent 70%),
+    linear-gradient(163deg, var(--pastel) 0%, var(--pastel-2) 100%);
   border-radius: 999px 999px var(--r) var(--r);
   padding: clamp(34px, 6vw, 76px) clamp(20px, 4vw, 56px) clamp(24px, 4vw, 48px);
   text-align: center;
@@ -228,7 +247,7 @@ section[id] { scroll-margin-top: 92px; }
   display: inline-block;
   padding: 7px 16px;
   border-radius: var(--pill);
-  background: var(--lime);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
   font-size: 13px;
   font-weight: 500;
 }
@@ -279,7 +298,10 @@ section[id] { scroll-margin-top: 92px; }
   font-size: 15px;
   transition: transform 0.24s var(--ease), background 0.24s var(--ease);
 }
-.acc details[open] summary::after { transform: rotate(180deg); background: var(--lime); }
+.acc details[open] summary::after {
+  transform: rotate(180deg);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+}
 .acc .acc-body { padding: 0 clamp(18px, 3vw, 28px) 22px; color: var(--muted); }
 
 /* =========================================================
@@ -305,35 +327,6 @@ section[id] { scroll-margin-top: 92px; }
 }
 
 
-/* =========================================================
-   Біжучий рядок
-   ========================================================= */
-.marquee {
-  overflow: hidden;
-  background: var(--lime);
-  border-bottom: 1px solid var(--rule);
-}
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 26s linear infinite;
-}
-.marquee span {
-  padding: 11px 0;
-  font-family: var(--f-caps);
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.marquee span i { font-style: normal; padding: 0 26px; opacity: 0.45; }
-
-@keyframes marquee { to { transform: translateX(-50%); } }
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
-}
 
 /* =========================================================
    Овальний медіа-блок
@@ -386,7 +379,7 @@ section[id] { scroll-margin-top: 92px; }
   gap: 6px;
   padding: 7px;
   border-radius: var(--pill);
-  background: var(--ink);
+  background: linear-gradient(150deg, #35352f 0%, var(--ink) 70%);
 }
 .nest a, .nest button {
   padding: 11px 22px;
@@ -413,7 +406,7 @@ section[id] { scroll-margin-top: 92px; }
   display: inline-block;
   padding: 9px 22px;
   border-radius: var(--pill);
-  background: var(--lime);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
   font-size: 15px;
   font-weight: 500;
   white-space: nowrap;

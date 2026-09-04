@@ -3,7 +3,10 @@
    Своє тут лише пастельний колір і кілька розкладок.
    ========================================================= */
 
-:root { --pastel: #f7d6c2; }
+:root {
+  --pastel: #f9dcc6;
+  --pastel-2: #f2c3ce;
+}
 
 /* --- шапка сторінки --- */
 .hero { display: grid; justify-items: center; gap: 0; }
@@ -53,7 +56,7 @@
   flex: none;
   padding: 6px 14px;
   border-radius: var(--pill);
-  background: var(--lime);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
   font-size: 13px;
   font-weight: 600;
   white-space: nowrap;
