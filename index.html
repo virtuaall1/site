@@ -2,179 +2,176 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>virtuaall1 — Developer</title>
-<meta name="description" content="Портфолио разработчика virtuaall1: проекты, стек технологий, активность на GitHub.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⌘</text></svg>">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://avatars.githubusercontent.com https://ghchart.rshah.org; connect-src https://api.github.com; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="color-scheme" content="dark light">
+
+<title>Telegram-боты под ключ — разработка и автоматизация</title>
+<meta name="description" content="Разработка Telegram-ботов: магазины с оплатой, рассылки, парсеры, модерация. Фиксированная цена, исходники и месяц поддержки.">
+<link rel="canonical" href="https://virtuaall1.github.io/site/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Telegram-боты под ключ — разработка и автоматизация">
+<meta property="og:description" content="Магазины с оплатой, рассылки, парсеры, модерация. Фиксированная цена, исходники и месяц поддержки.">
+<meta property="og:url" content="https://virtuaall1.github.io/site/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0b'/%3E%3Cpath d='M8 21.5 15 10h2l7 11.5h-3.4l-1.3-2.3h-6.6l-1.3 2.3z' fill='%23d8ff3e'/%3E%3C/svg%3E">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.github.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div class="cursor-dot" id="cursorDot"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<a class="skip-link" href="#main">Перейти к содержимому</a>
 
-<canvas id="bg-canvas"></canvas>
-<div class="noise-overlay"></div>
+<canvas id="grid-canvas" aria-hidden="true"></canvas>
 
-<div class="progress-bar" id="progressBar"></div>
-
-<header class="site-header">
-  <a href="#top" class="logo">
-    <span class="logo-bracket">&lt;</span>vt<span class="logo-bracket">/&gt;</span>
+<header class="topbar">
+  <a class="brand" href="#main">
+    <span class="brand-mark" aria-hidden="true">Λ</span>
+    <span class="brand-text">virtuaall</span>
   </a>
-  <nav class="nav-desktop">
-    <a href="#about" class="nav-link"><span>01</span>Обо мне</a>
-    <a href="#stack" class="nav-link"><span>02</span>Стек</a>
-    <a href="#projects" class="nav-link"><span>03</span>Проекты</a>
-    <a href="#activity" class="nav-link"><span>04</span>Активность</a>
-    <a href="#contact" class="nav-link"><span>05</span>Контакты</a>
+
+  <nav class="nav" aria-label="Основная навигация">
+    <a href="#services" data-i18n="nav.services">Услуги</a>
+    <a href="#process" data-i18n="nav.process">Как работаю</a>
+    <a href="#work" data-i18n="nav.work">Работы</a>
+    <a href="#faq" data-i18n="nav.faq">Вопросы</a>
   </nav>
-  <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
-    <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-    <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>
-  </button>
+
+  <div class="topbar-right">
+    <div class="lang" role="group" aria-label="Язык / Мова">
+      <button type="button" class="lang-btn" data-lang="ru">RU</button>
+      <button type="button" class="lang-btn" data-lang="uk">UA</button>
+    </div>
+    <a class="btn btn-solid btn-sm magnetic" id="topOrder" href="#contact" data-i18n="nav.order">Написать</a>
+    <button type="button" class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
 </header>
 
-<main id="top">
+<div class="mobile-menu" id="mobileMenu" hidden>
+  <a href="#services" data-i18n="nav.services">Услуги</a>
+  <a href="#process" data-i18n="nav.process">Как работаю</a>
+  <a href="#work" data-i18n="nav.work">Работы</a>
+  <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+  <a href="#contact" data-i18n="nav.contact">Контакты</a>
+</div>
 
+<main id="main">
+
+  <!-- ============ HERO ============ -->
   <section class="hero">
-    <div class="hero-inner">
-      <h1 class="hero-title">
-        <span class="reveal-up" style="--d:0">Привет, я</span>
-        <span class="hero-name gradient-text reveal-up" style="--d:1" id="heroName">virtuaall1</span>
-      </h1>
-      <h2 class="hero-role reveal-up" style="--d:2">
-        <span id="typedRole">Software&nbsp;Developer</span><span class="caret">|</span>
-      </h2>
-      <p class="hero-desc reveal-up" style="--d:3" id="heroBio">
-        Пишу код, ломаю баги, собираю пайплайны. Ниже — живые данные прямо из моего GitHub: репозитории, языки и активность, обновляются автоматически.
-      </p>
-      <div class="hero-actions reveal-up" style="--d:4">
-        <a href="#projects" class="btn btn-primary">
-          <span>Смотреть проекты</span>
-          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a href="https://github.com/virtuaall1" target="_blank" rel="noopener" class="btn btn-ghost">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.49-1.11-1.49-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.73 0 0 .84-.28 2.75 1.05a9.4 9.4 0 015 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.42.2 2.47.1 2.73.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.48-.01 2.82 0 .27.18.6.69.49A10.26 10.26 0 0022 12.25C22 6.58 17.52 2 12 2z"/></svg>
-          <span>GitHub</span>
-        </a>
+    <p class="status"><span class="status-dot" aria-hidden="true"></span><span data-i18n="hero.status">Беру заказы</span></p>
+
+    <h1 class="hero-title">
+      <span class="line"><span class="line-in" data-i18n="hero.title.1">Боты, которые</span></span>
+      <span class="line"><span class="line-in" data-i18n="hero.title.2">продают и</span></span>
+      <span class="line"><span class="line-in accent" data-i18n="hero.title.3">не спят</span></span>
+    </h1>
+
+    <div class="hero-bottom">
+      <p class="hero-lead" data-i18n="hero.lead">Разрабатываю Telegram-ботов и веб-сервисы: от автоответчика до магазина с оплатой, админкой и рассылками. Фиксированная цена, исходники на руки, месяц поддержки после запуска.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid magnetic" href="#contact" data-i18n="hero.cta">Обсудить задачу</a>
+        <a class="btn btn-line magnetic" id="heroGithub" href="https://github.com/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta2">Код на GitHub</a>
       </div>
     </div>
 
-    <div class="hero-terminal reveal-up" style="--d:2">
-      <div class="terminal-bar">
-        <span class="term-dot" style="background:#ff5f56"></span>
-        <span class="term-dot" style="background:#ffbd2e"></span>
-        <span class="term-dot" style="background:#27c93f"></span>
-        <span class="term-title">zsh — virtuaall1</span>
-      </div>
-      <div class="terminal-body" id="terminalBody"></div>
-    </div>
-
-    <div class="hero-scroll-hint">
-      <span>scroll</span>
-      <div class="scroll-line"><i></i></div>
-    </div>
-    <div class="hero-glow"></div>
+    <div class="hero-figures" id="heroFigures" aria-hidden="true"></div>
   </section>
 
-  <section id="about" class="section about-section">
-    <div class="section-head reveal-up">
-      <span class="section-num">01</span>
-      <h2 class="section-title">Обо мне</h2>
+  <!-- ============ TICKER ============ -->
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- ============ SERVICES ============ -->
+  <section class="section" id="services">
+    <div class="section-head">
+      <p class="kicker" data-i18n="services.kicker">Что заказывают</p>
+      <h2 class="section-title" data-i18n="services.title">Боты и цены</h2>
+      <p class="section-lead" data-i18n="services.lead">Цены — стартовые, финальная зависит от объёма. Точную смету называю после короткого разговора.</p>
     </div>
-    <div class="about-grid">
-      <div class="about-card glass reveal-up">
-        <img id="avatar" class="avatar" src="" alt="avatar" width="120" height="120">
-        <div class="about-name" id="aboutName">—</div>
-        <div class="about-login" id="aboutLogin">@virtuaall1</div>
-        <p class="about-bio" id="aboutBio">Загружаю профиль…</p>
-        <div class="about-meta" id="aboutMeta"></div>
-      </div>
-      <div class="stats-grid reveal-up">
-        <div class="stat-card glass">
-          <div class="stat-value" data-count="0" id="statRepos">0</div>
-          <div class="stat-label">репозиториев</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-value" data-count="0" id="statFollowers">0</div>
-          <div class="stat-label">подписчиков</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-value" data-count="0" id="statStars">0</div>
-          <div class="stat-label">звёзд получено</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-value" data-count="0" id="statYears">0</div>
-          <div class="stat-label">лет на GitHub</div>
-        </div>
-      </div>
-    </div>
+    <ul class="price-list" id="priceList"></ul>
   </section>
 
-  <section id="stack" class="section stack-section">
-    <div class="section-head reveal-up">
-      <span class="section-num">02</span>
-      <h2 class="section-title">Технологии</h2>
-      <p class="section-sub">Языки посчитаны автоматически по моим публичным репозиториям</p>
+  <!-- ============ PROCESS ============ -->
+  <section class="section section-alt" id="process">
+    <div class="section-head">
+      <p class="kicker" data-i18n="process.kicker">Как это устроено</p>
+      <h2 class="section-title" data-i18n="process.title">Четыре шага до запуска</h2>
     </div>
-    <div class="stack-content">
-      <div class="lang-bars glass reveal-up" id="langBars">
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-        <div class="skeleton-line"></div>
-      </div>
-      <div class="tag-cloud reveal-up" id="tagCloud"></div>
+    <ol class="steps" id="steps"></ol>
+  </section>
+
+  <!-- ============ WORK / GITHUB ============ -->
+  <section class="section" id="work">
+    <div class="section-head">
+      <p class="kicker" data-i18n="work.kicker">Открытый код</p>
+      <h2 class="section-title" data-i18n="work.title">Репозитории</h2>
+      <p class="section-lead" data-i18n="work.lead">Подтягивается с GitHub автоматически — сортировка по звёздам.</p>
+    </div>
+
+    <div class="stats-row" id="statsRow">
+      <div class="stat"><b class="stat-num" data-stat="repos">—</b><span data-i18n="stats.repos">репозиториев</span></div>
+      <div class="stat"><b class="stat-num" data-stat="stars">—</b><span data-i18n="stats.stars">звёзд</span></div>
+      <div class="stat"><b class="stat-num" data-stat="followers">—</b><span data-i18n="stats.followers">подписчиков</span></div>
+      <div class="stat"><b class="stat-num" data-stat="years">—</b><span data-i18n="stats.years">лет на GitHub</span></div>
+    </div>
+
+    <div class="repos" id="repos" aria-live="polite"></div>
+    <a class="link-arrow" id="allRepos" href="https://github.com/virtuaall1?tab=repositories" target="_blank" rel="noopener noreferrer" data-i18n="work.all">Весь профиль</a>
+  </section>
+
+  <!-- ============ STACK ============ -->
+  <section class="section section-alt" id="stack">
+    <div class="section-head">
+      <p class="kicker" data-i18n="stack.kicker">Инструменты</p>
+      <h2 class="section-title" data-i18n="stack.title">На чём пишу</h2>
+      <p class="section-lead" data-i18n="stack.lead">Языки посчитаны по моим публичным репозиториям, остальное — то, с чем работаю каждый день.</p>
+    </div>
+    <div class="stack-wrap">
+      <div class="langs" id="langs"></div>
+      <ul class="chips" id="chips"></ul>
     </div>
   </section>
 
-  <section id="projects" class="section projects-section">
-    <div class="section-head reveal-up">
-      <span class="section-num">03</span>
-      <h2 class="section-title">Проекты</h2>
-      <p class="section-sub">Топ репозиториев по звёздам, обновляется в реальном времени</p>
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="section-head">
+      <p class="kicker" data-i18n="faq.kicker">Без сюрпризов</p>
+      <h2 class="section-title" data-i18n="faq.title">Частые вопросы</h2>
     </div>
-    <div class="projects-grid" id="projectsGrid">
-      <div class="project-card glass skeleton-card reveal-up"></div>
-      <div class="project-card glass skeleton-card reveal-up"></div>
-      <div class="project-card glass skeleton-card reveal-up"></div>
-      <div class="project-card glass skeleton-card reveal-up"></div>
-    </div>
+    <div class="faq-list" id="faqList"></div>
   </section>
 
-  <section id="activity" class="section activity-section">
-    <div class="section-head reveal-up">
-      <span class="section-num">04</span>
-      <h2 class="section-title">Активность</h2>
-      <p class="section-sub">Календарь вкладов за последний год</p>
+  <!-- ============ CONTACT ============ -->
+  <section class="section contact" id="contact">
+    <p class="kicker" data-i18n="contact.kicker">Дальше</p>
+    <h2 class="contact-title" data-i18n="contact.title">Расскажи, что нужно автоматизировать</h2>
+    <p class="section-lead" data-i18n="contact.lead">Опиши задачу в двух словах — отвечу, реально ли это, сколько будет стоить и сколько займёт.</p>
+    <div class="contact-actions">
+      <a class="btn btn-solid btn-lg magnetic" id="tgLink" href="https://t.me/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="contact.tg">Написать в Telegram</a>
+      <a class="btn btn-line btn-lg magnetic" id="mailLink" href="mailto:virtuaall0@gmail.com" data-i18n="contact.mail">Почта</a>
     </div>
-    <div class="activity-card glass reveal-up">
-      <img id="contribGraph" class="contrib-graph" alt="GitHub contribution graph" src="" />
-      <div class="contrib-fallback" id="contribFallback"></div>
-    </div>
-  </section>
-
-  <section id="contact" class="section contact-section">
-    <div class="contact-inner reveal-up">
-      <span class="section-num">05</span>
-      <h2 class="contact-title">Свяжемся?</h2>
-      <p class="contact-sub">Открыт к предложениям, коллаборациям и интересным задачам.</p>
-      <a class="contact-email gradient-text" href="mailto:virtuaall0@gmail.com">virtuaall0@gmail.com</a>
-      <div class="social-row">
-        <a href="https://github.com/virtuaall1" target="_blank" rel="noopener" class="social-link">GitHub</a>
-        <a href="mailto:virtuaall0@gmail.com" class="social-link">Email</a>
-      </div>
-    </div>
-    <footer class="site-footer">
-      <span>© <span id="year"></span> virtuaall1. Собрано вручную, без фреймворков.</span>
-    </footer>
   </section>
 
 </main>
 
-<script src="js/main.js"></script>
+<footer class="footer">
+  <span>© <span id="year">2026</span> virtuaall</span>
+  <span data-i18n="footer.rights">Собрано вручную, без конструкторов.</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js" defer></script>
+<script src="js/content.js" defer></script>
+<script src="js/app.js" defer></script>
 </body>
 </html>
