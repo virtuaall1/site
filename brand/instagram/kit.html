@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>virtuaall — оформлення Instagram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   Макети для Instagram у токенах сайта virtuaall1.
+   Кожен .board — рівно той розмір, який віддає Instagram.
+   Правиш текст просто тут, далі node render.js.
+   ========================================================= */
+:root {
+  --ink: #0a0a0b;
+  --ink-2: #111113;
+  --paper: #f2efe8;
+  --muted: #8d8d94;
+  --faint: #5a5a61;
+  --rule: rgba(242, 239, 232, 0.14);
+  --acid: #d8ff3e;
+  --f-display: 'Unbounded', system-ui, sans-serif;
+  --f-text: 'Onest', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+body {
+  background: #1c1c1f;
+  padding: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: flex-start;
+  font-family: var(--f-text);
+}
+
+.board {
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+  flex: none;
+}
+
+/* ледь помітна сітка точок — та сама, що на сайті */
+.board::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(242, 239, 232, 0.055) 1.5px, transparent 1.5px);
+  background-size: 34px 34px;
+  pointer-events: none;
+}
+
+.size-1x1 { width: 1080px; height: 1080px; }
+.size-4x5 { width: 1080px; height: 1350px; }
+.size-9x16 { width: 1080px; height: 1920px; }
+
+/* ---------- спільні елементи ---------- */
+.pad { position: relative; height: 100%; padding: 92px; display: flex; flex-direction: column; }
+
+.eyebrow {
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--acid);
+}
+
+.rule { height: 1px; background: var(--rule); }
+
+.display {
+  font-family: var(--f-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  font-size: 26px;
+  color: var(--muted);
+}
+.foot b { color: var(--paper); font-weight: 500; }
+
+/* кутові мітки, як на друкарському аркуші */
+.marks span {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border: 0 solid var(--acid);
+  opacity: 0.55;
+}
+.marks span:nth-child(1) { top: 44px; left: 44px; border-top-width: 2px; border-left-width: 2px; }
+.marks span:nth-child(2) { top: 44px; right: 44px; border-top-width: 2px; border-right-width: 2px; }
+.marks span:nth-child(3) { bottom: 44px; left: 44px; border-bottom-width: 2px; border-left-width: 2px; }
+.marks span:nth-child(4) { bottom: 44px; right: 44px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.caption { width: 100%; color: #8d8d94; font-size: 15px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px; }
+.slot { display: flex; flex-direction: column; }
+
+/* =========================================================
+   1. Аватар
+   ========================================================= */
+#avatar .ring {
+  position: absolute;
+  inset: 56px;
+  border: 3px solid rgba(216, 255, 62, 0.35);
+  border-radius: 50%;
+}
+#avatar .mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 560px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: var(--acid);
+  padding-bottom: 40px;
+}
+/* =========================================================
+   2. Обкладинки highlights (кружок — працює лише центр)
+   ========================================================= */
+.hl { display: grid; place-items: center; }
+.hl .ring {
+  position: absolute;
+  inset: 70px;
+  border: 2px solid var(--rule);
+  border-radius: 50%;
+}
+.hl svg { position: relative; width: 380px; height: 380px; }
+.hl svg * { fill: none; stroke: var(--acid); stroke-width: 20; stroke-linecap: round; stroke-linejoin: round; }
+
+/* =========================================================
+   3. Пост-послуга
+   ========================================================= */
+.bullets { list-style: none; padding: 0; display: grid; gap: 26px; margin-top: 46px; }
+.bullets li {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 18px;
+  align-items: baseline;
+  font-size: 34px;
+  line-height: 1.3;
+  color: #cfccc4;
+}
+.bullets i { color: var(--acid); font-style: normal; font-size: 22px; letter-spacing: 0.1em; }
+
+.price {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 96px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--acid);
+}
+
+/* =========================================================
+   4. Кейс
+   ========================================================= */
+.steps { list-style: none; padding: 0; display: grid; margin-top: 40px; }
+.steps li {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 24px;
+  padding: 30px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 33px;
+  line-height: 1.3;
+}
+.steps li:last-child { border-bottom: 1px solid var(--rule); }
+.steps b { font-family: var(--f-display); font-weight: 600; font-size: 26px; color: var(--acid); }
+
+/* =========================================================
+   5. Теза
+   ========================================================= */
+.quote-bar { width: 132px; height: 8px; background: var(--acid); }
+
+/* =========================================================
+   6. Карусель
+   ========================================================= */
+.pager { display: flex; gap: 10px; align-items: center; }
+.pager span { width: 46px; height: 4px; background: var(--rule); }
+.pager span.on { background: var(--acid); }
+
+.swipe { display: flex; align-items: center; gap: 16px; font-size: 26px; color: var(--acid); letter-spacing: 0.1em; text-transform: uppercase; }
+
+.numbered { list-style: none; padding: 0; display: grid; margin-top: 30px; }
+.numbered li { padding: 34px 0; border-top: 1px solid var(--rule); }
+.numbered li:last-child { border-bottom: 1px solid var(--rule); }
+.numbered em {
+  display: block;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-style: normal;
+  font-size: 24px;
+  letter-spacing: 0.16em;
+  color: var(--acid);
+  margin-bottom: 12px;
+}
+.numbered p { font-size: 36px; line-height: 1.25; }
+
+.cta-plate {
+  margin-top: auto;
+  background: var(--acid);
+  color: var(--ink);
+  padding: 44px 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+.cta-plate .cta-name { font-family: var(--f-display); font-weight: 800; font-size: 58px; letter-spacing: -0.03em; }
+.cta-plate .cta-what { font-size: 26px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* =========================================================
+   7. Сторіс — безпечні зони зверху й знизу
+   ========================================================= */
+#story .pad { padding: 300px 92px 320px; }
+</style>
+</head>
+<body>
+
+<!-- ============ АВАТАР ============ -->
+<div class="slot">
+  <p class="caption">Аватар · 1080×1080</p>
+  <div class="board size-1x1" id="avatar">
+    <div class="ring"></div>
+    <div class="mark">v</div>
+  </div>
+</div>
+
+<!-- ============ HIGHLIGHTS ============ -->
+<div class="slot">
+  <p class="caption">Highlight · Боти</p>
+  <div class="board size-1x1 hl" id="hl-bots">
+    <div class="ring"></div>
+    <svg viewBox="0 0 200 200">
+      <path d="M30 52h140v96H92l-40 32v-32H30z"/>
+      <path d="M74 100h4M98 100h4M122 100h4"/>
+    </svg>
+  </div>
+</div>
+
+<div class="slot">
+  <p class="caption">Highlight · Сайти</p>
+  <div class="board size-1x1 hl" id="hl-sites">
+    <div class="ring"></div>
+    <svg viewBox="0 0 200 200">
+      <rect x="28" y="42" width="144" height="116" rx="10"/>
+      <path d="M28 76h144"/>
+      <path d="M52 59h.5M74 59h.5"/>
+    </svg>
+  </div>
+</div>
+
+<div class="slot">
+  <p class="caption">Highlight · Ціни</p>
+  <div class="board size-1x1 hl" id="hl-price">
+    <div class="ring"></div>
+    <svg viewBox="0 0 200 200">
+      <path d="M104 28H44a16 16 0 00-16 16v60l68 68 72-72z"/>
+      <path d="M70 70h.5"/>
+    </svg>
+  </div>
+</div>
+
+<div class="slot">
+  <p class="caption">Highlight · Кейси</p>
+  <div class="board size-1x1 hl" id="hl-cases">
+    <div class="ring"></div>
+    <svg viewBox="0 0 200 200">
+      <path d="M100 30l70 40-70 40-70-40z"/>
+      <path d="M30 110l70 40 70-40"/>
+    </svg>
+  </div>
+</div>
+
+<div class="slot">
+  <p class="caption">Highlight · Про мене</p>
+  <div class="board size-1x1 hl" id="hl-about">
+    <div class="ring"></div>
+    <svg viewBox="0 0 200 200">
+      <path d="M52 66l34 34-34 34"/>
+      <path d="M104 134h44"/>
+    </svg>
+  </div>
+</div>
+
+<div class="slot">
+  <p class="caption">Highlight · Контакт</p>
+  <div class="board size-1x1 hl" id="hl-contact">
+    <div class="ring"></div>
+    <svg viewBox="0 0 200 200">
+      <path d="M172 36L28 92l58 22 22 58z"/>
+      <path d="M86 114l86-78"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ============ ПОСТ: ПОСЛУГА ============ -->
+<div class="slot">
+  <p class="caption">Пост · послуга · 1080×1350</p>
+  <div class="board size-4x5" id="post-service">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга 02</p>
+      <h1 class="display" style="font-size:104px;margin-top:34px">Telegram-бот<br>з оплатою</h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <ul class="bullets">
+        <li><i>01</i><span>Каталог, категорії, кошик</span></li>
+        <li><i>02</i><span>Оплата карткою або криптою</span></li>
+        <li><i>03</i><span>Адмінка й вивантаження замовлень</span></li>
+      </ul>
+      <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+        <div>
+          <p style="font-size:24px;letter-spacing:.18em;text-transform:uppercase;color:#8d8d94;margin-bottom:12px">Від</p>
+          <p class="price">$250</p>
+        </div>
+        <p style="font-size:28px;color:#f2efe8">@virtuaall01</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ: КЕЙС ============ -->
+<div class="slot">
+  <p class="caption">Пост · кейс · 1080×1350</p>
+  <div class="board size-4x5" id="post-case">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Кейс</p>
+      <h1 class="display" style="font-size:96px;margin-top:34px">Магазин кави<br>в Telegram</h1>
+      <ol class="steps">
+        <li><b>Задача</b><span>Приймати замовлення без менеджера</span></li>
+        <li><b>Зроблено</b><span>Каталог, кошик, оплата, адмінка</span></li>
+        <li><b>Термін</b><span>9 днів від брифу до запуску</span></li>
+      </ol>
+      <div class="foot" style="margin-top:auto">
+        <span>Пишу боти й сайти під ключ</span>
+        <b>@virtuaall01</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ: ТЕЗА ============ -->
+<div class="slot">
+  <p class="caption">Пост · теза · 1080×1350</p>
+  <div class="board size-4x5" id="post-quote">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="quote-bar"></div>
+      <h1 class="display" style="font-size:88px;margin-top:56px">Бот не має<br>замінити людину.<br>Він має зняти<br>з неї рутину.</h1>
+      <div class="rule" style="margin-top:auto"></div>
+      <div class="foot" style="margin-top:36px">
+        <span>virtuaall · розробка</span>
+        <b>@virtuaall01</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ КАРУСЕЛЬ 1/3 ============ -->
+<div class="slot">
+  <p class="caption">Карусель 1/3</p>
+  <div class="board size-4x5" id="carousel-1">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span class="on"></span><span></span><span></span></div>
+      <h1 class="display" style="font-size:104px;margin-top:80px">Скільки<br>коштує бот<br>і за що<br>ти платиш</h1>
+      <p style="font-size:32px;line-height:1.4;color:#cfccc4;margin-top:38px;max-width:780px">Розкладаю ціну на три частини — щоб було видно, за що саме гроші.</p>
+      <div class="rule" style="margin-top:auto"></div>
+      <div class="swipe" style="margin-top:36px">Гортай <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ КАРУСЕЛЬ 2/3 ============ -->
+<div class="slot">
+  <p class="caption">Карусель 2/3</p>
+  <div class="board size-4x5" id="carousel-2">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span></span><span class="on"></span><span></span></div>
+      <p class="eyebrow" style="margin-top:40px">З чого складається ціна</p>
+      <ol class="numbered">
+        <li><em>01 · Логіка</em><p>Сценарії, стани, помилки — щоб бот не ламався на живих людях</p></li>
+        <li><em>02 · Дані</em><p>База, адмінка, вивантаження — все видно й редагується</p></li>
+        <li><em>03 · Запуск</em><p>Сервер, домен, оплата, моніторинг після здачі</p></li>
+      </ol>
+      <div class="swipe" style="margin-top:auto">Далі <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ КАРУСЕЛЬ 3/3 ============ -->
+<div class="slot">
+  <p class="caption">Карусель 3/3</p>
+  <div class="board size-4x5" id="carousel-3">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span></span><span></span><span class="on"></span></div>
+      <h1 class="display" style="font-size:96px;margin-top:56px">Розкажи<br>задачу —<br>скажу ціну<br>й термін</h1>
+      <p style="font-size:32px;line-height:1.4;color:#cfccc4;margin-top:36px;max-width:760px">Безкоштовно розберу, що взагалі треба робити, а що — ні.</p>
+      <div class="cta-plate">
+        <span class="cta-name">@virtuaall01</span>
+        <span class="cta-what">Telegram</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · 1080×1920</p>
+  <div class="board size-9x16" id="story">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Вільне вікно</p>
+      <h1 class="display" style="font-size:118px;margin-top:40px">Беру<br>проєкт<br>на цей<br>тиждень</h1>
+      <p style="font-size:34px;line-height:1.45;color:#cfccc4;margin-top:44px;max-width:820px">Боти, сайти, вебзастосунки. Пиши задачу — відповім із ціною й терміном.</p>
+      <div class="cta-plate">
+        <span class="cta-name">@virtuaall01</span>
+        <span class="cta-what">Написати</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
