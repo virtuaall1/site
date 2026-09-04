@@ -9,6 +9,7 @@
 | --- | --- | --- |
 | `orbita/` | `/site/cases/orbita/` | вебзастосунок з адмінкою: заявки, ролі, виторг |
 | `plitkarka/` | `/site/cases/plitkarka/` | сайт кав'ярні в Косові |
+| `shop-bot/` | `/site/cases/shop-bot/` | Telegram-бот магазину, який можна пройти в браузері |
 
 Посилання на них стоять у `js/content.js`, масив `PROJECTS`.
 
