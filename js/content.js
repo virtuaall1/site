@@ -260,6 +260,7 @@ window.SITE = (() => {
       'services.custom': 'ціна за задачею',
       'services.order': 'Замовити',
       'services.featured': 'хіт',
+      'services.orderText': 'Вітаю! Цікавить: {name}. Розкажіть, будь ласка, про строки та ціну.',
       'process.kicker': 'Як це влаштовано',
       'process.title': 'Чотири кроки до запуску',
       'work.kicker': 'Відкритий код',
@@ -278,6 +279,7 @@ window.SITE = (() => {
       'contact.title': 'Розкажи, що треба автоматизувати',
       'contact.lead': 'Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.',
       'contact.tg': 'Написати в Telegram',
+      'contact.tgText': 'Вітаю! Хочу обговорити проєкт.',
       'contact.mail': 'Пошта',
       'footer.rights': 'Зібрано вручну, без конструкторів.'
     },
@@ -305,6 +307,7 @@ window.SITE = (() => {
       'services.custom': 'quoted per project',
       'services.order': 'Order',
       'services.featured': 'top',
+      'services.orderText': 'Hi! I am interested in: {name}. Could you tell me about the timeline and price?',
       'process.kicker': 'How it works',
       'process.title': 'Four steps to launch',
       'work.kicker': 'Open source',
@@ -323,6 +326,7 @@ window.SITE = (() => {
       'contact.title': 'Tell me what needs automating',
       'contact.lead': 'Describe the task in a couple of sentences — I will tell you if it is doable, what it costs and how long it takes.',
       'contact.tg': 'Message on Telegram',
+      'contact.tgText': 'Hi! I would like to discuss a project.',
       'contact.mail': 'Email',
       'footer.rights': 'Hand-built, no page builders.'
     }

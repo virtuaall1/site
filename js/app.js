@@ -60,6 +60,11 @@
   let skipReveal = false;
   const t = key => (I18N[lang] && I18N[lang][key]) || I18N.uk[key] || key;
 
+  /** Ссылка на Telegram с уже готовым текстом сообщения */
+  function tgLink(text) {
+    return `${LINKS.telegram}?text=${encodeURIComponent(text)}`;
+  }
+
   /** класс появления: анимируем только первую отрисовку */
   function revealCls(extra = '') {
     return `${extra} reveal${skipReveal ? ' in' : ''}`.trim();
@@ -87,6 +92,10 @@
     renderFaq();
     renderFigures();
     refreshStats();
+
+    // текст готового сообщения тоже зависит от языка
+    const tgBtn = $('#tgLink');
+    if (tgBtn) tgBtn.href = tgLink(t('contact.tgText'));
     if (state.repos) renderRepos(state.repos);
 
     if (booted) {
@@ -148,7 +157,7 @@
           el('span', { class: 'price-value', text: priceText }),
           el('a', {
             class: 'price-cta',
-            href: LINKS.telegram,
+            href: tgLink(t('services.orderText').replace('{name}', copy.name)),
             target: '_blank',
             rel: 'noopener noreferrer'
           }, `${t('services.order')} →`)
@@ -500,12 +509,30 @@
       }
     }
 
-    function frame() {
+    /* Ударная волна от клика: расходится кольцом и толкает точки */
+    const WAVE_SPEED = 620;   // пикселей в секунду
+    const WAVE_LIFE = 1.7;    // секунд до затухания
+    const WAVE_BAND = 70;     // толщина фронта
+    const waves = [];
+
+    /* След из символов кода за курсором */
+    const SPARK_CHARS = ['0', '1', '{', '}', '<', '>', '/', ';', '=', '$', '[', ']'];
+    const sparks = [];
+    let lastSpark = 0;
+    let lastSparkPos = { x: 0, y: 0 };
+
+    function frame(now) {
       if (!running) return;
       ctx.clearRect(0, 0, w, h);
 
       const light = document.documentElement.dataset.theme === 'light';
       const base = light ? '10, 10, 11' : '242, 239, 232';
+      const seconds = now / 1000;
+
+      // старые волны выбрасываем, чтобы массив не рос
+      for (let i = waves.length - 1; i >= 0; i--) {
+        if (seconds - waves[i].t > WAVE_LIFE) waves.splice(i, 1);
+      }
 
       for (const d of dots) {
         const dx = d.ox - pointer.x;
@@ -515,21 +542,55 @@
         let push = 0;
         if (dist < RADIUS) push = (1 - dist / RADIUS);
 
-        const tx = d.ox + (dx / (dist || 1)) * push * 16;
-        const ty = d.oy + (dy / (dist || 1)) * push * 16;
+        let tx = d.ox + (dx / (dist || 1)) * push * 16;
+        let ty = d.oy + (dy / (dist || 1)) * push * 16;
+
+        // вклад ударных волн
+        let wave = 0;
+        for (const wv of waves) {
+          const age = seconds - wv.t;
+          const radius = age * WAVE_SPEED;
+          const wdx = d.ox - wv.x;
+          const wdy = d.oy - wv.y;
+          const wdist = Math.hypot(wdx, wdy);
+          const delta = Math.abs(wdist - radius);
+          if (delta > WAVE_BAND) continue;
+
+          const front = 1 - delta / WAVE_BAND;      // насколько точка близко к фронту
+          const fade = 1 - age / WAVE_LIFE;          // затухание со временем
+          const strength = front * fade * fade;
+          wave += strength;
+          tx += (wdx / (wdist || 1)) * strength * 22;
+          ty += (wdy / (wdist || 1)) * strength * 22;
+        }
 
         d.x += (tx - d.x) * 0.14;
         d.y += (ty - d.y) * 0.14;
 
-        const size = 1 + push * 1.6;
-        const alpha = 0.13 + push * 0.65;
+        const energy = Math.min(1, push + wave);
+        const size = 1 + energy * 2.4;
+        const alpha = 0.13 + energy * 0.72;
 
-        if (push > 0.45) {
+        if (energy > 0.4) {
           ctx.fillStyle = `rgba(216, 255, 62, ${alpha})`;
         } else {
           ctx.fillStyle = `rgba(${base}, ${alpha})`;
         }
         ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
+      }
+
+      // символы всплывают и гаснут
+      ctx.font = '11px "JetBrains Mono", ui-monospace, monospace';
+      ctx.textAlign = 'center';
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        const s = sparks[i];
+        const age = seconds - s.t;
+        if (age > 1.1) { sparks.splice(i, 1); continue; }
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vy -= 0.03;                      // подъём с ускорением
+        ctx.fillStyle = `rgba(216, 255, 62, ${(1 - age / 1.1) * 0.75})`;
+        ctx.fillText(s.char, s.x, s.y);
       }
 
       requestAnimationFrame(frame);
@@ -538,6 +599,28 @@
     window.addEventListener('pointermove', e => {
       pointer.x = e.clientX;
       pointer.y = e.clientY;
+
+      // символ роняем не чаще раза в 45 мс и только если курсор реально двигался
+      const now = performance.now();
+      const moved = Math.hypot(e.clientX - lastSparkPos.x, e.clientY - lastSparkPos.y);
+      if (now - lastSpark > 45 && moved > 16 && sparks.length < 26) {
+        lastSpark = now;
+        lastSparkPos = { x: e.clientX, y: e.clientY };
+        sparks.push({
+          x: e.clientX + (Math.random() - 0.5) * 14,
+          y: e.clientY + (Math.random() - 0.5) * 14,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: -0.4 - Math.random() * 0.5,
+          char: SPARK_CHARS[Math.floor(Math.random() * SPARK_CHARS.length)],
+          t: now / 1000
+        });
+      }
+    }, { passive: true });
+
+    // клик рождает волну по всей сетке
+    window.addEventListener('pointerdown', e => {
+      waves.push({ x: e.clientX, y: e.clientY, t: performance.now() / 1000 });
+      if (waves.length > 4) waves.shift();
     }, { passive: true });
 
     window.addEventListener('pointerleave', () => { pointer.x = pointer.y = -9999; });
@@ -556,6 +639,50 @@
 
     build();
     requestAnimationFrame(frame);
+  }
+
+  /* =======================================================
+     Заголовки «расшифровываются» из символов кода
+     ======================================================= */
+  const SCRAMBLE_CHARS = '01{}[]<>/\\|=+*#$%&~^';
+
+  function scramble(node) {
+    if (reduceMotion || node.dataset.scrambled) return;
+    node.dataset.scrambled = '1';
+
+    const final = [...node.textContent];
+    const start = performance.now();
+    const dur = 90 * Math.min(final.length, 9) + 260;
+
+    function step(now) {
+      const p = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 2);
+      const revealed = Math.floor(eased * final.length);
+
+      node.textContent = final
+        .map((ch, i) => {
+          if (i < revealed || ch === ' ' || ch === ' ') return ch;
+          return SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
+        })
+        .join('');
+
+      if (p < 1) requestAnimationFrame(step);
+      else node.textContent = final.join('');
+    }
+    requestAnimationFrame(step);
+  }
+
+  function initScramble() {
+    if (reduceMotion) return;
+    const targets = $$('.section-title, .contact-title');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        scramble(entry.target);
+        io.unobserve(entry.target);
+      });
+    }, { threshold: 0.4 });
+    targets.forEach(node => io.observe(node));
   }
 
   /* =======================================================
@@ -733,7 +860,7 @@
 
     // подставляем контакты из конфига, чтобы правились в одном месте
     const tg = $('#tgLink');
-    if (tg) tg.href = LINKS.telegram;
+    if (tg) tg.href = tgLink(t('contact.tgText'));
     const mail = $('#mailLink');
     if (mail) mail.href = `mailto:${LINKS.email}`;
     const gh = $('#heroGithub');
@@ -750,6 +877,7 @@
     initChrome();
     initGrid();
     initMagnetic();
+    initScramble();
     initAnimations();
     initSmoothScroll();
     booted = true;
