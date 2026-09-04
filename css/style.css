@@ -430,6 +430,90 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
 }
 
 /* =========================================================
+   Живые кейсы
+
+   Те же линейки и сдвиг при наведении, что и в списке работ:
+   блок новый, а язык прежний — рамка в волос, подпись
+   дисплейным шрифтом, акцент только на ховере.
+   ========================================================= */
+.case-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: clamp(20px, 3vw, 38px);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.case-link {
+  display: grid;
+  align-content: start;
+  height: 100%;
+  text-decoration: none;
+  transition: padding-left 0.4s var(--ease);
+}
+.case-link:hover { padding-left: 10px; }
+
+.case-frame {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+}
+.case-shot {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease), filter 0.4s;
+  filter: grayscale(0.25);
+}
+.case-link:hover .case-shot { transform: scale(1.03); filter: none; }
+
+.case-name {
+  margin: 18px 0 0;
+  min-height: 2.4em;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1rem, 1.6vw, 1.18rem);
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  transition: color 0.3s;
+}
+.case-link:hover .case-name { color: var(--acid-text); }
+
+.case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 10px;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.case-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  transition: color 0.3s;
+}
+.case-open span:last-child { transition: transform 0.3s var(--ease); }
+.case-link:hover .case-open { color: var(--acid-text); }
+.case-link:hover .case-open span:last-child { transform: translate(4px, -4px); }
+
+/* подпись про языки живёт внутри блока, который появляется с данными */
+.langs-note { margin-top: 14px; font-size: 0.8rem; color: var(--faint); }
+
+/* ссылка на живой кейс в примере услуги — обычная стрелка, без нового вида */
+.ex-case { margin-top: 18px; }
+
+/* =========================================================
    Прайс-лист (строки, а не карточки)
    ========================================================= */
 .price-list { border-top: 1px solid var(--rule); }
