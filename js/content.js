@@ -35,7 +35,34 @@ window.SITE = (() => {
   const PROJECTS = [
     {
       year: '2026',
-      link: 'https://github.com/virtuaall1/telegram-shop-bot',
+      link: 'https://virtuaall1.github.io/site/cases/orbita/',
+      uk: {
+        name: 'Орбіта — облік замовлень майстерні',
+        desc: 'Демо вебзастосунку з адмінкою. Одні й ті самі заявки показані трьома ролями: менеджер веде всі й переводить статуси, майстер бачить лише свої наряди з чек-листом і без сум, власник — виторг за тижнями та частку кожного майстра. Підсумки рахуються з тих самих записів, а не намальовані наперед.',
+        tags: ['HTML', 'CSS', 'JavaScript']
+      },
+      en: {
+        name: 'Orbita — repair shop order tracker',
+        desc: 'A demo of a web app with an admin panel. The same orders seen through three roles: the manager runs all of them and moves statuses, the technician sees only their own jobs with a checklist and no prices, the owner sees weekly revenue and each technician\u2019s share. Every total is computed from those records, not drawn in advance.',
+        tags: ['HTML', 'CSS', 'JavaScript']
+      }
+    },
+    {
+      year: '2026',
+      link: 'https://virtuaall1.github.io/site/cases/plitkarka/',
+      uk: {
+        name: 'Сайт кав’ярні «Пліткарка»',
+        desc: 'Односторінковий сайт кав’ярні в Косові. Оформлення взяте з косівської кераміки: зелена полива, тепла глина, вохра, наскрізна форма — арка з гравірованим контуром. Перемикач «що в чашці» міняє знімок і тон світла за ним. Тексти й меню зібрані з реального профілю закладу.',
+        tags: ['HTML', 'CSS', 'JavaScript']
+      },
+      en: {
+        name: 'Plitkarka coffee house site',
+        desc: 'A one-page site for a coffee house in Kosiv. The visual language comes from Kosiv ceramics: green glaze, warm clay, ochre, and one recurring shape — an arch with an engraved outline. A switcher changes the photo and the tone of light behind it. Copy and menu come from the venue\u2019s own profile.',
+        tags: ['HTML', 'CSS', 'JavaScript']
+      }
+    },
+    {
+      year: '2026',
       uk: {
         name: 'Telegram-бот магазину',
         desc: 'Каталог за категоріями, кошик, оформлення замовлення в три кроки і сповіщення адміну про кожну покупку. Ціни зберігаються в копійках, а назва й ціна фіксуються на момент покупки — зміна каталогу не переписує старі замовлення.',
@@ -45,20 +72,6 @@ window.SITE = (() => {
         name: 'Telegram shop bot',
         desc: 'Catalogue by category, cart, a three-step checkout and an instant admin notification for every order. Prices are stored in cents, and each order keeps the title and price it was made with, so catalogue edits never rewrite past orders.',
         tags: ['Python', 'aiogram 3', 'SQLite']
-      }
-    },
-    {
-      year: '2026',
-      link: 'https://virtuaall1.github.io/cafe-landing/',
-      uk: {
-        name: 'Лендинг кав’ярні «Обжарка»',
-        desc: 'Односторінковий сайт: меню з цінами, етапи обсмажування, адреса і форма заявки з валідацією. Ілюстрації намальовані в SVG, тож сторінка не тягне жодного стокового фото.',
-        tags: ['HTML', 'CSS', 'JavaScript']
-      },
-      en: {
-        name: 'Coffee shop landing page',
-        desc: 'A one-page site: menu with prices, the roasting process, address and a validated order form. Illustrations are drawn in SVG, so the page pulls no stock photography at all.',
-        tags: ['HTML', 'CSS', 'JavaScript']
       }
     }
   ];

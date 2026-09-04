@@ -1,0 +1,443 @@
+/* =========================================================
+   Орбіта — облік замовлень майстерні.
+
+   Оформлення взяте з робочого креслення: синій аркуш,
+   міліметрівка, волосяні лінії, кутові мітки і штамп унизу.
+   Майстерня — місце технічне, тож і панель виглядає як лист,
+   а не як черговий дашборд.
+   ========================================================= */
+
+:root {
+  --sheet:   #0c2436;
+  --panel:   #0a1c2b;
+  --panel-2: #0e2b40;
+  --ink:     #dfebf4;
+  --muted:   #85a2b8;
+  --faint:   #58748b;
+
+  --line:      rgba(197, 226, 246, 0.16);
+  --line-soft: rgba(197, 226, 246, 0.08);
+  --mm:        rgba(197, 226, 246, 0.045);
+
+  --accent: #6fd7ff;
+
+  --ok:   #5fd39a;
+  --warn: #f2c14e;
+  --late: #ff6f5e;
+
+  --f-title: 'Oswald', 'Arial Narrow', sans-serif;
+  --f-ui: 'Golos Text', system-ui, sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --pad: clamp(18px, 3.4vw, 46px);
+  --ease: cubic-bezier(0.22, 0.68, 0.24, 1);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--sheet);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+
+  /* міліметрівка: дрібна клітинка і груба кожні п'ять */
+  background-image:
+    linear-gradient(var(--mm) 1px, transparent 1px),
+    linear-gradient(90deg, var(--mm) 1px, transparent 1px),
+    linear-gradient(rgba(197, 226, 246, 0.075) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(197, 226, 246, 0.075) 1px, transparent 1px);
+  background-size: 22px 22px, 22px 22px, 110px 110px, 110px 110px;
+}
+
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 20;
+  background: var(--accent); color: #06202f; padding: 10px 16px; font-weight: 600;
+}
+.skip:focus { left: 10px; top: 10px; }
+
+/* =========================================================
+   Аркуш і рамка
+   ========================================================= */
+.sheet {
+  position: relative;
+  max-width: 1320px;
+  margin: clamp(14px, 2.6vw, 34px) auto;
+  padding: var(--pad);
+  border: 1px solid var(--line);
+  background: rgba(9, 27, 41, 0.72);
+}
+
+.frame i {
+  position: absolute;
+  width: 26px; height: 26px;
+  border: 0 solid var(--accent);
+  opacity: 0.7;
+}
+.frame i:nth-child(1) { top: 10px; left: 10px; border-top-width: 2px; border-left-width: 2px; }
+.frame i:nth-child(2) { top: 10px; right: 10px; border-top-width: 2px; border-right-width: 2px; }
+.frame i:nth-child(3) { bottom: 10px; left: 10px; border-bottom-width: 2px; border-left-width: 2px; }
+.frame i:nth-child(4) { bottom: 10px; right: 10px; border-bottom-width: 2px; border-right-width: 2px; }
+
+/* =========================================================
+   Шапка
+   ========================================================= */
+.head {
+  display: grid;
+  gap: clamp(22px, 3vw, 40px);
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--line);
+}
+@media (min-width: 900px) {
+  .head { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+}
+
+.stamp {
+  margin: 0 0 12px;
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--f-title);
+  font-weight: 600;
+  font-size: clamp(38px, 6vw, 68px);
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.sub { margin: 10px 0 0; max-width: 46ch; color: var(--muted); }
+
+/* --- ролі --- */
+.roles { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--line); }
+
+.role {
+  display: grid;
+  gap: 2px;
+  padding: 13px 18px;
+  min-width: 128px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.22s var(--ease), color 0.22s var(--ease);
+}
+.role:last-child { border-right: 0; }
+.role:hover { background: rgba(111, 215, 255, 0.07); color: var(--ink); }
+
+.role-k { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.16em; color: var(--faint); }
+.role-n { font-family: var(--f-title); font-size: 17px; text-transform: uppercase; letter-spacing: 0.02em; }
+.role-d { font-size: 11px; color: var(--faint); }
+
+.role.is-on { background: var(--accent); color: #06202f; }
+.role.is-on .role-k,
+.role.is-on .role-d { color: rgba(6, 32, 47, 0.72); }
+
+/* =========================================================
+   Смуга над таблицею
+   ========================================================= */
+.view { padding-top: 26px; }
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 22px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+}
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip {
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--muted);
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.22s var(--ease), color 0.22s var(--ease), background 0.22s var(--ease);
+}
+.chip:hover { color: var(--ink); border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #06202f; }
+.chip b { font-weight: 700; margin-left: 6px; }
+
+/* =========================================================
+   Таблиця заявок
+   ========================================================= */
+.table-wrap { overflow-x: auto; border-top: 1px solid var(--line); }
+
+.grid {
+  width: 100%;
+  min-width: 880px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.grid th {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  text-align: left;
+  white-space: nowrap;
+}
+.grid td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+}
+.grid tbody tr { transition: background 0.18s var(--ease); }
+.grid tbody tr:hover { background: rgba(111, 215, 255, 0.05); }
+
+.c-no { font-family: var(--f-mono); font-weight: 700; color: var(--accent); }
+.c-client { white-space: nowrap; }
+.c-device { color: var(--muted); }
+.c-master { white-space: nowrap; }
+.num, .c-sum { text-align: right; font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.c-due { font-family: var(--f-mono); font-size: 13px; white-space: nowrap; }
+.c-due.is-late { color: var(--late); }
+.c-due small { display: block; font-size: 10px; letter-spacing: 0.06em; color: var(--late); }
+
+/* --- статус --- */
+.st {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 11px 5px 8px;
+  border: 1px solid currentColor;
+  background: none;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s var(--ease);
+}
+.st::before { content: ''; width: 7px; height: 7px; background: currentColor; }
+.st:hover { background: rgba(255, 255, 255, 0.07); }
+.st-new  { color: var(--muted); }
+.st-work { color: var(--accent); }
+.st-wait { color: var(--warn); }
+.st-done { color: var(--ok); }
+
+/* --- підсумки --- */
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 22px 0 0;
+  border: 1px solid var(--line);
+}
+.totals > div { padding: 14px 22px; border-right: 1px solid var(--line); flex: 1 1 auto; }
+.totals > div:last-child { border-right: 0; }
+.totals dt {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.totals dd {
+  margin: 5px 0 0;
+  font-family: var(--f-title);
+  font-size: 25px;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================================
+   Роль майстра
+   ========================================================= */
+.who { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.who-label { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.who-name { font-family: var(--f-title); font-size: 20px; text-transform: uppercase; letter-spacing: 0.02em; }
+.who-role { font-size: 12px; color: var(--muted); }
+
+.jobs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.job {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 20px;
+  border: 1px solid var(--line);
+  background: rgba(12, 36, 54, 0.6);
+}
+.job-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.job-no { font-family: var(--f-mono); font-weight: 700; color: var(--accent); }
+.job-device { font-family: var(--f-title); font-size: 19px; line-height: 1.15; text-transform: uppercase; letter-spacing: 0.01em; }
+.job-client { font-size: 13px; color: var(--muted); }
+
+.job-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--line-soft); }
+.job-checks li { border-bottom: 1px solid var(--line-soft); }
+.job-checks label {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 2px;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.job-checks input { position: absolute; opacity: 0; width: 0; height: 0; }
+.job-checks .box {
+  flex: none;
+  width: 15px; height: 15px;
+  border: 1px solid var(--muted);
+  display: grid;
+  place-items: center;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+.job-checks .box::after {
+  content: '';
+  width: 7px; height: 7px;
+  background: var(--ok);
+  transform: scale(0);
+  transition: transform 0.2s var(--ease);
+}
+.job-checks input:checked + .box { border-color: var(--ok); }
+.job-checks input:checked + .box::after { transform: scale(1); }
+.job-checks input:checked ~ .txt { color: var(--faint); text-decoration: line-through; }
+.job-checks input:focus-visible + .box { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.job-progress { display: flex; align-items: center; gap: 10px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.job-track { flex: 1; height: 4px; background: var(--line); }
+.job-fill { display: block; height: 100%; background: var(--ok); transition: width 0.3s var(--ease); }
+
+/* =========================================================
+   Роль власника
+   ========================================================= */
+.kpi {
+  display: grid;
+  gap: 0;
+  margin: 0 0 22px;
+  border: 1px solid var(--line);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.kpi > div { padding: 18px 22px; border-right: 1px solid var(--line); }
+.kpi > div:last-child { border-right: 0; }
+.kpi dt { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--faint); }
+.kpi dd {
+  margin: 6px 0 0;
+  font-family: var(--f-title);
+  font-size: clamp(26px, 3.4vw, 38px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.kpi .unit { font-size: 0.42em; color: var(--muted); margin-left: 8px; letter-spacing: 0.02em; }
+
+.panel { border: 1px solid var(--line); margin-bottom: 22px; }
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.panel-head h2 {
+  margin: 0;
+  font-family: var(--f-title);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.chart-wrap { padding: 22px; overflow-x: auto; }
+.chart { display: block; width: 100%; min-width: 460px; height: auto; }
+.chart .axis { stroke: var(--line); stroke-width: 1; }
+.chart .bar { fill: var(--accent); opacity: 0.85; }
+.chart .bar-last { fill: var(--accent); opacity: 1; }
+.chart .lbl { fill: var(--faint); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.chart .val { fill: var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; }
+
+.bars { list-style: none; margin: 0; padding: 0; }
+.bars li {
+  display: grid;
+  grid-template-columns: minmax(120px, 170px) minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.bars li:last-child { border-bottom: 0; }
+.bars .name { font-size: 14px; white-space: nowrap; }
+.bars .track { height: 8px; background: var(--line-soft); }
+.bars .fill { display: block; height: 100%; background: var(--accent); }
+.bars .sum { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 14px; }
+
+/* =========================================================
+   Штамп
+   ========================================================= */
+.titleblock {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 26px;
+  border: 1px solid var(--line);
+  font-family: var(--f-mono);
+  font-size: 11px;
+}
+.titleblock > div {
+  flex: 1 1 auto;
+  padding: 10px 16px;
+  border-right: 1px solid var(--line);
+  display: grid;
+  gap: 3px;
+}
+.titleblock > div:last-child { border-right: 0; }
+.titleblock span { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+.titleblock b { font-weight: 500; color: var(--ink); }
+.tb-brand b i { font-style: normal; color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 1ms !important; }
+}
