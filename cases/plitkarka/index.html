@@ -4,195 +4,147 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Пліткарка — кав'ярня в Косові</title>
-<meta name="description" content="Кав'ярня «Пліткарка», Косів, вул. Шевченка 46: кава, десерти власної кухні, презентації книжок і благодійні дні.">
-<meta name="theme-color" content="#23402f">
+<meta name="description" content="Кав'ярня «Пліткарка» в Косові: дві точки на Шевченка, кава, десерти власної кухні, презентації книжок і благодійні дні.">
+<meta name="theme-color" content="#eceeeb" id="themeColor">
 <meta property="og:title" content="Пліткарка — кав'ярня в Косові">
-<meta property="og:description" content="Кава, десерти власної кухні, презентації книжок і благодійні дні.">
+<meta property="og:description" content="Дві точки на Шевченка, кава, десерти власної кухні, презентації книжок і благодійні дні.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2323402f'/%3E%3Cpath d='M16 6a7 7 0 017 7v13H9V13a7 7 0 017-7z' fill='%23cf9a3a'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23181310'/%3E%3Cpath d='M9 8h9a6 6 0 010 12h-4v6H9z' fill='%23e0788f'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,700&family=Manrope:wght@400;500;600&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<a class="skip" href="#hero">Перейти до вмісту</a>
+<a class="skip" href="#top">Перейти до вмісту</a>
 
-<!-- ===================== ГЛАЗУР ===================== -->
-<div class="glaze">
+<!-- Смуга світла: показує, наскільки далеко зайшов день -->
+<div class="daybar" aria-hidden="true"><i id="dayFill"></i></div>
 
-  <header class="masthead">
-    <a class="wordmark" href="#hero">
-      <span class="wordmark-name">Пліткарка</span>
-      <span class="wordmark-place">Косів · від 08:00</span>
-    </a>
+<header class="bar">
+  <a class="mark" href="#top">Пліткарка</a>
+  <nav class="nav" aria-label="Розділи">
+    <a href="#cup">У чашці</a>
+    <a href="#oven">З печі</a>
+    <a href="#events">Афіша</a>
+    <a href="#spots">Дві точки</a>
+  </nav>
+  <p class="clock"><span id="partOfDay">Зранку</span> · з 08:00</p>
+</header>
 
-    <nav class="nav" aria-label="Розділи">
-      <a class="nav-link is-active" href="#hero">У чашці</a>
-      <a class="nav-link" href="#kitchen">Кухня</a>
-      <a class="nav-link" href="#events">Події</a>
-      <a class="nav-link" href="#where">Де ми</a>
-    </nav>
+<main id="top">
 
-    <a class="btn btn-ghost" href="https://www.instagram.com/plitkarka_o.m" target="_blank" rel="noopener noreferrer">
-      Instagram<span class="btn-arrow" aria-hidden="true">↗</span>
-    </a>
-  </header>
+  <!-- ================= ШАПКА ================= -->
+  <section class="hero">
+    <p class="tag"><i class="tag-mark" aria-hidden="true"></i>Косів · дві точки на Шевченка</p>
 
-  <section class="hero" id="hero">
+    <h1 class="huge">Кав’ярня,<br>де лишаються<br>довше, ніж<br>планували</h1>
 
-    <div class="hero-text">
-      <p class="label">Кав'ярня в Косові</p>
-      <h1 class="hero-title" id="dishName">Капучино</h1>
-      <p class="hero-sub" id="dishSub">з латте-артом, на столику надворі</p>
-
-      <p class="hero-lede">
-        Дві точки на Шевченка — в центрі й біля гімназії. Кава, десерти
-        власної кухні, а між ними презентації книжок і благодійні дні.
+    <div class="hero-foot">
+      <p class="lede">
+        Кава, десерти власної кухні й місце, куди приходять не лише за
+        нею: тут презентують книжки, а на благодійних днях виторг іде
+        на військових.
       </p>
-
-      <div class="hero-actions">
-        <a class="btn btn-solid" href="#kitchen">Що на кухні<span class="btn-arrow" aria-hidden="true">↓</span></a>
-        <a class="btn btn-line" href="#where">Як нас знайти</a>
-      </div>
-
-      <p class="hero-meta">
-        <span>вул. Шевченка, 46</span>
-        <span>Косів</span>
-        <span>щодня з 08:00</span>
-      </p>
+      <a class="btn" href="#cup">Що в чашці<span aria-hidden="true">↓</span></a>
     </div>
-
-    <figure class="arch arch-hero">
-      <img class="arch-img" id="heroImg" src="img/cappuccino.jpg" alt="Капучино" width="393" height="460">
-    </figure>
-
   </section>
 
-  <!-- перемикач -->
-  <div class="switcher">
-    <p class="label switcher-label">Що в чашці <span class="switcher-hint">← →</span></p>
-    <ul class="switcher-list" id="rail" role="tablist" aria-label="Що в чашці"></ul>
-  </div>
+  <!-- ================= У ЧАШЦІ ================= -->
+  <section class="act" id="cup">
+    <p class="hour">Вдень</p>
 
-  <div class="ornament" aria-hidden="true"></div>
-</div>
-
-<main id="main">
-
-  <!-- ===================== КУХНЯ ===================== -->
-  <section class="section section-clay" id="kitchen">
-    <div class="section-head">
-      <p class="label">Кухня</p>
-      <h2 class="section-title">Десерти робимо самі</h2>
-      <p class="section-lede">
-        Макарони, тарти, млинці й круасани — щодня свіжі, невеликими
-        партіями. Каву варимо на сиропах Loft: вишня, лісовий горіх,
-        зелений банан, шоколадне печиво.
-      </p>
-    </div>
-
-    <ul class="plates">
-      <li class="plate">
-        <figure class="arch">
-          <img class="arch-img" src="img/macarons.jpg" alt="Макарони з різнокольоровими начинками" width="393" height="460" loading="lazy">
-        </figure>
-        <p class="plate-name">Макарони</p>
-        <p class="plate-note">щоранку свіжа партія</p>
-      </li>
-      <li class="plate">
-        <figure class="arch">
-          <img class="arch-img" src="img/fig-tart.jpg" alt="Тарти зі свіжим інжиром" width="393" height="460" loading="lazy">
-        </figure>
-        <p class="plate-name">Тарт з інжиром</p>
-        <p class="plate-note">сезонний</p>
-      </li>
-      <li class="plate">
-        <figure class="arch">
-          <img class="arch-img" src="img/crepes.jpg" alt="Млинці з шоколадом і бананом" width="393" height="460" loading="lazy">
-        </figure>
-        <p class="plate-name">Млинці</p>
-        <p class="plate-note">шоколад, банан, ягоди</p>
-      </li>
-      <li class="plate">
-        <figure class="arch">
-          <img class="arch-img" src="img/desserts.jpg" alt="Десерт і кава на світлому столі" width="393" height="460" loading="lazy">
-        </figure>
-        <p class="plate-name">Десерт до кави</p>
-        <p class="plate-note">подаємо з лавандою</p>
-      </li>
-      <li class="plate">
-        <figure class="arch">
-          <img class="arch-img" src="img/syrups.jpg" alt="Пляшки сиропів Loft на стійці" width="393" height="460" loading="lazy">
-        </figure>
-        <p class="plate-name">Сиропи Loft</p>
-        <p class="plate-note">вишня · горіх · банан</p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- ===================== ПОДІЇ ===================== -->
-  <section class="section section-glaze" id="events">
-    <div class="ornament ornament-top" aria-hidden="true"></div>
-
-    <div class="events-grid">
-      <div class="section-head">
-        <p class="label">Події</p>
-        <h2 class="section-title">Тут не лише п'ють каву</h2>
-        <p class="section-lede">
-          «Пліткарка» збирає людей: письменниці презентують книжки,
-          а на благодійних днях виторг іде на військових.
-        </p>
-        <figure class="arch arch-small">
-          <img class="arch-img" src="img/doodle-cup.jpg" alt="Горнятко з намальованим чоловічком, що читає книжку" width="393" height="460" loading="lazy">
-        </figure>
-      </div>
-
-      <ol class="afisha">
-        <li>
-          <p class="afisha-kind">Презентація</p>
-          <h3 class="afisha-title">Детектив «Дівчина в озері»</h3>
-          <p class="afisha-body">Світлана Флікян, письменниця. Модераторка — Олександра Павлюк.</p>
-          <p class="afisha-when"><time datetime="05-15">15 травня, 17:00</time> · вул. Шевченка, 46</p>
-        </li>
-        <li>
-          <p class="afisha-kind">Благодійний день</p>
-          <h3 class="afisha-title">Збір для 77 батальйону та 102 бригади РВП</h3>
-          <p class="afisha-body">Виторг за день іде на РЕБ і мавіки.</p>
-          <p class="afisha-when">Дату оголошуємо в Instagram</p>
-        </li>
-      </ol>
-    </div>
-
-    <div class="ornament" aria-hidden="true"></div>
-  </section>
-
-  <!-- ===================== ДЕ МИ ===================== -->
-  <section class="section section-clay" id="where">
-    <div class="where-grid">
+    <div class="act-body cup-grid">
       <div>
-        <p class="label">Де ми</p>
-        <h2 class="section-title">Дві «Пліткарки»<br>на одній вулиці</h2>
+        <h2 class="head">У чашці</h2>
+        <p class="note">Наведи на позицію — знімок поруч зміниться.</p>
+        <ul class="menu" id="drinks"></ul>
+      </div>
+
+      <figure class="shot">
+        <img class="shot-img" id="cupImg" src="img/cappuccino.jpg" alt="Капучино" width="393" height="460">
+        <figcaption class="shot-cap" id="cupCap">Капучино · з латте-артом</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ================= З ПЕЧІ ================= -->
+  <section class="act" id="oven">
+    <p class="hour">Пополудні</p>
+
+    <div class="act-body">
+      <h2 class="head">З печі</h2>
+      <p class="note wide">
+        Десерти робимо самі, невеликими партіями. Каву варимо на сиропах Loft.
+      </p>
+
+      <ul class="bakes" id="bakes"></ul>
+
+      <ul class="syrups" id="syrups"></ul>
+    </div>
+  </section>
+
+  <!-- ================= АФІША ================= -->
+  <section class="act act-dusk" id="events">
+    <p class="hour">Увечері</p>
+
+    <div class="act-body">
+      <h2 class="head">Афіша</h2>
+      <p class="note wide">Тут не лише п’ють каву.</p>
+      <ol class="bill" id="bill"></ol>
+    </div>
+  </section>
+
+  <!-- ================= ДВІ ТОЧКИ ================= -->
+  <section class="act act-dusk" id="spots">
+    <p class="hour">Пізно</p>
+
+    <div class="act-body spots-grid">
+      <div>
+        <h2 class="head">Дві точки<br>на одній вулиці</h2>
 
         <dl class="facts">
           <div><dt>Місто</dt><dd>Косів, Івано-Франківщина</dd></div>
-          <div><dt>Адреса</dt><dd>вул. Шевченка, 46 — напроти гімназії</dd></div>
-          <div><dt>Точки</dt><dd>«Пліткарка центр» · «Пліткарка біля гімназії»</dd></div>
+          <div><dt>Вулиця</dt><dd>Шевченка</dd></div>
           <div><dt>Відчиняємось</dt><dd>з 08:00</dd></div>
           <div><dt>Instagram</dt><dd><a class="link" href="https://www.instagram.com/plitkarka_o.m" target="_blank" rel="noopener noreferrer">@plitkarka_o.m</a></dd></div>
         </dl>
 
-        <a class="btn btn-solid" href="https://www.instagram.com/plitkarka_o.m" target="_blank" rel="noopener noreferrer">
-          Написати в Instagram<span class="btn-arrow" aria-hidden="true">↗</span>
+        <a class="btn btn-fill" href="https://www.instagram.com/plitkarka_o.m" target="_blank" rel="noopener noreferrer">
+          Забронювати стіл<span aria-hidden="true">↗</span>
         </a>
+        <p class="note">Пишемо в Instagram — там відповідаємо найшвидше.</p>
       </div>
 
-      <figure class="arch arch-door">
-        <span class="arch-shape">
-          <img class="arch-img" src="img/door.jpg" alt="Вхід у кав'ярню, прикрашений зеленню й квітами" width="393" height="460" loading="lazy">
-        </span>
-        <figcaption>Вхід із боку вулиці</figcaption>
+      <!-- Схема, а не мапа: показує порядок, а не точні координати -->
+      <figure class="scheme">
+        <svg viewBox="0 0 420 240" role="img" aria-label="Схема вулиці Шевченка: дві «Пліткарки», між ними гімназія">
+          <line class="street" x1="24" y1="150" x2="396" y2="150"/>
+          <g class="tick"><line x1="24" y1="142" x2="24" y2="158"/><line x1="396" y1="142" x2="396" y2="158"/></g>
+
+          <g class="stop">
+            <circle cx="110" cy="150" r="9"/>
+            <line x1="110" y1="141" x2="110" y2="96"/>
+            <text x="110" y="74" text-anchor="middle">Пліткарка</text>
+            <text class="sub" x="110" y="90" text-anchor="middle">центр</text>
+          </g>
+
+          <g class="place">
+            <rect x="238" y="164" width="56" height="26"/>
+            <text x="266" y="207" text-anchor="middle">гімназія</text>
+          </g>
+
+          <g class="stop">
+            <circle cx="310" cy="150" r="9"/>
+            <line x1="310" y1="141" x2="310" y2="96"/>
+            <text x="310" y="74" text-anchor="middle">Пліткарка</text>
+            <text class="sub" x="310" y="90" text-anchor="middle">Шевченка, 46</text>
+          </g>
+
+          <text class="street-name" x="24" y="176">вул. Шевченка</text>
+        </svg>
+        <figcaption>Схема, не мапа: показує порядок, а не відстані.</figcaption>
       </figure>
     </div>
   </section>
@@ -201,7 +153,7 @@
 
 <footer class="foot">
   <span>© <span id="year">2026</span> Пліткарка, Косів</span>
-  <span>Демонстраційний проєкт</span>
+  <span>Демонстраційний проєкт · v<i>.</i>studio</span>
 </footer>
 
 <script src="js/menu.js" defer></script>
