@@ -9,7 +9,7 @@
 
   const {
     LINKS, GITHUB_USER, HIDDEN_REPOS, PROJECTS, SERVICES,
-    PROCESS, FAQ, TICKER, EXTRA_STACK, PLURALS, I18N
+    PROCESS, FAQ, EXTRA_STACK, PLURALS, I18N
   } = window.SITE;
 
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -86,7 +86,6 @@
     $$('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
     $$('.lang-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
 
-    renderTicker();
     renderServices();
     renderSteps();
     renderFaq();
@@ -121,17 +120,6 @@
   /* =======================================================
      Рендер статических блоков
      ======================================================= */
-  function renderTicker() {
-    const track = $('#tickerTrack');
-    if (!track) return;
-    track.textContent = '';
-    const words = TICKER[lang] || TICKER.uk;
-    // дублируем список, чтобы лента крутилась бесшовно
-    for (let pass = 0; pass < 2; pass++) {
-      words.forEach(word => track.append(el('span', { class: 'ticker-item', text: word })));
-    }
-  }
-
   function renderServices() {
     const list = $('#priceList');
     if (!list) return;

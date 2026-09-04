@@ -208,11 +208,6 @@ window.SITE = (() => {
     }
   ];
 
-  const TICKER = {
-    uk: ['Java', 'Spring Boot', 'Python', 'FastAPI', 'Вебзастосунки', 'REST API', 'PostgreSQL', 'Telegram Bot API', 'Docker', 'Деплой на VPS'],
-    en: ['Java', 'Spring Boot', 'Python', 'FastAPI', 'Web apps', 'REST API', 'PostgreSQL', 'Telegram Bot API', 'Docker', 'VPS deployment']
-  };
-
   /* Технологии, которых может не быть в GitHub-статистике, но с ними я работаю */
   const EXTRA_STACK = [
     'Java', 'Spring Boot', 'Python', 'FastAPI', 'REST API', 'Telegram Bot API',
@@ -332,5 +327,5 @@ window.SITE = (() => {
     }
   };
 
-  return { LINKS, GITHUB_USER, HIDDEN_REPOS, PROJECTS, SERVICES, PROCESS, FAQ, TICKER, EXTRA_STACK, PLURALS, I18N };
+  return { LINKS, GITHUB_USER, HIDDEN_REPOS, PROJECTS, SERVICES, PROCESS, FAQ, EXTRA_STACK, PLURALS, I18N };
 })();
