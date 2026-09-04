@@ -82,6 +82,26 @@ img { display: block; max-width: 100%; }
 
 body > *:not(#grid-canvas) { position: relative; z-index: 1; }
 
+/* На сенсорных экранах курсора нет, а покадровая отрисовка фона сажает
+   батарею и дёргает прокрутку. Рисуем ту же сетку одной статичной
+   картинкой — выглядит так же, стоит ноль. */
+@media (hover: none), (pointer: coarse) {
+  #grid-canvas { display: none; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(242, 239, 232, 0.13) 1px, transparent 1px);
+    background-size: 34px 34px;
+  }
+
+  /* без Lenis плавность к якорям даёт сам браузер */
+  html { scroll-behavior: smooth; }
+}
+
 /* =========================================================
    Шапка
    ========================================================= */

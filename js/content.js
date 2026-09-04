@@ -8,8 +8,8 @@ window.SITE = (() => {
 
   const LINKS = {
     github: 'https://github.com/virtuaall1',
-    telegram: 'https://t.me/virtuaall',
-    telegramHandle: '@virtuaall',
+    telegram: 'https://t.me/virtuaall01',
+    telegramHandle: '@virtuaall01',
     email: 'virtuaall0@gmail.com'
   };
 

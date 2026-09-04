@@ -16,6 +16,12 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Телефоны и планшеты: курсора нет, а покадровая отрисовка фона, GSAP и
+     инерционный скролл только жрут батарею и дёргают прокрутку. Там всё
+     тяжёлое выключаем — фоновую сетку рисует CSS одной статичной картинкой. */
+  const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  const heavyAnim = !reduceMotion && !coarsePointer;
+
   /** Короткий конструктор элементов: el('div', {class:'x'}, 'текст') */
   function el(tag, attrs = {}, ...children) {
     const node = document.createElement(tag);
@@ -468,7 +474,7 @@
      ======================================================= */
   function initGrid() {
     const canvas = $('#grid-canvas');
-    if (!canvas || reduceMotion) return;
+    if (!canvas || !heavyAnim) return;
 
     const ctx = canvas.getContext('2d', { alpha: true });
     const GAP = 34;
@@ -669,7 +675,7 @@
   }
 
   function initScramble() {
-    if (reduceMotion) return;
+    if (!heavyAnim) return;
     const targets = $$('.section-title, .contact-title');
     const io = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -685,7 +691,7 @@
      Магнитные кнопки
      ======================================================= */
   function initMagnetic() {
-    if (reduceMotion || !window.matchMedia('(hover: hover)').matches) return;
+    if (!heavyAnim) return;
 
     $$('.magnetic').forEach(node => {
       let raf = null;
@@ -738,7 +744,7 @@
   }
 
   function refreshAnimations() {
-    if (window.gsap && window.ScrollTrigger && !reduceMotion) {
+    if (heavyAnim && window.gsap && window.ScrollTrigger) {
       gsapReveals();
       window.ScrollTrigger.refresh();
     } else {
@@ -752,7 +758,7 @@
       return;
     }
 
-    if (window.gsap && window.ScrollTrigger) {
+    if (heavyAnim && window.gsap && window.ScrollTrigger) {
       const { gsap, ScrollTrigger } = window;
       gsap.registerPlugin(ScrollTrigger);
 
@@ -795,7 +801,7 @@
   let smoothScroll = null;
 
   function initSmoothScroll() {
-    if (reduceMotion || !window.Lenis) return;
+    if (!heavyAnim || !window.Lenis) return;
     const lenis = new window.Lenis({ duration: 1.05, smoothWheel: true });
     smoothScroll = lenis;
     const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
