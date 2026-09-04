@@ -1,6 +1,7 @@
 /**
  * Весь редактируемый контент сайта в одном месте.
- * Меняешь цены, услуги, контакты — только здесь, трогать разметку не нужно.
+ * Меняешь цены, услуги, контакты — только здесь, разметку трогать не нужно.
+ * Языки: uk (основной) и en. Каждый блок должен иметь оба.
  */
 window.SITE = (() => {
   'use strict';
@@ -27,160 +28,189 @@ window.SITE = (() => {
    * {
    *   year: '2026',
    *   link: 'https://t.me/имя_бота',   // необязательно
-   *   ru: { name: 'Бот-магазин одежды', desc: 'Каталог на 400 позиций, оплата картой, 1200 заказов за первый месяц.', tags: ['aiogram', 'PostgreSQL', 'ЮKassa'] },
-   *   uk: { name: 'Бот-магазин одягу',  desc: 'Каталог на 400 позицій, оплата карткою, 1200 замовлень за перший місяць.', tags: ['aiogram', 'PostgreSQL', 'ЮKassa'] }
+   *   uk: { name: 'Бот-магазин одягу', desc: 'Каталог на 400 позицій, оплата карткою, 1200 замовлень за перший місяць.', tags: ['aiogram', 'PostgreSQL'] },
+   *   en: { name: 'Clothing shop bot',  desc: '400-item catalogue, card payments, 1,200 orders in the first month.',    tags: ['aiogram', 'PostgreSQL'] }
    * }
    */
   const PROJECTS = [];
 
-  /* Услуги: цена — строка, чтобы можно было писать «от 60 $» или «договорная» */
   const SERVICES = [
     {
       id: 'webapp',
       price: '$400+',
       featured: true,
-      ru: {
-        name: 'Веб-приложение с админкой',
-        desc: 'Сервис под задачу бизнеса: личные кабинеты, роли и права, панель управления, отчёты.',
-        bullets: ['Авторизация и роли', 'Админ-панель', 'База данных', 'Отчёты и выгрузки']
-      },
       uk: {
         name: 'Вебзастосунок з адмінкою',
         desc: 'Сервіс під задачу бізнесу: особисті кабінети, ролі та права, панель керування, звіти.',
         bullets: ['Авторизація і ролі', 'Адмінпанель', 'База даних', 'Звіти та вивантаження']
+      },
+      en: {
+        name: 'Web app with admin panel',
+        desc: 'A service built around your process: user accounts, roles and permissions, dashboard, reports.',
+        bullets: ['Auth and roles', 'Admin panel', 'Database', 'Reports and exports']
       }
     },
     {
       id: 'backend',
       price: '$350+',
-      ru: {
-        name: 'Бэкенд и API',
-        desc: 'Серверная часть на Java со Spring Boot или на Python: REST API, база, интеграции с внешними сервисами.',
-        bullets: ['Java · Spring Boot', 'Python · FastAPI', 'REST API', 'Docker и деплой']
-      },
       uk: {
         name: 'Бекенд і API',
         desc: 'Серверна частина на Java зі Spring Boot або на Python: REST API, база, інтеграції із зовнішніми сервісами.',
         bullets: ['Java · Spring Boot', 'Python · FastAPI', 'REST API', 'Docker і деплой']
+      },
+      en: {
+        name: 'Backend and APIs',
+        desc: 'Server side in Java with Spring Boot or in Python: REST APIs, database, third-party integrations.',
+        bullets: ['Java · Spring Boot', 'Python · FastAPI', 'REST API', 'Docker and deploy']
       }
     },
     {
       id: 'landing',
       price: '$150+',
-      ru: {
-        name: 'Сайт-визитка и лендинг',
-        desc: 'Быстрая страница под услугу или товар: адаптив, формы заявок, подключение аналитики.',
-        bullets: ['Адаптив под телефон', 'Форма заявки', 'Скорость и SEO', 'Запуск за 3–5 дней']
-      },
       uk: {
         name: 'Сайт-візитка та лендинг',
         desc: 'Швидка сторінка під послугу або товар: адаптив, форми заявок, підключення аналітики.',
         bullets: ['Адаптив під телефон', 'Форма заявки', 'Швидкість і SEO', 'Запуск за 3–5 днів']
+      },
+      en: {
+        name: 'Landing page',
+        desc: 'A fast page for one product or service: responsive layout, lead forms, analytics wired up.',
+        bullets: ['Mobile-first layout', 'Lead form', 'Speed and SEO', 'Live in 3–5 days']
       }
     },
     {
       id: 'shop-bot',
       price: '$250+',
-      ru: {
-        name: 'Telegram-бот с оплатой',
-        desc: 'Каталог, корзина, приём платежей, уведомления о заказах и админка для управления товарами.',
-        bullets: ['Каталог и категории', 'Оплата картой / крипта', 'Админ-панель', 'Выгрузка заказов']
-      },
       uk: {
         name: 'Telegram-бот з оплатою',
         desc: 'Каталог, кошик, приймання платежів, сповіщення про замовлення та адмінка для керування товарами.',
         bullets: ['Каталог і категорії', 'Оплата карткою / крипта', 'Адмінпанель', 'Вивантаження замовлень']
+      },
+      en: {
+        name: 'Telegram shop bot',
+        desc: 'Catalogue, cart, payments, order notifications and an admin panel to manage the products.',
+        bullets: ['Catalogue and categories', 'Card / crypto payments', 'Admin panel', 'Order exports']
       }
     },
     {
       id: 'bot',
       price: '$120+',
-      ru: {
-        name: 'Бот: рассылки, заявки, модерация',
-        desc: 'От автоответчика до мини-CRM с сегментами, отложенным постингом и антиспамом в чате.',
-        bullets: ['Заявки владельцу', 'Рассылки по базе', 'Капча и антиспам', 'Статистика']
-      },
       uk: {
         name: 'Бот: розсилки, заявки, модерація',
         desc: 'Від автовідповідача до міні-CRM із сегментами, відкладеним постингом і антиспамом у чаті.',
         bullets: ['Заявки власнику', 'Розсилки по базі', 'Капча й антиспам', 'Статистика']
+      },
+      en: {
+        name: 'Bot: broadcasts, leads, moderation',
+        desc: 'From a simple auto-reply to a mini CRM with segments, scheduled posts and chat anti-spam.',
+        bullets: ['Leads to your inbox', 'Broadcasts', 'Captcha and anti-spam', 'Statistics']
       }
     },
     {
       id: 'automation',
       price: '$120+',
-      ru: {
-        name: 'Парсинг и автоматизация',
-        desc: 'Собирает данные с сайтов, следит за изменениями и переносит рутину в скрипты по расписанию.',
-        bullets: ['Сбор данных 24/7', 'Выгрузка в таблицы', 'Уведомления', 'Работа по расписанию']
-      },
       uk: {
         name: 'Парсинг і автоматизація',
         desc: 'Збирає дані із сайтів, стежить за змінами і переносить рутину у скрипти за розкладом.',
         bullets: ['Збір даних 24/7', 'Вивантаження в таблиці', 'Сповіщення', 'Робота за розкладом']
+      },
+      en: {
+        name: 'Scraping and automation',
+        desc: 'Collects data from websites, watches for changes and moves routine work into scheduled scripts.',
+        bullets: ['24/7 data collection', 'Export to spreadsheets', 'Alerts', 'Runs on a schedule']
       }
     },
     {
       id: 'custom',
       price: '?',
-      ru: {
-        name: 'Нестандартная задача',
-        desc: 'Доработка чужого кода, интеграции между сервисами, перенос на новый сервер, ускорение медленного проекта.',
-        bullets: ['Доработка проекта', 'Интеграции сервисов', 'Переезд и деплой', 'Оптимизация']
-      },
       uk: {
         name: 'Нестандартне завдання',
         desc: 'Доопрацювання чужого коду, інтеграції між сервісами, перенесення на новий сервер, прискорення повільного проєкту.',
         bullets: ['Доопрацювання проєкту', 'Інтеграції сервісів', 'Переїзд і деплой', 'Оптимізація']
+      },
+      en: {
+        name: 'Something else',
+        desc: 'Picking up someone else’s code, wiring services together, moving to a new server, speeding up a slow project.',
+        bullets: ['Take over a project', 'Service integrations', 'Migration and deploy', 'Optimisation']
       }
     }
   ];
 
   const PROCESS = [
     {
-      ru: { title: 'Разбор задачи', desc: 'Созваниваемся или переписываемся, я задаю вопросы и фиксирую, что бот должен уметь.' },
-      uk: { title: 'Розбір завдання', desc: 'Зідзвонюємось або листуємось, я ставлю питання і фіксую, що бот має вміти.' }
+      uk: { title: 'Розбір задачі', desc: 'Зідзвонюємось або листуємось, я ставлю питання і фіксую, що саме має вміти проєкт.' },
+      en: { title: 'Understanding the task', desc: 'We talk it through, I ask questions and write down exactly what the project has to do.' }
     },
     {
-      ru: { title: 'Смета и сроки', desc: 'Присылаю фиксированную цену и дату сдачи. Предоплата — половина, остальное после приёмки.' },
-      uk: { title: 'Кошторис і строки', desc: 'Надсилаю фіксовану ціну й дату здачі. Передоплата — половина, решта після приймання.' }
+      uk: { title: 'Кошторис і строки', desc: 'Надсилаю фіксовану ціну й дату здачі. Передоплата — половина, решта після приймання.' },
+      en: { title: 'Quote and timeline', desc: 'You get a fixed price and a delivery date. Half up front, the rest once you accept the work.' }
     },
     {
-      ru: { title: 'Разработка', desc: 'Показываю промежуточные версии, чтобы правки не копились до самого конца.' },
-      uk: { title: 'Розробка', desc: 'Показую проміжні версії, щоб правки не накопичувались до самого кінця.' }
+      uk: { title: 'Розробка', desc: 'Показую проміжні версії, щоб правки не накопичувались до самого кінця.' },
+      en: { title: 'Development', desc: 'I show work in progress, so changes get caught early instead of piling up at the end.' }
     },
     {
-      ru: { title: 'Запуск и поддержка', desc: 'Разворачиваю на сервере, отдаю исходники и месяц правлю баги бесплатно.' },
-      uk: { title: 'Запуск і підтримка', desc: 'Розгортаю на сервері, віддаю вихідники і місяць правлю баги безкоштовно.' }
+      uk: { title: 'Запуск і підтримка', desc: 'Розгортаю на сервері, віддаю вихідники і місяць правлю баги безкоштовно.' },
+      en: { title: 'Launch and support', desc: 'I deploy it, hand over the source code and fix bugs free of charge for a month.' }
     }
   ];
 
   const FAQ = [
     {
-      ru: { q: 'Сколько занимает разработка?', a: 'Лендинг или простой бот — 3–5 дней. Магазин с оплатой — от полутора недель. Веб-приложение с админкой и бэкендом — от трёх недель. Точный срок называю после разбора задачи и фиксирую в договорённости.' },
-      uk: { q: 'Скільки триває розробка?', a: 'Лендинг або простий бот — 3–5 днів. Магазин з оплатою — від півтора тижня. Вебзастосунок з адмінкою та бекендом — від трьох тижнів. Точний строк називаю після розбору завдання і фіксую в домовленості.' }
+      uk: {
+        q: 'Скільки триває розробка?',
+        a: 'Лендинг або простий бот — 3–5 днів. Магазин з оплатою — від півтора тижня. Вебзастосунок з адмінкою та бекендом — від трьох тижнів. Точний строк називаю після розбору завдання і фіксую в домовленості.'
+      },
+      en: {
+        q: 'How long does it take?',
+        a: 'A landing page or a simple bot takes 3–5 days. A shop with payments starts at a week and a half. A web app with an admin panel and backend starts at three weeks. I give you an exact date after we scope the task, and it stays fixed.'
+      }
     },
     {
-      ru: { q: 'Исходники остаются у меня?', a: 'Да. После финальной оплаты передаю весь код и доступы. Никакой привязки ко мне: другой разработчик сможет продолжить работу.' },
-      uk: { q: 'Вихідники залишаються в мене?', a: 'Так. Після фінальної оплати передаю весь код і доступи. Жодної прив’язки до мене: інший розробник зможе продовжити роботу.' }
+      uk: {
+        q: 'Вихідники залишаються в мене?',
+        a: 'Так. Після фінальної оплати передаю весь код і доступи. Жодної прив’язки до мене: інший розробник зможе продовжити роботу.'
+      },
+      en: {
+        q: 'Do I get the source code?',
+        a: 'Yes. Once the final payment is through, you get all the code and credentials. Nothing is locked to me — another developer can pick it up.'
+      }
     },
     {
-      ru: { q: 'Как оплачивать?', a: 'Половина до старта, половина после приёмки. Карта или крипта — как удобнее. Для крупных задач можно разбить на этапы.' },
-      uk: { q: 'Як оплачувати?', a: 'Половина до старту, половина після приймання. Картка або крипта — як зручніше. Для великих завдань можна розбити на етапи.' }
+      uk: {
+        q: 'Як оплачувати?',
+        a: 'Половина до старту, половина після приймання. Картка або крипта — як зручніше. Для великих завдань можна розбити на етапи.'
+      },
+      en: {
+        q: 'How does payment work?',
+        a: 'Half before we start, half when you accept the work. Card or crypto, whichever suits you. Larger projects can be split into stages.'
+      }
     },
     {
-      ru: { q: 'А если после запуска что-то сломается?', a: 'Месяц после сдачи правлю баги бесплатно. Дальше — по договорённости: разово или помесячная поддержка с мониторингом.' },
-      uk: { q: 'А якщо після запуску щось зламається?', a: 'Місяць після здачі правлю баги безкоштовно. Далі — за домовленістю: разово або щомісячна підтримка з моніторингом.' }
+      uk: {
+        q: 'А якщо після запуску щось зламається?',
+        a: 'Місяць після здачі правлю баги безкоштовно. Далі — за домовленістю: разово або щомісячна підтримка з моніторингом.'
+      },
+      en: {
+        q: 'What if something breaks after launch?',
+        a: 'I fix bugs free for a month after delivery. After that it is either one-off fixes or a monthly support plan with monitoring.'
+      }
     },
     {
-      ru: { q: 'Где всё это будет работать?', a: 'Разворачиваю на твоём сервере или подбираю недорогой VPS: домен, SSL, автозапуск, логи и перезапуск при падении. Доступы остаются у тебя.' },
-      uk: { q: 'Де все це працюватиме?', a: 'Розгортаю на твоєму сервері або підбираю недорогий VPS: домен, SSL, автозапуск, логи та перезапуск при падінні. Доступи лишаються в тебе.' }
+      uk: {
+        q: 'Де все це працюватиме?',
+        a: 'Розгортаю на твоєму сервері або підбираю недорогий VPS: домен, SSL, автозапуск, логи та перезапуск при падінні. Доступи лишаються в тебе.'
+      },
+      en: {
+        q: 'Where does it run?',
+        a: 'On your server, or on an inexpensive VPS I pick for you: domain, SSL, autostart, logs and automatic restart on failure. The credentials stay yours.'
+      }
     }
   ];
 
   const TICKER = {
-    ru: ['Java', 'Spring Boot', 'Python', 'FastAPI', 'Веб-приложения', 'REST API', 'PostgreSQL', 'Telegram Bot API', 'Docker', 'Деплой на VPS'],
-    uk: ['Java', 'Spring Boot', 'Python', 'FastAPI', 'Вебзастосунки', 'REST API', 'PostgreSQL', 'Telegram Bot API', 'Docker', 'Деплой на VPS']
+    uk: ['Java', 'Spring Boot', 'Python', 'FastAPI', 'Вебзастосунки', 'REST API', 'PostgreSQL', 'Telegram Bot API', 'Docker', 'Деплой на VPS'],
+    en: ['Java', 'Spring Boot', 'Python', 'FastAPI', 'Web apps', 'REST API', 'PostgreSQL', 'Telegram Bot API', 'Docker', 'VPS deployment']
   };
 
   /* Технологии, которых может не быть в GitHub-статистике, но с ними я работаю */
@@ -189,72 +219,23 @@ window.SITE = (() => {
     'aiogram', 'PostgreSQL', 'SQLite', 'Redis', 'Docker', 'nginx', 'Git', 'Linux'
   ];
 
-  /* Склонения: [1 штука, 2–4 штуки, 5 штук] */
+  /* Формы множественного числа по категориям Intl.PluralRules */
   const PLURALS = {
-    ru: {
-      repos: ['репозиторий', 'репозитория', 'репозиториев'],
-      stars: ['звезда', 'звезды', 'звёзд'],
-      followers: ['подписчик', 'подписчика', 'подписчиков'],
-      years: ['год на GitHub', 'года на GitHub', 'лет на GitHub']
-    },
     uk: {
-      repos: ['репозиторій', 'репозиторії', 'репозиторіїв'],
-      stars: ['зірка', 'зірки', 'зірок'],
-      followers: ['підписник', 'підписники', 'підписників'],
-      years: ['рік на GitHub', 'роки на GitHub', 'років на GitHub']
+      repos: { one: 'репозиторій', few: 'репозиторії', many: 'репозиторіїв', other: 'репозиторіїв' },
+      stars: { one: 'зірка', few: 'зірки', many: 'зірок', other: 'зірок' },
+      followers: { one: 'підписник', few: 'підписники', many: 'підписників', other: 'підписників' },
+      years: { one: 'рік на GitHub', few: 'роки на GitHub', many: 'років на GitHub', other: 'років на GitHub' }
+    },
+    en: {
+      repos: { one: 'repository', other: 'repositories' },
+      stars: { one: 'star', other: 'stars' },
+      followers: { one: 'follower', other: 'followers' },
+      years: { one: 'year on GitHub', other: 'years on GitHub' }
     }
   };
 
   const I18N = {
-    ru: {
-      'meta.title': 'Разработка сайтов, сервисов и Telegram-ботов — Python, Java, Spring',
-      'meta.desc': 'Веб-приложения, бэкенд на Java и Spring Boot, сайты, Telegram-боты и автоматизация. Фиксированная цена, исходники и месяц поддержки.',
-      'nav.services': 'Услуги',
-      'nav.process': 'Как работаю',
-      'nav.work': 'Работы',
-      'nav.faq': 'Вопросы',
-      'nav.contact': 'Контакты',
-      'nav.order': 'Написать',
-      'hero.status': 'Беру заказы',
-      'hero.title.1': 'Сайты, сервисы',
-      'hero.title.2': 'и боты, которые',
-      'hero.title.3': 'работают за вас',
-      'hero.lead': 'Пишу веб-приложения, бэкенд и Telegram-ботов: Python, Java, Spring Boot, базы данных, интеграции с чужими API. Фиксированная цена, исходники на руки, месяц поддержки после запуска.',
-      'hero.cta': 'Обсудить задачу',
-      'hero.cta2': 'Код на GitHub',
-      'hero.scroll': 'листай',
-      'services.kicker': 'Что заказывают',
-      'services.title': 'Услуги и цены',
-      'services.lead': 'Цены — стартовые, финальная зависит от объёма. Точную смету называю после короткого разговора.',
-      'services.from': 'от',
-      'services.custom': 'цена по задаче',
-      'services.order': 'Заказать',
-      'process.kicker': 'Как это устроено',
-      'process.title': 'Четыре шага до запуска',
-      'work.kicker': 'Открытый код',
-      'work.title': 'Репозитории',
-      'work.lead': 'Подтягивается с GitHub автоматически — сортировка по звёздам.',
-      'work.empty': 'Пока нет публичных репозиториев.',
-      'work.error': 'GitHub не отвечает. Загляни в профиль напрямую.',
-      'work.updated': 'обновлён',
-      'work.all': 'Весь профиль',
-      'stack.kicker': 'Инструменты',
-      'stack.title': 'На чём пишу',
-      'stack.lead': 'Языки посчитаны по моим публичным репозиториям, остальное — то, с чем работаю каждый день.',
-      'stats.repos': 'репозиториев',
-      'stats.stars': 'звёзд',
-      'stats.years': 'лет на GitHub',
-      'stats.followers': 'подписчиков',
-      'faq.kicker': 'Без сюрпризов',
-      'faq.title': 'Частые вопросы',
-      'contact.kicker': 'Дальше',
-      'contact.title': 'Расскажи, что нужно автоматизировать',
-      'contact.lead': 'Опиши задачу в двух словах — отвечу, реально ли это, сколько будет стоить и сколько займёт.',
-      'contact.tg': 'Написать в Telegram',
-      'contact.mail': 'Почта',
-      'footer.rights': 'Собрано вручную, без конструкторов.',
-      'lang.label': 'Язык'
-    },
     uk: {
       'meta.title': 'Розробка сайтів, сервісів і Telegram-ботів — Python, Java, Spring',
       'meta.desc': 'Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.',
@@ -271,13 +252,14 @@ window.SITE = (() => {
       'hero.lead': 'Пишу вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.',
       'hero.cta': 'Обговорити задачу',
       'hero.cta2': 'Код на GitHub',
-      'hero.scroll': 'гортай',
+      'hero.figures': ['Вихідники твої', 'Фіксована ціна', 'Місяць підтримки'],
       'services.kicker': 'Що замовляють',
       'services.title': 'Послуги та ціни',
       'services.lead': 'Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаю після короткої розмови.',
       'services.from': 'від',
       'services.custom': 'ціна за задачею',
       'services.order': 'Замовити',
+      'services.featured': 'хіт',
       'process.kicker': 'Як це влаштовано',
       'process.title': 'Чотири кроки до запуску',
       'work.kicker': 'Відкритий код',
@@ -290,10 +272,6 @@ window.SITE = (() => {
       'stack.kicker': 'Інструменти',
       'stack.title': 'Чим пишу',
       'stack.lead': 'Мови пораховані за моїми публічними репозиторіями, решта — те, з чим працюю щодня.',
-      'stats.repos': 'репозиторіїв',
-      'stats.stars': 'зірок',
-      'stats.years': 'років на GitHub',
-      'stats.followers': 'підписників',
       'faq.kicker': 'Без сюрпризів',
       'faq.title': 'Часті питання',
       'contact.kicker': 'Далі',
@@ -301,8 +279,52 @@ window.SITE = (() => {
       'contact.lead': 'Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.',
       'contact.tg': 'Написати в Telegram',
       'contact.mail': 'Пошта',
-      'footer.rights': 'Зібрано вручну, без конструкторів.',
-      'lang.label': 'Мова'
+      'footer.rights': 'Зібрано вручну, без конструкторів.'
+    },
+    en: {
+      'meta.title': 'Web apps, backends and Telegram bots — Python, Java, Spring',
+      'meta.desc': 'Web applications, Java and Spring Boot backends, landing pages, Telegram bots and automation. Fixed price, source code included, a month of support.',
+      'nav.services': 'Services',
+      'nav.process': 'Process',
+      'nav.work': 'Work',
+      'nav.faq': 'FAQ',
+      'nav.contact': 'Contact',
+      'nav.order': 'Get in touch',
+      'hero.status': 'Available for work',
+      'hero.title.1': 'Sites, services',
+      'hero.title.2': 'and bots that',
+      'hero.title.3': 'work for you',
+      'hero.lead': 'I build web apps, backends and Telegram bots: Python, Java, Spring Boot, databases, third-party API integrations. Fixed price, source code included, a month of support after launch.',
+      'hero.cta': 'Discuss your project',
+      'hero.cta2': 'Code on GitHub',
+      'hero.figures': ['You own the code', 'Fixed price', 'A month of support'],
+      'services.kicker': 'What people order',
+      'services.title': 'Services and pricing',
+      'services.lead': 'These are starting prices — the final one depends on scope. I quote exactly after a short conversation.',
+      'services.from': 'from',
+      'services.custom': 'quoted per project',
+      'services.order': 'Order',
+      'services.featured': 'top',
+      'process.kicker': 'How it works',
+      'process.title': 'Four steps to launch',
+      'work.kicker': 'Open source',
+      'work.title': 'Repositories',
+      'work.lead': 'Pulled from GitHub automatically, sorted by stars.',
+      'work.empty': 'No public repositories yet.',
+      'work.error': 'GitHub is not responding. Have a look at the profile directly.',
+      'work.updated': 'updated',
+      'work.all': 'Full profile',
+      'stack.kicker': 'Tools',
+      'stack.title': 'What I build with',
+      'stack.lead': 'Languages are counted from my public repositories; the rest is what I work with day to day.',
+      'faq.kicker': 'No surprises',
+      'faq.title': 'Frequently asked',
+      'contact.kicker': 'Next',
+      'contact.title': 'Tell me what needs automating',
+      'contact.lead': 'Describe the task in a couple of sentences — I will tell you if it is doable, what it costs and how long it takes.',
+      'contact.tg': 'Message on Telegram',
+      'contact.mail': 'Email',
+      'footer.rights': 'Hand-built, no page builders.'
     }
   };
 

@@ -33,9 +33,10 @@
   }
 
   /* =======================================================
-     Язык: uk для украинской локали, иначе ru
+     Язык: uk для местных локалей, en для остальных
      ======================================================= */
-  const SUPPORTED = ['ru', 'uk'];
+  const SUPPORTED = ['uk', 'en'];
+  const LOCALES = { uk: 'uk-UA', en: 'en-GB' };
 
   function detectLang() {
     try {
@@ -43,20 +44,21 @@
       if (SUPPORTED.includes(saved)) return saved;
     } catch (e) { /* приватный режим — молча пропускаем */ }
 
-    const candidates = navigator.languages || [navigator.language || 'ru'];
+    // украинский для местных локалей, английский для всех остальных
+    const candidates = navigator.languages || [navigator.language || 'uk'];
     for (const raw of candidates) {
       const code = String(raw).toLowerCase();
-      if (code.startsWith('uk')) return 'uk';
-      if (code.startsWith('ru')) return 'ru';
+      if (code.startsWith('uk') || code.startsWith('ru')) return 'uk';
+      if (code.startsWith('en')) return 'en';
     }
-    return 'ru';
+    return 'uk';
   }
 
   let lang = detectLang();
   let booted = false;
   /* при смене языка контент не должен заново «проявляться» — иначе страница прыгает */
   let skipReveal = false;
-  const t = key => (I18N[lang] && I18N[lang][key]) || I18N.ru[key] || key;
+  const t = key => (I18N[lang] && I18N[lang][key]) || I18N.uk[key] || key;
 
   /** класс появления: анимируем только первую отрисовку */
   function revealCls(extra = '') {
@@ -64,7 +66,7 @@
   }
 
   function applyLang(next) {
-    lang = SUPPORTED.includes(next) ? next : 'ru';
+    lang = SUPPORTED.includes(next) ? next : 'uk';
     skipReveal = booted;
     // перерисовка списков схлопывает высоту документа и сбрасывает скролл —
     // запоминаем позицию, чтобы человека не выкинуло в начало страницы
@@ -103,9 +105,7 @@
     const figures = $('#heroFigures');
     if (!figures) return;
     figures.textContent = '';
-    const items = lang === 'uk'
-      ? ['Вихідники твої', 'Фіксована ціна', 'Місяць підтримки']
-      : ['Исходники твои', 'Фиксированная цена', 'Месяц поддержки'];
+    const items = t('hero.figures') || [];
     items.forEach(text => figures.append(el('span', { text: `— ${text}` })));
   }
 
@@ -116,7 +116,7 @@
     const track = $('#tickerTrack');
     if (!track) return;
     track.textContent = '';
-    const words = TICKER[lang] || TICKER.ru;
+    const words = TICKER[lang] || TICKER.uk;
     // дублируем список, чтобы лента крутилась бесшовно
     for (let pass = 0; pass < 2; pass++) {
       words.forEach(word => track.append(el('span', { class: 'ticker-item', text: word })));
@@ -129,12 +129,12 @@
     list.textContent = '';
 
     SERVICES.forEach(service => {
-      const copy = service[lang] || service.ru;
+      const copy = service[lang] || service.uk;
       const isCustom = service.price === '?';
 
       const name = el('h3', { class: 'price-name' }, copy.name);
       if (service.featured) {
-        name.append(el('span', { class: 'price-featured', text: lang === 'uk' ? 'хіт' : 'хит' }));
+        name.append(el('span', { class: 'price-featured', text: t('services.featured') }));
       }
 
       const priceText = isCustom
@@ -168,7 +168,7 @@
     wrap.textContent = '';
 
     PROCESS.forEach((step, i) => {
-      const copy = step[lang] || step.ru;
+      const copy = step[lang] || step.uk;
       wrap.append(el('li', { class: revealCls('step') },
         el('span', { class: 'step-num', text: String(i + 1).padStart(2, '0') }),
         el('div', {},
@@ -185,7 +185,7 @@
     wrap.textContent = '';
 
     FAQ.forEach((item, i) => {
-      const copy = item[lang] || item.ru;
+      const copy = item[lang] || item.uk;
       const answerId = `faq-a-${i}`;
 
       const btn = el('button', {
@@ -286,14 +286,13 @@
     requestAnimationFrame(step);
   }
 
-  /** Славянские склонения: 1 репозиторий, 2 репозитория, 5 репозиториев */
+  /** Формы числа берём у Intl: 1 репозиторій / 2 репозиторії / 5 репозиторіїв, 1 star / 2 stars */
   function plural(n, forms) {
-    const abs = Math.abs(n) % 100;
-    const last = abs % 10;
-    if (abs > 10 && abs < 20) return forms[2];
-    if (last > 1 && last < 5) return forms[1];
-    if (last === 1) return forms[0];
-    return forms[2];
+    let category = 'other';
+    try {
+      category = new Intl.PluralRules(LOCALES[lang] || 'uk-UA').select(n);
+    } catch (e) { /* очень старый браузер — останется other */ }
+    return forms[category] || forms.other || forms.many || forms.one;
   }
 
   /** Ноль в счётчике выглядит хуже, чем его отсутствие — такую плитку прячем */
@@ -311,7 +310,7 @@
     if (tile) tile.hidden = false;
 
     const label = $(`[data-stat-label="${name}"]`);
-    const forms = (PLURALS[lang] || PLURALS.ru)[name];
+    const forms = (PLURALS[lang] || PLURALS.uk)[name];
     if (label && forms) label.textContent = plural(value, forms);
 
     countUp(node, value);
@@ -325,7 +324,7 @@
   /** Работы, которых нет в открытом доступе — из конфига */
   function renderProjects(wrap) {
     (PROJECTS || []).forEach(project => {
-      const copy = project[lang] || project.ru;
+      const copy = project[lang] || project.uk;
       if (!copy) return;
 
       const meta = el('div', { class: 'repo-meta' });
@@ -372,7 +371,7 @@
       }
       meta.append(el('span', { text: `★ ${repo.stargazers_count}` }));
       meta.append(el('span', {
-        text: `${t('work.updated')} ${new Date(repo.pushed_at).toLocaleDateString(lang === 'uk' ? 'uk-UA' : 'ru-RU')}`
+        text: `${t('work.updated')} ${new Date(repo.pushed_at).toLocaleDateString(LOCALES[lang] || 'uk-UA')}`
       }));
 
       wrap.append(el('a', {

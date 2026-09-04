@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,12 +7,12 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="dark light">
 
-<title>Telegram-боты под ключ — разработка и автоматизация</title>
-<meta name="description" content="Разработка Telegram-ботов: магазины с оплатой, рассылки, парсеры, модерация. Фиксированная цена, исходники и месяц поддержки.">
+<title>Розробка сайтів, сервісів і Telegram-ботів — Python, Java, Spring</title>
+<meta name="description" content="Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.">
 <link rel="canonical" href="https://virtuaall1.github.io/site/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Telegram-боты под ключ — разработка и автоматизация">
-<meta property="og:description" content="Магазины с оплатой, рассылки, парсеры, модерация. Фиксированная цена, исходники и месяц поддержки.">
+<meta property="og:title" content="Розробка сайтів, сервісів і Telegram-ботів">
+<meta property="og:description" content="Вебзастосунки, бекенд на Java і Spring Boot, сайти та Telegram-боти. Фіксована ціна, вихідники та місяць підтримки.">
 <meta property="og:url" content="https://virtuaall1.github.io/site/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0b'/%3E%3Cpath d='M8 21.5 15 10h2l7 11.5h-3.4l-1.3-2.3h-6.6l-1.3 2.3z' fill='%23d8ff3e'/%3E%3C/svg%3E">
@@ -25,7 +25,7 @@
 </head>
 <body>
 
-<a class="skip-link" href="#main">Перейти к содержимому</a>
+<a class="skip-link" href="#main">Перейти до вмісту</a>
 
 <canvas id="grid-canvas" aria-hidden="true"></canvas>
 
@@ -35,19 +35,19 @@
     <span class="brand-text">virtuaall</span>
   </a>
 
-  <nav class="nav" aria-label="Основная навигация">
-    <a href="#services" data-i18n="nav.services">Услуги</a>
-    <a href="#process" data-i18n="nav.process">Как работаю</a>
-    <a href="#work" data-i18n="nav.work">Работы</a>
-    <a href="#faq" data-i18n="nav.faq">Вопросы</a>
+  <nav class="nav" aria-label="Основна навігація">
+    <a href="#services" data-i18n="nav.services">Послуги</a>
+    <a href="#process" data-i18n="nav.process">Як працюю</a>
+    <a href="#work" data-i18n="nav.work">Роботи</a>
+    <a href="#faq" data-i18n="nav.faq">Питання</a>
   </nav>
 
   <div class="topbar-right">
-    <div class="lang" role="group" aria-label="Язык / Мова">
-      <button type="button" class="lang-btn" data-lang="ru">RU</button>
+    <div class="lang" role="group" aria-label="Мова / Language">
       <button type="button" class="lang-btn" data-lang="uk">UA</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
     </div>
-    <a class="btn btn-solid btn-sm magnetic" id="topOrder" href="#contact" data-i18n="nav.order">Написать</a>
+    <a class="btn btn-solid btn-sm magnetic" id="topOrder" href="#contact" data-i18n="nav.order">Написати</a>
     <button type="button" class="burger" id="burger" aria-label="Меню" aria-expanded="false">
       <span></span><span></span>
     </button>
@@ -55,29 +55,29 @@
 </header>
 
 <div class="mobile-menu" id="mobileMenu" hidden>
-  <a href="#services" data-i18n="nav.services">Услуги</a>
-  <a href="#process" data-i18n="nav.process">Как работаю</a>
-  <a href="#work" data-i18n="nav.work">Работы</a>
-  <a href="#faq" data-i18n="nav.faq">Вопросы</a>
-  <a href="#contact" data-i18n="nav.contact">Контакты</a>
+  <a href="#services" data-i18n="nav.services">Послуги</a>
+  <a href="#process" data-i18n="nav.process">Як працюю</a>
+  <a href="#work" data-i18n="nav.work">Роботи</a>
+  <a href="#faq" data-i18n="nav.faq">Питання</a>
+  <a href="#contact" data-i18n="nav.contact">Контакти</a>
 </div>
 
 <main id="main">
 
   <!-- ============ HERO ============ -->
   <section class="hero">
-    <p class="status"><span class="status-dot" aria-hidden="true"></span><span data-i18n="hero.status">Беру заказы</span></p>
+    <p class="status"><span class="status-dot" aria-hidden="true"></span><span data-i18n="hero.status">Беру замовлення</span></p>
 
     <h1 class="hero-title">
-      <span class="line"><span class="line-in" data-i18n="hero.title.1">Боты, которые</span></span>
-      <span class="line"><span class="line-in" data-i18n="hero.title.2">продают и</span></span>
-      <span class="line"><span class="line-in accent" data-i18n="hero.title.3">не спят</span></span>
+      <span class="line"><span class="line-in" data-i18n="hero.title.1">Сайти, сервіси</span></span>
+      <span class="line"><span class="line-in" data-i18n="hero.title.2">і боти, які</span></span>
+      <span class="line"><span class="line-in accent" data-i18n="hero.title.3">працюють за вас</span></span>
     </h1>
 
     <div class="hero-bottom">
-      <p class="hero-lead" data-i18n="hero.lead">Разрабатываю Telegram-ботов и веб-сервисы: от автоответчика до магазина с оплатой, админкой и рассылками. Фиксированная цена, исходники на руки, месяц поддержки после запуска.</p>
+      <p class="hero-lead" data-i18n="hero.lead">Пишу вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.</p>
       <div class="hero-actions">
-        <a class="btn btn-solid magnetic" href="#contact" data-i18n="hero.cta">Обсудить задачу</a>
+        <a class="btn btn-solid magnetic" href="#contact" data-i18n="hero.cta">Обговорити задачу</a>
         <a class="btn btn-line magnetic" id="heroGithub" href="https://github.com/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta2">Код на GitHub</a>
       </div>
     </div>
@@ -93,9 +93,9 @@
   <!-- ============ SERVICES ============ -->
   <section class="section" id="services">
     <div class="section-head">
-      <p class="kicker" data-i18n="services.kicker">Что заказывают</p>
-      <h2 class="section-title" data-i18n="services.title">Боты и цены</h2>
-      <p class="section-lead" data-i18n="services.lead">Цены — стартовые, финальная зависит от объёма. Точную смету называю после короткого разговора.</p>
+      <p class="kicker" data-i18n="services.kicker">Що замовляють</p>
+      <h2 class="section-title" data-i18n="services.title">Послуги та ціни</h2>
+      <p class="section-lead" data-i18n="services.lead">Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаю після короткої розмови.</p>
     </div>
     <ul class="price-list" id="priceList"></ul>
   </section>
@@ -103,8 +103,8 @@
   <!-- ============ PROCESS ============ -->
   <section class="section section-alt" id="process">
     <div class="section-head">
-      <p class="kicker" data-i18n="process.kicker">Как это устроено</p>
-      <h2 class="section-title" data-i18n="process.title">Четыре шага до запуска</h2>
+      <p class="kicker" data-i18n="process.kicker">Як це влаштовано</p>
+      <h2 class="section-title" data-i18n="process.title">Чотири кроки до запуску</h2>
     </div>
     <ol class="steps" id="steps"></ol>
   </section>
@@ -112,28 +112,28 @@
   <!-- ============ WORK / GITHUB ============ -->
   <section class="section" id="work">
     <div class="section-head">
-      <p class="kicker" data-i18n="work.kicker">Открытый код</p>
-      <h2 class="section-title" data-i18n="work.title">Репозитории</h2>
-      <p class="section-lead" data-i18n="work.lead">Подтягивается с GitHub автоматически — сортировка по звёздам.</p>
+      <p class="kicker" data-i18n="work.kicker">Відкритий код</p>
+      <h2 class="section-title" data-i18n="work.title">Репозиторії</h2>
+      <p class="section-lead" data-i18n="work.lead">Підтягується з GitHub автоматично — сортування за зірками.</p>
     </div>
 
     <div class="stats-row" id="statsRow">
-      <div class="stat"><b class="stat-num" data-stat="repos">—</b><span data-stat-label="repos">репозиториев</span></div>
-      <div class="stat"><b class="stat-num" data-stat="stars">—</b><span data-stat-label="stars">звёзд</span></div>
-      <div class="stat"><b class="stat-num" data-stat="followers">—</b><span data-stat-label="followers">подписчиков</span></div>
-      <div class="stat"><b class="stat-num" data-stat="years">—</b><span data-stat-label="years">лет на GitHub</span></div>
+      <div class="stat"><b class="stat-num" data-stat="repos">—</b><span data-stat-label="repos">репозиторіїв</span></div>
+      <div class="stat"><b class="stat-num" data-stat="stars">—</b><span data-stat-label="stars">зірок</span></div>
+      <div class="stat"><b class="stat-num" data-stat="followers">—</b><span data-stat-label="followers">підписників</span></div>
+      <div class="stat"><b class="stat-num" data-stat="years">—</b><span data-stat-label="years">років на GitHub</span></div>
     </div>
 
     <div class="repos" id="repos" aria-live="polite"></div>
-    <a class="link-arrow" id="allRepos" href="https://github.com/virtuaall1?tab=repositories" target="_blank" rel="noopener noreferrer" data-i18n="work.all">Весь профиль</a>
+    <a class="link-arrow" id="allRepos" href="https://github.com/virtuaall1?tab=repositories" target="_blank" rel="noopener noreferrer" data-i18n="work.all">Увесь профіль</a>
   </section>
 
   <!-- ============ STACK ============ -->
   <section class="section section-alt" id="stack">
     <div class="section-head">
-      <p class="kicker" data-i18n="stack.kicker">Инструменты</p>
-      <h2 class="section-title" data-i18n="stack.title">На чём пишу</h2>
-      <p class="section-lead" data-i18n="stack.lead">Языки посчитаны по моим публичным репозиториям, остальное — то, с чем работаю каждый день.</p>
+      <p class="kicker" data-i18n="stack.kicker">Інструменти</p>
+      <h2 class="section-title" data-i18n="stack.title">Чим пишу</h2>
+      <p class="section-lead" data-i18n="stack.lead">Мови пораховані за моїми публічними репозиторіями, решта — те, з чим працюю щодня.</p>
     </div>
     <div class="stack-wrap">
       <div class="langs" id="langs"></div>
@@ -144,20 +144,20 @@
   <!-- ============ FAQ ============ -->
   <section class="section" id="faq">
     <div class="section-head">
-      <p class="kicker" data-i18n="faq.kicker">Без сюрпризов</p>
-      <h2 class="section-title" data-i18n="faq.title">Частые вопросы</h2>
+      <p class="kicker" data-i18n="faq.kicker">Без сюрпризів</p>
+      <h2 class="section-title" data-i18n="faq.title">Часті питання</h2>
     </div>
     <div class="faq-list" id="faqList"></div>
   </section>
 
   <!-- ============ CONTACT ============ -->
   <section class="section contact" id="contact">
-    <p class="kicker" data-i18n="contact.kicker">Дальше</p>
-    <h2 class="contact-title" data-i18n="contact.title">Расскажи, что нужно автоматизировать</h2>
-    <p class="section-lead" data-i18n="contact.lead">Опиши задачу в двух словах — отвечу, реально ли это, сколько будет стоить и сколько займёт.</p>
+    <p class="kicker" data-i18n="contact.kicker">Далі</p>
+    <h2 class="contact-title" data-i18n="contact.title">Розкажи, що треба автоматизувати</h2>
+    <p class="section-lead" data-i18n="contact.lead">Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.</p>
     <div class="contact-actions">
-      <a class="btn btn-solid btn-lg magnetic" id="tgLink" href="https://t.me/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="contact.tg">Написать в Telegram</a>
-      <a class="btn btn-line btn-lg magnetic" id="mailLink" href="mailto:virtuaall0@gmail.com" data-i18n="contact.mail">Почта</a>
+      <a class="btn btn-solid btn-lg magnetic" id="tgLink" href="https://t.me/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="contact.tg">Написати в Telegram</a>
+      <a class="btn btn-line btn-lg magnetic" id="mailLink" href="mailto:virtuaall0@gmail.com" data-i18n="contact.mail">Пошта</a>
     </div>
   </section>
 
@@ -165,7 +165,7 @@
 
 <footer class="footer">
   <span>© <span id="year">2026</span> virtuaall</span>
-  <span data-i18n="footer.rights">Собрано вручную, без конструкторов.</span>
+  <span data-i18n="footer.rights">Зібрано вручну, без конструкторів.</span>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>

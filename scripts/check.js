@@ -107,15 +107,18 @@ if (SITE) {
   }
 
   // и наоборот: обращения вида PLURALS[...] к полям, которых нет
+  // формы числа должны покрывать все категории, которые вернёт Intl.PluralRules
+  const LOCALES = { uk: 'uk-UA', en: 'en-GB' };
   const plurals = SITE.PLURALS || {};
-  for (const [lng, forms] of Object.entries(plurals)) {
-    for (const [key, list] of Object.entries(forms)) {
-      if (!Array.isArray(list) || list.length !== 3) {
-        fail(`склонения "${key}" (${lng}) должны быть массивом из трёх форм`);
+  for (const [lng, keys] of Object.entries(plurals)) {
+    const categories = new Intl.PluralRules(LOCALES[lng] || lng).resolvedOptions().pluralCategories;
+    for (const [key, forms] of Object.entries(keys)) {
+      for (const category of categories) {
+        if (!forms[category]) fail(`формы числа "${key}" (${lng}) не покрывают категорию "${category}"`);
       }
     }
   }
-  ok('склонения заданы тремя формами для каждого языка');
+  ok('формы числа покрывают все категории Intl.PluralRules');
 }
 
 /* ---------- 4. Внутренние якоря никуда не ведут в пустоту ---------- */
