@@ -82,8 +82,40 @@ if (!SITE) {
     SITE.PROCESS.forEach((p, i) => {
       if (!p[lang]) fail(`шаг #${i + 1} без перевода на "${lang}"`);
     });
+    (SITE.PROJECTS || []).forEach((p, i) => {
+      if (!p[lang]) fail(`проект #${i + 1} без перевода на "${lang}"`);
+      else if (!p[lang].name) fail(`у проекта #${i + 1} (${lang}) нет названия`);
+    });
   }
   ok(`услуги (${SITE.SERVICES.length}), шаги (${SITE.PROCESS.length}) и вопросы (${SITE.FAQ.length}) переведены`);
+}
+
+/* ---------- 3.5. app.js берёт из SITE только то, что там есть ---------- */
+if (SITE) {
+  const destructured = appJs.match(/const\s*\{([\s\S]*?)\}\s*=\s*window\.SITE/);
+  if (!destructured) {
+    fail('в app.js не найдено получение данных из window.SITE');
+  } else {
+    const names = destructured[1]
+      .split(',')
+      .map(s => s.trim().split(':')[0].trim())
+      .filter(Boolean);
+    for (const name of names) {
+      if (!(name in SITE)) fail(`app.js ждёт SITE.${name}, но content.js его не отдаёт`);
+    }
+    ok(`app.js использует ${names.length} полей конфига — все есть в content.js`);
+  }
+
+  // и наоборот: обращения вида PLURALS[...] к полям, которых нет
+  const plurals = SITE.PLURALS || {};
+  for (const [lng, forms] of Object.entries(plurals)) {
+    for (const [key, list] of Object.entries(forms)) {
+      if (!Array.isArray(list) || list.length !== 3) {
+        fail(`склонения "${key}" (${lng}) должны быть массивом из трёх форм`);
+      }
+    }
+  }
+  ok('склонения заданы тремя формами для каждого языка');
 }
 
 /* ---------- 4. Внутренние якоря никуда не ведут в пустоту ---------- */

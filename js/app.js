@@ -7,7 +7,10 @@
 (() => {
   'use strict';
 
-  const { LINKS, GITHUB_USER, SERVICES, PROCESS, FAQ, TICKER, EXTRA_STACK, I18N } = window.SITE;
+  const {
+    LINKS, GITHUB_USER, HIDDEN_REPOS, PROJECTS, SERVICES,
+    PROCESS, FAQ, TICKER, EXTRA_STACK, PLURALS, I18N
+  } = window.SITE;
 
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -81,6 +84,7 @@
     renderSteps();
     renderFaq();
     renderFigures();
+    refreshStats();
     if (state.repos) renderRepos(state.repos);
 
     if (booted) {
@@ -222,7 +226,7 @@
   /* =======================================================
      GitHub: живые данные + кэш, чтобы не упираться в лимит 60/час
      ======================================================= */
-  const state = { repos: null };
+  const state = { repos: null, stats: {} };
 
   const LANG_COLORS = {
     JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5', HTML: '#e34c26',
@@ -282,9 +286,65 @@
     requestAnimationFrame(step);
   }
 
-  function setStat(name, value) {
+  /** Славянские склонения: 1 репозиторий, 2 репозитория, 5 репозиториев */
+  function plural(n, forms) {
+    const abs = Math.abs(n) % 100;
+    const last = abs % 10;
+    if (abs > 10 && abs < 20) return forms[2];
+    if (last > 1 && last < 5) return forms[1];
+    if (last === 1) return forms[0];
+    return forms[2];
+  }
+
+  /** Ноль в счётчике выглядит хуже, чем его отсутствие — такую плитку прячем */
+  function setStat(name, value, hideIfZero = false) {
     const node = $(`[data-stat="${name}"]`);
-    if (node) countUp(node, value);
+    if (!node) return;
+
+    state.stats[name] = { value, hideIfZero };
+
+    const tile = node.closest('.stat');
+    if (!value && hideIfZero) {
+      if (tile) tile.hidden = true;
+      return;
+    }
+    if (tile) tile.hidden = false;
+
+    const label = $(`[data-stat-label="${name}"]`);
+    const forms = (PLURALS[lang] || PLURALS.ru)[name];
+    if (label && forms) label.textContent = plural(value, forms);
+
+    countUp(node, value);
+  }
+
+  /** После смены языка подписи пересчитываем заново */
+  function refreshStats() {
+    Object.entries(state.stats).forEach(([name, { value, hideIfZero }]) => setStat(name, value, hideIfZero));
+  }
+
+  /** Работы, которых нет в открытом доступе — из конфига */
+  function renderProjects(wrap) {
+    (PROJECTS || []).forEach(project => {
+      const copy = project[lang] || project.ru;
+      if (!copy) return;
+
+      const meta = el('div', { class: 'repo-meta' });
+      (copy.tags || []).slice(0, 3).forEach(tag => meta.append(el('span', { text: tag })));
+      if (project.year) meta.append(el('span', { text: project.year }));
+
+      const body = el('div', {},
+        el('h3', { class: 'repo-name', text: copy.name }),
+        copy.desc ? el('p', { class: 'repo-desc', text: copy.desc }) : null
+      );
+
+      const attrs = { class: revealCls('repo') };
+      if (project.link) {
+        Object.assign(attrs, { href: project.link, target: '_blank', rel: 'noopener noreferrer' });
+        wrap.append(el('a', attrs, body, meta));
+      } else {
+        wrap.append(el('div', attrs, body, meta));
+      }
+    });
   }
 
   function renderRepos(repos) {
@@ -292,8 +352,14 @@
     if (!wrap) return;
     wrap.textContent = '';
 
+    renderProjects(wrap);
+
     if (!repos.length) {
-      wrap.append(el('p', { class: 'state-msg', text: t('work.empty') }));
+      // если своих проектов нет и репозиториев тоже — честно говорим об этом
+      if (!(PROJECTS || []).length) {
+        wrap.append(el('p', { class: 'state-msg', text: t('work.empty') }));
+      }
+      refreshAnimations();
       return;
     }
 
@@ -366,22 +432,28 @@
     if (profile.status === 'fulfilled') {
       const u = profile.value;
       setStat('repos', u.public_repos || 0);
-      setStat('followers', u.followers || 0);
+      setStat('followers', u.followers || 0, true);
       const years = (Date.now() - new Date(u.created_at).getTime()) / (365.25 * 24 * 3600 * 1000);
       setStat('years', Math.max(1, Math.round(years)));
     }
 
     if (repos.status !== 'fulfilled') {
+      // GitHub не ответил — свои проекты всё равно показываем
       if (reposWrap) {
         reposWrap.textContent = '';
-        reposWrap.append(el('p', { class: 'state-msg', text: t('work.error') }));
+        renderProjects(reposWrap);
+        if (!(PROJECTS || []).length) {
+          reposWrap.append(el('p', { class: 'state-msg', text: t('work.error') }));
+        }
+        refreshAnimations();
       }
       renderChips([]);
       return;
     }
 
-    const own = repos.value.filter(r => !r.fork);
-    setStat('stars', own.reduce((sum, r) => sum + r.stargazers_count, 0));
+    const hidden = new Set((HIDDEN_REPOS || []).map(n => n.toLowerCase()));
+    const own = repos.value.filter(r => !r.fork && !hidden.has(r.name.toLowerCase()));
+    setStat('stars', own.reduce((sum, r) => sum + r.stargazers_count, 0), true);
 
     const counts = {};
     own.forEach(r => { if (r.language) counts[r.language] = (counts[r.language] || 0) + 1; });
