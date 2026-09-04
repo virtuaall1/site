@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
 
 <title>v.studio — сайти, сервіси і Telegram-боти на Python, Java, Spring</title>
 <meta name="description" content="Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.">
@@ -20,18 +20,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.github.com">
-<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Literata:ital,opsz,wght@1,7..72,400&family=Onest:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <a class="skip-link" href="#main">Перейти до вмісту</a>
 
+<canvas id="grid-canvas" aria-hidden="true"></canvas>
+
 <header class="topbar">
   <a class="brand" href="#main">v<span class="brand-dot">.</span>studio</a>
 
   <nav class="nav" aria-label="Основна навігація">
-    <a href="#cases" data-i18n="nav.cases">Кейси</a>
     <a href="#services" data-i18n="nav.services">Послуги</a>
     <a href="#process" data-i18n="nav.process">Як працюю</a>
     <a href="#work" data-i18n="nav.work">Кейси</a>
@@ -91,16 +92,6 @@
     <div class="hero-figures" id="heroFigures" aria-hidden="true"></div>
   </section>
 
-  <!-- ============ ЖИВІ КЕЙСИ ============ -->
-  <section class="section" id="cases">
-    <div class="section-head">
-      <p class="kicker" data-i18n="cases.kicker">Можна відкрити</p>
-      <h2 class="section-title" data-i18n="cases.title">Живі кейси</h2>
-      <p class="section-lead" data-i18n="cases.lead">Не картинки, а робочі сторінки: бота можна пройти до кінця, а в застосунку перемкнути роль.</p>
-    </div>
-    <ul class="case-grid" id="caseGrid"></ul>
-  </section>
-
   <!-- ============ SERVICES ============ -->
   <section class="section" id="services">
     <div class="section-head">
@@ -148,7 +139,6 @@
     </div>
     <div class="stack-wrap">
       <div class="langs" id="langs"></div>
-      <p class="langs-note" id="langsNote" data-i18n="stack.langs" hidden>Мови пораховані за нашими публічними репозиторіями на GitHub.</p>
       <ul class="chips" id="chips"></ul>
     </div>
   </section>

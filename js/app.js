@@ -114,7 +114,6 @@
     $$('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
     $$('.lang-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
 
-    renderCases();
     renderServices();
     renderSteps();
     renderFaq();
@@ -149,42 +148,6 @@
   /* =======================================================
      Рендер статических блоков
      ======================================================= */
-  /** Кейси, які можна відкрити: беремо ті проєкти, у яких є знімок */
-  function renderCases() {
-    const grid = $('#caseGrid');
-    if (!grid) return;
-    grid.textContent = '';
-
-    const shown = (PROJECTS || []).filter(p => p.shot && p.link);
-    if (!shown.length) { grid.hidden = true; return; }
-
-    shown.forEach(project => {
-      const copy = project[lang] || project.uk;
-      if (!copy) return;
-
-      const shot = el('img', {
-        class: 'case-shot',
-        src: project.shot,
-        alt: copy.name,
-        width: '960',
-        height: '600',
-        loading: 'lazy'
-      });
-
-      const tags = el('div', { class: 'case-tags' });
-      (copy.tags || []).slice(0, 3).forEach(tag => tags.append(el('span', { text: tag })));
-
-      grid.append(el('li', { class: revealCls('case') },
-        el('a', { class: 'case-link', href: project.link, target: '_blank', rel: 'noopener noreferrer' },
-          el('span', { class: 'case-frame' }, shot),
-          el('h3', { class: 'case-name', text: copy.name }),
-          tags,
-          el('span', { class: 'case-open' }, el('span', { text: t('cases.open') }), el('span', { 'aria-hidden': 'true', text: '↗' }))
-        )
-      ));
-    });
-  }
-
   function renderServices() {
     const list = $('#priceList');
     if (!list) return;
@@ -241,20 +204,8 @@
         const figure = el('div', { class: 'ex-mock' });
         figure.append(mock.content.cloneNode(true));
 
-        const exText = el('div', { class: 'ex-side' }, el('p', { class: 'ex-text', text: example }));
-
-        // три послуги мають робоче демо — ведемо прямо туди
-        if (service.caseLink) {
-          exText.append(el('a', {
-            class: 'ex-case',
-            href: service.caseLink,
-            target: '_blank',
-            rel: 'noopener noreferrer'
-          }, el('span', { text: t('services.case') }), el('span', { 'aria-hidden': 'true', text: '↗' })));
-        }
-
         const panel = el('div', { class: 'price-example', id: panelId },
-          el('div', {}, el('div', { class: 'ex-body' }, figure, exText))
+          el('div', {}, el('div', { class: 'ex-body' }, figure, el('p', { class: 'ex-text', text: example })))
         );
 
         toggle.addEventListener('click', () => {
@@ -511,9 +462,7 @@
     if (!wrap) return;
     wrap.textContent = '';
 
-    const note = $('#langsNote');
-    if (!entries.length) { if (note) note.hidden = true; return; }
-    if (note) note.hidden = false;
+    if (!entries.length) return;
 
     const bar = el('div', { class: 'lang-bar' });
     const legend = el('ul', { class: 'lang-legend' });
