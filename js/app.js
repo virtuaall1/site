@@ -487,7 +487,17 @@
     const RADIUS = 150;
     let w = 0, h = 0, dpr = 1, dots = [];
     let pointer = { x: -9999, y: -9999 };
-    let running = true;
+    let rafId = null;
+
+    /* Держим ровно один цикл отрисовки: браузер может придержать
+       запланированный кадр на скрытой вкладке и отдать его уже после
+       того, как мы запустили новый — так набегает второй цикл. */
+    function start() {
+      if (rafId === null) rafId = requestAnimationFrame(frame);
+    }
+    function stop() {
+      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+    }
 
     function build() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -522,11 +532,9 @@
     let lastSparkPos = { x: 0, y: 0 };
 
     function frame(now) {
-      if (!running) return;
+      rafId = null;
       ctx.clearRect(0, 0, w, h);
 
-      const light = document.documentElement.dataset.theme === 'light';
-      const base = light ? '10, 10, 11' : '242, 239, 232';
       const seconds = now / 1000;
 
       // старые волны выбрасываем, чтобы массив не рос
@@ -574,7 +582,7 @@
         if (energy > 0.4) {
           ctx.fillStyle = `rgba(216, 255, 62, ${alpha})`;
         } else {
-          ctx.fillStyle = `rgba(${base}, ${alpha})`;
+          ctx.fillStyle = `rgba(242, 239, 232, ${alpha})`;
         }
         ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
       }
@@ -593,7 +601,7 @@
         ctx.fillText(s.char, s.x, s.y);
       }
 
-      requestAnimationFrame(frame);
+      start();
     }
 
     window.addEventListener('pointermove', e => {
@@ -627,8 +635,8 @@
 
     // не жжём батарею на фоновой вкладке
     document.addEventListener('visibilitychange', () => {
-      running = !document.hidden;
-      if (running) requestAnimationFrame(frame);
+      if (document.hidden) stop();
+      else start();
     });
 
     let resizeTimer;
@@ -638,7 +646,7 @@
     });
 
     build();
-    requestAnimationFrame(frame);
+    start();
   }
 
   /* =======================================================

@@ -29,20 +29,6 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-[data-theme="light"] {
-  --ink: #f2efe8;
-  --ink-2: #e9e5db;
-  --ink-3: #dedad0;
-  --text: #0a0a0b;
-  --muted: #5c5c63;
-  --faint: #8e8e96;
-  --rule: rgba(10, 10, 11, 0.16);
-  --rule-soft: rgba(10, 10, 11, 0.08);
-  --bg: var(--ink);
-  --surface: var(--ink-2);
-  color-scheme: light;
-}
-
 *, *::before, *::after { box-sizing: border-box; }
 
 [hidden] { display: none !important; }
