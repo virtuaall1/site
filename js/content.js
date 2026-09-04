@@ -32,7 +32,36 @@ window.SITE = (() => {
    *   en: { name: 'Clothing shop bot',  desc: '400-item catalogue, card payments, 1,200 orders in the first month.',    tags: ['aiogram', 'PostgreSQL'] }
    * }
    */
-  const PROJECTS = [];
+  const PROJECTS = [
+    {
+      year: '2026',
+      link: 'https://github.com/virtuaall1/telegram-shop-bot',
+      uk: {
+        name: 'Telegram-бот магазину',
+        desc: 'Каталог за категоріями, кошик, оформлення замовлення в три кроки і сповіщення адміну про кожну покупку. Ціни зберігаються в копійках, а назва й ціна фіксуються на момент покупки — зміна каталогу не переписує старі замовлення.',
+        tags: ['Python', 'aiogram 3', 'SQLite']
+      },
+      en: {
+        name: 'Telegram shop bot',
+        desc: 'Catalogue by category, cart, a three-step checkout and an instant admin notification for every order. Prices are stored in cents, and each order keeps the title and price it was made with, so catalogue edits never rewrite past orders.',
+        tags: ['Python', 'aiogram 3', 'SQLite']
+      }
+    },
+    {
+      year: '2026',
+      link: 'https://virtuaall1.github.io/cafe-landing/',
+      uk: {
+        name: 'Лендинг кав’ярні «Обжарка»',
+        desc: 'Односторінковий сайт: меню з цінами, етапи обсмажування, адреса і форма заявки з валідацією. Ілюстрації намальовані в SVG, тож сторінка не тягне жодного стокового фото.',
+        tags: ['HTML', 'CSS', 'JavaScript']
+      },
+      en: {
+        name: 'Coffee shop landing page',
+        desc: 'A one-page site: menu with prices, the roasting process, address and a validated order form. Illustrations are drawn in SVG, so the page pulls no stock photography at all.',
+        tags: ['HTML', 'CSS', 'JavaScript']
+      }
+    }
+  ];
 
   const SERVICES = [
     {
@@ -288,9 +317,9 @@ window.SITE = (() => {
       'services.orderText': 'Вітаю! Цікавить: {name}. Розкажіть, будь ласка, про строки та ціну.',
       'process.kicker': 'Як це влаштовано',
       'process.title': 'Чотири кроки до запуску',
-      'work.kicker': 'Відкритий код',
-      'work.title': 'Репозиторії',
-      'work.lead': 'Підтягується з GitHub автоматично — сортування за зірками.',
+      'work.kicker': 'Портфоліо',
+      'work.title': 'Роботи',
+      'work.lead': 'Проєкти й відкритий код. Репозиторії підтягуються з GitHub автоматично.',
       'work.empty': 'Поки немає публічних репозиторіїв.',
       'work.error': 'GitHub не відповідає. Зазирни в профіль напряму.',
       'work.updated': 'оновлено',
@@ -337,9 +366,9 @@ window.SITE = (() => {
       'services.orderText': 'Hi! I am interested in: {name}. Could you tell me about the timeline and price?',
       'process.kicker': 'How it works',
       'process.title': 'Four steps to launch',
-      'work.kicker': 'Open source',
-      'work.title': 'Repositories',
-      'work.lead': 'Pulled from GitHub automatically, sorted by stars.',
+      'work.kicker': 'Portfolio',
+      'work.title': 'Work',
+      'work.lead': 'Projects and open source. Repositories are pulled from GitHub automatically.',
       'work.empty': 'No public repositories yet.',
       'work.error': 'GitHub is not responding. Have a look at the profile directly.',
       'work.updated': 'updated',
