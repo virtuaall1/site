@@ -669,19 +669,56 @@
     }
 
     const hidden = new Set((HIDDEN_REPOS || []).map(n => n.toLowerCase()));
-    const own = repos.value.filter(r => !r.fork && !hidden.has(r.name.toLowerCase()));
+    const notFork = repos.value.filter(r => !r.fork);
+    // HIDDEN_REPOS прячет репозиторий из карточек проектов — и только.
+    // Код в нём такой же наш, поэтому в подсчёт языков он входит:
+    // там лежит и сам сайт, и три сайта из кейсов.
+    const own = notFork.filter(r => !hidden.has(r.name.toLowerCase()));
     setStat('stars', own.reduce((sum, r) => sum + r.stargazers_count, 0), true);
-
-    const counts = {};
-    own.forEach(r => { if (r.language) counts[r.language] = (counts[r.language] || 0) + 1; });
-    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    const total = entries.reduce((s, [, c]) => s + c, 0);
-
-    renderLangs(entries.slice(0, 6), total || 1);
-    renderChips(entries.map(([name]) => name));
+    renderLangs([], 1);                       // до ответа полосу не рисуем
 
     state.repos = [...own].sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, 6);
     renderRepos(state.repos);
+    await renderStack(notFork);
+  }
+
+  /**
+   * Языки — по объёму кода, а не по числу репозиториев.
+   *
+   * Прошлый способ считал репозитории: один проект на Java давал
+   * «Java 100%», хотя рядом лежат сайт студии и три сайта из
+   * кейсов на js, css и html. GitHub отдаёт байты по языкам
+   * отдельной ручкой на каждый репозиторий — берём её.
+   *
+   * Восемь штук, а не все: без токена GitHub даёт 60 запросов в
+   * час на адрес, и незачем тратить их на давно заброшенное.
+   * Ответы лежат в sessionStorage полчаса.
+   */
+  async function renderStack(repos) {
+    const counted = repos.slice(0, 8);
+    const answers = await Promise.allSettled(counted.map(
+      r => api(`/repos/${GITHUB_USER}/${r.name}/languages`, `gh:lang:${r.name}`)
+    ));
+
+    const bytes = {};
+    let measured = 0;
+    answers.forEach(res => {
+      if (res.status !== 'fulfilled') return;
+      measured++;
+      Object.entries(res.value).forEach(([name, n]) => { bytes[name] = (bytes[name] || 0) + n; });
+    });
+
+    // ни один запрос не прошёл — откатываемся к грубому счёту по репозиториям
+    if (!measured) counted.forEach(r => { if (r.language) bytes[r.language] = (bytes[r.language] || 0) + 1; });
+
+    const all = Object.entries(bytes).sort((a, b) => b[1] - a[1]);
+    const total = all.reduce((s, [, n]) => s + n, 0) || 1;
+    // меньше процента — это случайный Shell или Dockerfile на пару
+    // килобайт: в легенде он всё равно нарисуется как «0%»
+    const entries = all.filter(([, n]) => n / total >= 0.01);
+
+    renderLangs(entries.slice(0, 6), total);
+    renderChips(entries.map(([name]) => name));
   }
 
   /* =======================================================
