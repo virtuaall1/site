@@ -52,6 +52,51 @@ window.SITE = (() => {
   const PROJECTS = [
     {
       year: '2026',
+      link: 'https://virtuaall1.github.io/site/cases/booking/',
+      shot: 'img/cases/booking.jpg',
+      uk: {
+        name: 'Запис до майстра — Telegram-бот',
+        desc: 'Демо бота запису. Вільні вікна рахуються з графіка й уже зайнятого часу, причому послуга займає не клітинку, а свою тривалість — тому «стрижка з бородою» не пропонується за чверть години до закриття. Подвійний запис неможливий: унікальність тримає сама база, а не перевірка в коді. Бот нагадує за добу й за дві години, а на скасування сам зве першого з листа очікування.',
+        tags: ['Python', 'aiogram', 'SQLite']
+      },
+      en: {
+        name: 'Appointment booking Telegram bot',
+        desc: 'A booking bot demo. Free slots come from the schedule and what is already taken, and a service occupies its real duration — so a 75-minute job is never offered fifteen minutes before closing. Double booking is impossible: uniqueness is held by the database itself, not by a check in the code. The bot reminds a day and two hours ahead, and on a cancellation it calls the first person on the waitlist by itself.',
+        tags: ['Python', 'aiogram', 'SQLite']
+      }
+    },
+    {
+      year: '2026',
+      link: 'https://virtuaall1.github.io/site/cases/guard/',
+      shot: 'img/cases/guard.jpg',
+      uk: {
+        name: 'Модератор чату — Telegram-бот',
+        desc: 'Демо бота модерації. Новачкам капча, посилання від них видаляються, розсилки й повтори ловляться навіть коли їх пишуть латиницею всередині кирилиці. Покарання йдуть драбинкою, а лічильник порушень старіє за тиждень. Кожна дія пояснюється причиною: без неї адміністратор перестає довіряти боту й вимикає його.',
+        tags: ['Python', 'aiogram', 'SQLite']
+      },
+      en: {
+        name: 'Chat moderation Telegram bot',
+        desc: 'A moderation bot demo. Newcomers get a captcha, their links are removed, and spam or repeats are caught even when written in Latin letters inside Cyrillic words. Penalties escalate step by step, and the strike counter ages out over a week. Every action states its reason: without one, an admin stops trusting the bot and turns it off.',
+        tags: ['Python', 'aiogram', 'SQLite']
+      }
+    },
+    {
+      year: '2026',
+      link: 'https://virtuaall1.github.io/site/cases/spend/',
+      shot: 'img/cases/spend.jpg',
+      uk: {
+        name: 'Облік витрат — Telegram-бот',
+        desc: 'Демо бота обліку без жодного меню: пишеш «120 кава» — і все. Сума читається в будь-якому порядку слів, категорія підбирається за словником і за основою слова, бо українська відмінюється. Виправив категорію — бот запамʼятав це слово за нею, і твій словник стає головнішим за загальний. Ліміти попереджають на 80 %, а не коли гроші вже скінчились.',
+        tags: ['Python', 'aiogram', 'SQLite']
+      },
+      en: {
+        name: 'Expense tracking Telegram bot',
+        desc: 'An expense bot demo with no menus at all: you type “120 coffee” and that is it. The amount is read in any word order, and the category is guessed from a dictionary and from word stems, because Ukrainian inflects. Correct a category once and the bot remembers that word for it, so your own vocabulary outranks the built-in one. Limits warn at 80 %, not after the money is gone.',
+        tags: ['Python', 'aiogram', 'SQLite']
+      }
+    },
+    {
+      year: '2026',
       link: 'https://virtuaall1.github.io/site/cases/orbita/',
       shot: 'img/cases/orbita.jpg',
       uk: {
@@ -138,6 +183,7 @@ window.SITE = (() => {
     },
     {
       id: 'bot',
+      caseLink: 'https://virtuaall1.github.io/site/cases/guard/',
       example: {
         uk: 'Приклад: бот стоматології нагадує про візит за добу і збирає відгуки, а нових у чаті зустрічає капча.',
         en: "Example: a clinic bot reminds patients a day before the visit and collects reviews, while a captcha meets newcomers in the chat."

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Модератор чату — кейс v.studio</title>
+<meta name="description" content="Демонстрація Telegram-бота модерації: капча новачкам, ловля розсилок, флуду й капсу, покарання драбинкою. Кожну ситуацію можна запустити прямо тут.">
+<meta name="theme-color" content="#ededea">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23232322'/%3E%3Cpath d='M16 5l10 4v7c0 6-4 10-10 11-6-1-10-5-10-11V9z' stroke='%23c6f24d' stroke-width='2.4' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Literata:ital,opsz,wght@1,7..72,400&family=Onest:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_ui/ui.css">
+<link rel="stylesheet" href="../_ui/demo.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#demo">Перейти до демо</a>
+
+<header class="head">
+  <a class="logo" href="#top">Вар<i>та</i></a>
+  <p class="head-note">Модератор чату · демо</p>
+  <a class="round head-cta" href="../../" aria-label="До студії">↗</a>
+</header>
+
+<main>
+
+  <section class="wrap band" id="top">
+    <div class="arch hero">
+      <p class="chip">Telegram-бот модерації</p>
+
+      <h1 class="duo duo-flip">
+        <b>що не спить і не втомлюється</b>
+        <i>Модератор,</i>
+      </h1>
+
+      <p class="lede">
+        Розсилки приходять о третій ночі, коли адмін спить. Нижче той самий
+        бот у браузері: натисни будь-яку ситуацію зліва й подивись, що він
+        зробить — і головне, як пояснить, за що.
+      </p>
+
+      <p class="run"><span class="run-dot" aria-hidden="true"></span>Демо працює тут, у вкладці. Нічого нікуди не йде.</p>
+    </div>
+  </section>
+
+  <section class="wrap band-tight" id="demo">
+    <div class="stage">
+
+      <div class="phone-col">
+        <div class="phone">
+          <div class="phone-bar">
+            <span class="phone-av" aria-hidden="true">В</span>
+            <span class="phone-who">
+              <b>Чат спільноти</b>
+              <i id="members">учасників: 248</i>
+            </span>
+          </div>
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Чат"></div>
+        </div>
+        <button class="pill pill-line pill-sm" type="button" id="restart">Очистити чат</button>
+      </div>
+
+      <aside class="admin card">
+        <div class="card-head">
+          <h2>Що може статися</h2>
+          <p class="hint">Натисни — і подивись реакцію</p>
+        </div>
+
+        <div class="admin-body cases-body">
+          <div class="case-list" id="cases"></div>
+
+          <div class="ladder">
+            <h3>Драбинка покарань</h3>
+            <ol>
+              <li><b>1–2</b> попередження в чат</li>
+              <li><b>3–4</b> година мовчання</li>
+              <li><b>5+</b> доба мовчання</li>
+            </ol>
+            <p class="hint">Лічильник старіє: порушення тижневої давності вже не рахується.</p>
+          </div>
+        </div>
+
+        <dl class="tiles" id="sum"></dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap band" id="notes">
+    <h2 class="duo"><b>Що всередині</b><i>і чому саме так</i></h2>
+
+    <div class="acc">
+      <details open>
+        <summary>Капча — арифметика, а не картинка</summary>
+        <div class="acc-body">
+          Живій людині це коштує секунди, а автоматичній реєстрації —
+          зусиль, які на такому чаті не окупаються. Не відповів за дві
+          хвилини — кік із негайним розбаном: не покарання, а фільтр,
+          зайти можна знову.
+        </div>
+      </details>
+      <details>
+        <summary>Обхід фільтра через схожі літери</summary>
+        <div class="acc-body">
+          «Зapaбoтoк» латиницею всередині кирилиці читається людиною
+          однаково, а фільтром — ні. Тому текст приводиться до спільного
+          вигляду. Тут є пастка, на якій ми вже спіймалися: словник треба
+          приводити до того самого вигляду, інакше захист від обходу ламає
+          розпізнавання звичайного спаму. Це впіймали тести.
+        </div>
+      </details>
+      <details>
+        <summary>Новачкам не можна посилання</summary>
+        <div class="acc-body">
+          Перша доба й перші двадцять повідомлень — без посилань. Це не
+          недовіра, а те, що відсікає майже всі розсилки: справжній учасник
+          не приходить у чат, щоб одразу кинути лінк.
+        </div>
+      </details>
+      <details>
+        <summary>Кожна дія з причиною</summary>
+        <div class="acc-body">
+          Бот пише, за що саме прибрав повідомлення, і сам стирає цю
+          службову репліку за хвилину. Без причини адмін перестає довіряти
+          боту й вимикає його — це найчастіша причина, чому модерація в
+          чатах не приживається.
+        </div>
+      </details>
+      <details>
+        <summary>Службові повідомлення прибираються</summary>
+        <div class="acc-body">
+          «Такий-то приєднався» в активному чаті — половина стрічки.
+          Бот прибирає їх одразу, лишаючи тільки розмову.
+        </div>
+      </details>
+    </div>
+
+    <ul class="tags facts">
+      <li class="tag">Python · aiogram 3</li>
+      <li class="tag">SQLite</li>
+      <li class="tag">Капча з таймаутом</li>
+      <li class="tag">Стоп-слова чату</li>
+      <li class="tag">Тихий режим уночі</li>
+    </ul>
+  </section>
+
+  <section class="wrap band-tight">
+    <div class="card card-dark end">
+      <h2 class="duo duo-left"><b>Треба такий самий</b><i>у свій чат?</i></h2>
+      <p class="lede">Правила лежать окремим файлом і перевіряються тестами — під інший чат налаштовується без переписування бота.</p>
+      <a class="pill pill-lime" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer">Написати в Telegram</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span class="foot-mark">v.studio</span>
+  <span>Демонстраційний проєкт</span>
+</footer>
+
+<script src="js/rules.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>

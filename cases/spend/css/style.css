@@ -1,0 +1,50 @@
+/* Кейс «Облік витрат». Телефон и панель — в ../_ui/demo.css. */
+
+.hero { display: grid; justify-items: center; }
+.hero .duo { margin-top: 20px; }
+
+.run {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin: 26px 0 0; padding: 9px 16px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  font-size: 13px; color: var(--muted);
+}
+.run-dot { width: 8px; height: 8px; border-radius: 50%; background: #2fa36a; }
+
+.say { display: flex; border-top: 1px solid #33332f; background: #17171a; }
+.say input {
+  flex: 1; min-width: 0; padding: 14px 16px;
+  border: 0; background: none; color: #efeee8; font: inherit; font-size: 14px;
+}
+.say input:focus { outline: none; }
+.say input::placeholder { color: #77776f; }
+.say button { width: 54px; border: 0; background: none; color: var(--lime); font-size: 19px; cursor: pointer; }
+
+.quick { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+.warn { color: #d9b93a; }
+.warn.red { color: #d96a4a; }
+
+.report { padding: 20px clamp(20px, 3vw, 28px) 24px; overflow-y: auto; }
+.empty { margin: 0 0 4px; color: var(--faint); font-size: 14px; }
+
+.bars, .limits ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.bars li, .limits li {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(0, 1fr) auto;
+  gap: 12px; align-items: center; font-size: 13.5px;
+}
+.bar-name { color: var(--muted); }
+.bar-track { height: 12px; border-radius: 999px; background: #e4e3dd; overflow: hidden; }
+.bar-track i { display: block; height: 100%; background: var(--lime); }
+.bar-track.near i { background: #e8d24a; }
+.bar-track.over i { background: #d96a4a; }
+.bar-sum { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--faint); }
+
+.limits { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.limits h3 { margin: 0 0 14px; font-family: var(--f-caps); font-weight: 700; font-size: 15px; }
+.limits .hint { margin-top: 12px; }
+
+.facts { margin-top: 30px; }
+.end { display: grid; justify-items: start; gap: 18px; }
+.end .lede { margin: 0; max-width: 620px; }

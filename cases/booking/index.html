@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Запис до майстра — кейс v.studio</title>
+<meta name="description" content="Демонстрація Telegram-бота запису: вільні вікна рахуються з графіка, подвійний запис неможливий, нагадування і лист очікування працюють самі. Бота можна пройти прямо тут.">
+<meta name="theme-color" content="#ededea">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23232322'/%3E%3Cpath d='M9 7v4M23 7v4M6 14h20M8 11h16v14H8z' stroke='%23c6f24d' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Literata:ital,opsz,wght@1,7..72,400&family=Onest:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_ui/ui.css">
+<link rel="stylesheet" href="../_ui/demo.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#demo">Перейти до демо</a>
+
+<header class="head">
+  <a class="logo" href="#top">Кри<i>ва</i></a>
+  <p class="head-note">Барбершоп · бот запису · демо</p>
+  <a class="round head-cta" href="../../" aria-label="До студії">↗</a>
+</header>
+
+<main>
+
+  <!-- ================= ШАПКА ================= -->
+  <section class="wrap band" id="top">
+    <div class="arch hero">
+      <p class="chip">Telegram-бот запису</p>
+
+      <h1 class="duo duo-flip">
+        <b>що не питає «коли вам зручно»</b>
+        <i>Запис,</i>
+      </h1>
+
+      <p class="lede">
+        Клієнт бачить лише вільний час — той, у який справді можна прийти.
+        Нижче той самий бот у браузері: запишись і подивись, як запис
+        одразу з’явиться в кабінеті майстра, а вікно зникне з сітки.
+      </p>
+
+      <p class="run"><span class="run-dot" aria-hidden="true"></span>Демо працює тут, у вкладці. Нічого нікуди не йде.</p>
+    </div>
+  </section>
+
+  <!-- ================= ДЕМО ================= -->
+  <section class="wrap band-tight" id="demo">
+    <div class="stage">
+
+      <div class="phone-col">
+        <div class="phone">
+          <div class="phone-bar">
+            <span class="phone-av" aria-hidden="true">К</span>
+            <span class="phone-who">
+              <b>Крива · запис</b>
+              <i id="botState">бот</i>
+            </span>
+          </div>
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Переписка з ботом"></div>
+        </div>
+        <button class="pill pill-line pill-sm" type="button" id="restart">Почати спочатку</button>
+      </div>
+
+      <aside class="admin card">
+        <div class="card-head">
+          <h2>Кабінет майстра</h2>
+          <p class="hint">Той самий запис з іншого боку</p>
+        </div>
+
+        <div class="admin-body">
+          <div class="day-tabs" id="dayTabs" role="tablist" aria-label="День"></div>
+          <div class="grid" id="grid"></div>
+        </div>
+
+        <dl class="tiles" id="sum"></dl>
+      </aside>
+    </div>
+
+    <div class="wait-strip card" id="waitStrip" hidden>
+      <p><b>Лист очікування.</b> <span id="waitText"></span></p>
+      <button class="pill pill-lime pill-sm" type="button" id="freeUp">Скасувати чужий запис об 11:00</button>
+    </div>
+  </section>
+
+  <!-- ================= ЩО ВСЕРЕДИНІ ================= -->
+  <section class="wrap band" id="notes">
+    <h2 class="duo"><b>Що всередині</b><i>і чому саме так</i></h2>
+
+    <div class="acc">
+      <details open>
+        <summary>Послуга займає час, а не клітинку</summary>
+        <div class="acc-body">
+          Сітка йде з кроком 15 хвилин, але «стрижка + борода» — це 75 хвилин
+          поспіль. Вікно годиться, тільки якщо вільний увесь відрізок і він
+          цілком влазить у зміну. Без цього бот бадьоро записує на 19:45
+          при закритті о 20:00 — і майстер лишається розбиратися сам.
+        </div>
+      </details>
+      <details>
+        <summary>Подвійний запис неможливий у принципі</summary>
+        <div class="acc-body">
+          Двоє можуть натиснути на одне вікно в одну секунду. Перевірка в коді
+          тут не рятує: між «подивився» і «записав» проходить час. Тому
+          унікальність тримає сама база — індекс на майстра й час серед живих
+          записів. Другий вставити просто не вийде, і бот чесно каже «цей час
+          щойно зайняли».
+        </div>
+      </details>
+      <details>
+        <summary>Два нагадування, а не одне</summary>
+        <div class="acc-body">
+          За добу — щоб іще можна було перенести. За дві години — щоб уже просто
+          не забути. Мітка про відправку лежить у базі, тому перезапуск бота не
+          розсилає все заново.
+        </div>
+      </details>
+      <details>
+        <summary>Скасування нікуди не зникає</summary>
+        <div class="acc-body">
+          Щойно хтось відмовився, бот сам пише першому з листа очікування —
+          з готовою кнопкою на це саме вікно. Ніхто не має помічати діру в
+          розкладі вручну.
+        </div>
+      </details>
+      <details>
+        <summary>Не приходять — це видно</summary>
+        <div class="acc-body">
+          Майстер відмічає «прийшов» або «не прийшов» однією кнопкою. Неявки
+          рахуються за клієнтом, і власник бачить їх у звіті поруч із виторгом
+          і завантаженням по кожному майстру.
+        </div>
+      </details>
+    </div>
+
+    <ul class="tags facts">
+      <li class="tag">Python · aiogram 3</li>
+      <li class="tag">SQLite</li>
+      <li class="tag">Нагадування за 24 год і 2 год</li>
+      <li class="tag">Лист очікування</li>
+      <li class="tag">Звіти й вигрузка CSV</li>
+    </ul>
+  </section>
+
+  <!-- ================= КІНЕЦЬ ================= -->
+  <section class="wrap band-tight">
+    <div class="card card-dark end">
+      <h2 class="duo duo-left"><b>Треба такий самий</b><i>під твій салон?</i></h2>
+      <p class="lede">Послуги, майстри й графік лежать в одному файлі налаштувань — під інший бізнес переробляється за вечір.</p>
+      <a class="pill pill-lime" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer">Написати в Telegram</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span class="foot-mark">v.studio</span>
+  <span>Демонстраційний проєкт</span>
+</footer>
+
+<script src="js/data.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>

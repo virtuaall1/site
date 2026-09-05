@@ -1,0 +1,71 @@
+/* Кейс «Модератор чату». Телефон и панель — в ../_ui/demo.css. */
+
+.hero { display: grid; justify-items: center; }
+.hero .duo { margin-top: 20px; }
+
+.run {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin: 26px 0 0; padding: 9px 16px;
+  border: 1px solid var(--rule); border-radius: 999px;
+  font-size: 13px; color: var(--muted);
+}
+.run-dot { width: 8px; height: 8px; border-radius: 50%; background: #2fa36a; }
+
+/* сообщения участников и реплики бота выглядят по-разному:
+   в живом чате их тоже не спутаешь */
+.gmsg {
+  align-self: flex-start;
+  max-width: 92%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  background: #2c2c2a;
+  color: #efeee8;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.gmsg b { display: block; margin-bottom: 3px; font-size: 12px; color: var(--lime); font-weight: 600; }
+.gmsg-gone { opacity: 0.42; text-decoration: line-through; text-decoration-color: #8a8a82; }
+
+.gbot {
+  align-self: stretch;
+  padding: 10px 13px;
+  border-left: 3px solid #4a4a44;
+  background: #1e1e20;
+  color: #d8d7d0;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.gbot .dim { color: #8f8f88; }
+.gbot-ok { border-left-color: #2fa36a; }
+.gbot-act { border-left-color: #d96a4a; }
+.gbot-cap { border-left-color: var(--lime); }
+.gbot-sys { border-left-color: #4a4a44; }
+
+.cases-body { padding: 18px clamp(20px, 3vw, 28px) 24px; overflow-y: auto; }
+
+.case-list { display: grid; gap: 8px; }
+.case-btn {
+  display: grid;
+  gap: 3px;
+  padding: 13px 16px;
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: none;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.case-btn:hover { border-color: #232322; background: #f2f1eb; }
+.case-btn b { font-size: 14px; font-weight: 600; }
+.case-btn i { font-style: normal; font-size: 12.5px; color: var(--muted); }
+
+.ladder { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.ladder h3 { margin: 0 0 12px; font-family: var(--f-caps); font-weight: 700; font-size: 15px; }
+.ladder ol { margin: 0; padding-left: 20px; display: grid; gap: 7px; font-size: 13.5px; }
+.ladder b { font-family: 'JetBrains Mono', monospace; font-size: 12.5px; }
+.ladder .hint { margin-top: 12px; }
+
+.facts { margin-top: 30px; }
+.end { display: grid; justify-items: start; gap: 18px; }
+.end .lede { margin: 0; max-width: 620px; }

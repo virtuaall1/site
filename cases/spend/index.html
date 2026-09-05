@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Облік витрат — кейс v.studio</title>
+<meta name="description" content="Демонстрація Telegram-бота обліку витрат: пишеш «120 кава» одним рядком, бот сам розбирає суму, підбирає категорію і вчиться на виправленнях. Спробуй прямо тут.">
+<meta name="theme-color" content="#ededea">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23232322'/%3E%3Cpath d='M7 24V13M14 24V8M21 24v-7M28 24H4' stroke='%23c6f24d' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Literata:ital,opsz,wght@1,7..72,400&family=Onest:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_ui/ui.css">
+<link rel="stylesheet" href="../_ui/demo.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#demo">Перейти до демо</a>
+
+<header class="head">
+  <a class="logo" href="#top">Ко<i>пійка</i></a>
+  <p class="head-note">Облік витрат · демо</p>
+  <a class="round head-cta" href="../../" aria-label="До студії">↗</a>
+</header>
+
+<main>
+
+  <section class="wrap band" id="top">
+    <div class="arch hero">
+      <p class="chip">Telegram-бот обліку</p>
+
+      <h1 class="duo duo-flip">
+        <b>у якому нема жодного меню</b>
+        <i>Облік витрат,</i>
+      </h1>
+
+      <p class="lede">
+        Пишеш <b>120 кава</b> — і все. Бот сам дістав суму, сам підібрав
+        категорію, сам записав. Помилився — виправляєш однією кнопкою, і
+        це слово він більше не плутає. Спробуй нижче: пиши будь-що зі
+        сумою, хоч «таксі 85,50», хоч «☕ 45 на виніс».
+      </p>
+
+      <p class="run"><span class="run-dot" aria-hidden="true"></span>Демо працює тут, у вкладці. Нічого нікуди не йде.</p>
+    </div>
+  </section>
+
+  <section class="wrap band-tight" id="demo">
+    <div class="stage">
+
+      <div class="phone-col">
+        <div class="phone">
+          <div class="phone-bar">
+            <span class="phone-av" aria-hidden="true">₴</span>
+            <span class="phone-who">
+              <b>Копійка · облік</b>
+              <i>бот</i>
+            </span>
+          </div>
+          <div class="chat" id="chat" role="log" aria-live="polite" aria-label="Переписка з ботом"></div>
+          <form class="say" id="say" autocomplete="off">
+            <input id="input" type="text" placeholder="120 кава" aria-label="Витрата">
+            <button type="submit" aria-label="Надіслати">↑</button>
+          </form>
+        </div>
+        <div class="quick" id="quick"></div>
+      </div>
+
+      <aside class="admin card">
+        <div class="card-head">
+          <h2>Звіт за місяць</h2>
+          <p class="hint">Рахується на льоту</p>
+        </div>
+
+        <div class="admin-body report">
+          <p class="empty" id="empty">Ще нічого не записано. Напиши витрату в чаті — з’явиться тут.</p>
+          <ul class="bars" id="bars"></ul>
+
+          <div class="limits" id="limits">
+            <h3>Ліміти</h3>
+            <ul id="limitList"></ul>
+            <p class="hint">Бот попереджає на 80 %, а не тоді, коли гроші вже скінчились.</p>
+          </div>
+        </div>
+
+        <dl class="tiles" id="sum"></dl>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap band" id="notes">
+    <h2 class="duo"><b>Що всередині</b><i>і чому саме так</i></h2>
+
+    <div class="acc">
+      <details open>
+        <summary>Розбір прощає все</summary>
+        <div class="acc-body">
+          Сума може стояти спереду чи ззаду, з комою чи крапкою, з емодзі й
+          зайвими пробілами. Якщо змусити людину писати «правильно», вона
+          перестане писати взагалі — а бот тримається рівно на тому, що це
+          робиться за три секунди.
+        </div>
+      </details>
+      <details>
+        <summary>Категорія вгадується, а не питається</summary>
+        <div class="acc-body">
+          Словник знає звичні слова, а українська ще й відмінюється — тому
+          порівнюються основи: «кавуська» ловиться на «каву». Правило грубе,
+          зате разом із навчанням дає точність, якої вистачає.
+        </div>
+      </details>
+      <details>
+        <summary>Вчиться саме на твоїх словах</summary>
+        <div class="acc-body">
+          Виправив категорію — бот запам’ятав кожне слово нотатки за нею, і
+          твій словник стає головнішим за загальний. «Зерно» у кав’ярні й у
+          фермера означає різне, і загальний словник тут не допоможе.
+        </div>
+      </details>
+      <details>
+        <summary>Гроші — цілими числами</summary>
+        <div class="acc-body">
+          У копійках. Дробові гроші рано чи пізно дають
+          <code>0.1 + 0.2 = 0.30000000000000004</code>, і на сотій операції
+          звіт перестає сходитись.
+        </div>
+      </details>
+      <details>
+        <summary>Підсумок приходить сам</summary>
+        <div class="acc-body">
+          У понеділок вранці — тиждень одним повідомленням. Позначка про
+          відправку лежить у базі, тому перезапуск не розсилає підсумок двічі.
+        </div>
+      </details>
+    </div>
+
+    <ul class="tags facts">
+      <li class="tag">Python · aiogram 3</li>
+      <li class="tag">SQLite</li>
+      <li class="tag">Навчання на виправленнях</li>
+      <li class="tag">Ліміти з попередженням</li>
+      <li class="tag">Вигрузка CSV</li>
+    </ul>
+  </section>
+
+  <section class="wrap band-tight">
+    <div class="card card-dark end">
+      <h2 class="duo duo-left"><b>Треба такий самий</b><i>під свою задачу?</i></h2>
+      <p class="lede">Категорії й словник лежать в одному файлі — під облік чого завгодно переробляється за вечір.</p>
+      <a class="pill pill-lime" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer">Написати в Telegram</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span class="foot-mark">v.studio</span>
+  <span>Демонстраційний проєкт</span>
+</footer>
+
+<script src="js/parse.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
