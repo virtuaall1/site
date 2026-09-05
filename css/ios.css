@@ -150,6 +150,117 @@ button { background: none; border: 0; padding: 0; cursor: pointer; }
 
 .wrap { width: min(100% - var(--pad) * 2, var(--wide)); margin-inline: auto; }
 
+
+/* =========================================================
+   Стекло (Liquid Glass)
+
+   Размытие само по себе ничего не даёт: если под ним ровная
+   заливка, размывать нечего и панель выглядит как обычная серая
+   плашка. Поэтому сначала — фон, который стоит размывать: три
+   больших мягких пятна тоном акцента. Они не декор, а материал,
+   из которого стекло берёт цвет.
+   ========================================================= */
+
+:root {
+  /* прозрачность материала: светлой теме нужно больше плотности,
+     иначе текст на стекле теряется */
+  --glass: color-mix(in srgb, var(--surface) 62%, transparent);
+  --glass-strong: color-mix(in srgb, var(--surface) 78%, transparent);
+  --glass-edge: rgba(255, 255, 255, 0.75);
+  --glass-edge-dim: rgba(0, 0, 0, 0.07);
+  --blur: saturate(180%) blur(28px);
+  --blur-soft: saturate(160%) blur(16px);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --glass: color-mix(in srgb, var(--surface) 55%, transparent);
+    --glass-strong: color-mix(in srgb, var(--surface) 72%, transparent);
+    --glass-edge: rgba(255, 255, 255, 0.14);
+    --glass-edge-dim: rgba(255, 255, 255, 0.07);
+  }
+}
+:root[data-theme="dark"] {
+  --glass: color-mix(in srgb, var(--surface) 55%, transparent);
+  --glass-strong: color-mix(in srgb, var(--surface) 72%, transparent);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-edge-dim: rgba(255, 255, 255, 0.07);
+}
+
+/* Атмосфера под стеклом. Пятна огромные и почти прозрачные —
+   на глаз это не «градиентный фон», а лёгкое свечение, которое
+   становится видно только сквозь размытие. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -20vh -10vw;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40vw 40vw at 10% 6%, color-mix(in srgb, var(--tint) 38%, transparent), transparent 60%),
+    radial-gradient(34vw 34vw at 90% 20%, color-mix(in srgb, var(--tint) 24%, transparent), transparent 58%),
+    radial-gradient(44vw 44vw at 55% 78%, color-mix(in srgb, var(--tint) 28%, transparent), transparent 62%),
+    radial-gradient(30vw 30vw at 25% 55%, color-mix(in srgb, var(--tint) 18%, transparent), transparent 58%);
+  filter: blur(30px);
+}
+
+/* Материал. Свет по верхней кромке — то, что отличает стекло от
+   полупрозрачного прямоугольника: у настоящей толщи есть блик. */
+.glass {
+  background: var(--glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge-dim);
+  box-shadow:
+    inset 0 1px 0 var(--glass-edge),
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    0 12px 32px rgba(0, 0, 0, 0.08);
+}
+.glass-strong {
+  background: var(--glass-strong);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+}
+
+/* Плавающая круглая кнопка — как × и ••• поверх содержимого */
+.float {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--glass-strong);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge-dim);
+  box-shadow: inset 0 1px 0 var(--glass-edge), 0 6px 18px rgba(0, 0, 0, 0.14);
+  color: var(--text);
+  transition: transform 0.25s var(--ease), background 0.25s var(--ease);
+}
+.float:hover { background: var(--glass-strong); transform: scale(1.06); }
+.float:active { transform: scale(0.94); }
+
+/* Ручка-хваталка у раскрывающихся блоков — прямо из системных шторок */
+.grabber {
+  display: block;
+  width: 36px;
+  height: 5px;
+  margin: 8px auto;
+  border-radius: 3px;
+  background: var(--fill-2);
+}
+
+/* Кому-то прозрачность мешает — система умеет об этом сказать.
+   Тогда стекло становится плотным, без размытия. */
+@media (prefers-reduced-transparency: reduce) {
+  :root { --glass: var(--surface); --glass-strong: var(--surface); }
+  .glass, .glass-strong, .float {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  body::before { display: none; }
+}
+
 /* ========================= типографика ========================= */
 
 .large-title { font-size: clamp(2rem, 7vw, 3.4rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1.05; }
