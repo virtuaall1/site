@@ -1,0 +1,21 @@
+{
+  // Настройки деплоя на Cloudflare.
+  //
+  // Без этого файла wrangler сам угадывает, что публиковать, и
+  // угадывает плохо: он взял корень репозитория целиком и упёрся в
+  // node_modules/workerd на 147 МБ («Asset too large»). Здесь прямо
+  // сказано: публикуем только dist — то, что собрал build.js.
+  //
+  // _headers с заголовками безопасности лежит внутри dist и
+  // подхватывается автоматически: Workers разбирает его сам и
+  // наружу как файл не отдаёт.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "site",
+  "compatibility_date": "2026-09-03",
+  "assets": {
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
