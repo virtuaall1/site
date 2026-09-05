@@ -262,7 +262,75 @@ body {
 /* =========================================================
    7. Сторіс — безпечні зони зверху й знизу
    ========================================================= */
-#story .pad { padding: 300px 92px 320px; }
+
+/* =========================================================
+   8. Друга партія макетів: сторіс, послуги, кейси, підбірка
+   ========================================================= */
+/* сторіс однакові в усіх макетах 9:16, а не лише в першому */
+.size-9x16 .pad { padding: 300px 92px 320px; }
+
+.lede    { font-size: 34px; line-height: 1.45; color: #cfccc4; max-width: 860px; }
+.lede-sm { font-size: 31px; line-height: 1.45; color: #cfccc4; max-width: 820px; }
+
+.price-cap { font-size: 24px; letter-spacing: 0.18em; text-transform: uppercase; color: #8d8d94; margin-bottom: 12px; }
+.price-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+
+/* стек і теги — рамкою, без заливки, щоб не сперечались із кислотним акцентом */
+.chips { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 14px; }
+.chips li { border: 1px solid var(--rule); padding: 14px 26px; font-size: 28px; color: #cfccc4; }
+.chips li.on { border-color: var(--acid); color: var(--acid); }
+
+/* порядок роботи: крок — і що в ньому відбувається */
+.flow { list-style: none; padding: 0; display: grid; }
+.flow li {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 24px;
+  align-items: baseline;
+  padding: 30px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 34px;
+  line-height: 1.25;
+}
+.flow li:last-child { border-bottom: 1px solid var(--rule); }
+.flow b { font-family: var(--f-display); font-weight: 600; font-size: 26px; color: var(--acid); }
+
+/* питання — відповідь */
+.qa { list-style: none; padding: 0; display: grid; }
+.qa li { padding: 32px 0; border-top: 1px solid var(--rule); }
+.qa li:last-child { border-bottom: 1px solid var(--rule); }
+.qa em {
+  display: block;
+  font-style: normal;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.qa p { font-size: 30px; line-height: 1.35; color: #cfccc4; }
+
+/* місце під рідний стікер інстаграму — пунктир на макет не піде, він орієнтир */
+.sticker {
+  border: 2px dashed rgba(216, 255, 62, 0.45);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 46px;
+  color: #8d8d94;
+  font-size: 25px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+/* справжній знімок кейсу всередині сторіс */
+.shot { display: block; width: 100%; border: 1px solid var(--rule); }
+/* у форматі 4:5 знімок обрізаємо: інакше підпис і підвал не влазять */
+.shot-crop { height: 420px; object-fit: cover; object-position: top center; }
+.link-line { font-size: 27px; color: var(--acid); letter-spacing: 0.02em; word-break: break-all; }
+
+.tail { margin-top: auto; }
 </style>
 </head>
 <body>
@@ -405,7 +473,7 @@ body {
       <ol class="steps">
         <li><b>Задача</b><span>Приймати замовлення без менеджера</span></li>
         <li><b>Зроблено</b><span>Каталог, кошик, оплата, адмінка</span></li>
-        <li><b>Термін</b><span>9 днів від брифу до запуску</span></li>
+        <li><b>Демо</b><span>Робочий приклад на сайті студії</span></li>
       </ol>
       <div class="foot" style="margin-top:auto">
         <span class="wordmark" style="color:#f2efe8">v.studio</span>
@@ -494,6 +562,479 @@ body {
       <div class="cta-plate">
         <span class="cta-name">@virtuaall01</span>
         <span class="cta-what">v.studio · написати</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     ДРУГА ПАРТІЯ: сторіс, послуги, кейси, підбірка
+     ================================================================ -->
+
+<!-- ============ СТОРІС · ЦІНА: БОТ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · ціна · бот</p>
+  <div class="board size-9x16" id="st-price-bot">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга</p>
+      <h1 class="display" style="font-size:112px;margin-top:40px">Telegram-бот<br>з оплатою<span class="dot-mark"></span></h1>
+      <ul class="chips" style="margin-top:48px">
+        <li>Каталог</li><li>Кошик</li><li>Оплата</li><li>Адмінка</li>
+      </ul>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:40px"></div>
+        <div class="price-row">
+          <div>
+            <p class="price-cap">Від</p>
+            <p class="price">$250</p>
+          </div>
+          <p style="font-size:28px"><span class="wordmark">v.studio</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · ЦІНА: САЙТ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · ціна · сайт</p>
+  <div class="board size-9x16" id="st-price-site">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга</p>
+      <h1 class="display" style="font-size:112px;margin-top:40px">Сайт<br>під одну<br>послугу<span class="dot-mark"></span></h1>
+      <p class="lede" style="margin-top:40px">Адаптив, форма заявки просто в Telegram, швидкість і базове SEO.</p>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:40px"></div>
+        <div class="price-row">
+          <div>
+            <p class="price-cap">Від</p>
+            <p class="price">$150</p>
+          </div>
+          <p style="font-size:28px"><span class="wordmark">v.studio</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · ЦІНА: ВЕБЗАСТОСУНОК ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · ціна · вебзастосунок</p>
+  <div class="board size-9x16" id="st-price-app">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга</p>
+      <h1 class="display" style="font-size:104px;margin-top:40px">Вебзастосунок<br>з адмінкою<span class="dot-mark"></span></h1>
+      <ul class="chips" style="margin-top:44px">
+        <li>Ролі й права</li><li>База даних</li><li>Звіти</li>
+      </ul>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:40px"></div>
+        <div class="price-row">
+          <div>
+            <p class="price-cap">Від</p>
+            <p class="price">$400</p>
+          </div>
+          <p style="font-size:28px"><span class="wordmark">v.studio</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · КЕЙС: КАВ'ЯРНЯ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · кейс · кав'ярня</p>
+  <div class="board size-9x16" id="st-case-cafe">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Кейс 01</p>
+      <h1 class="display" style="font-size:96px;margin-top:34px">Сторінка<br>кав'ярні<span class="dot-mark"></span></h1>
+      <img class="shot" src="../../img/cases/plitkarka.jpg" alt="" style="margin-top:48px">
+      <p class="lede-sm" style="margin-top:36px">Одна сторінка: меню, події, адреса. Оформлення взяли з косівської кераміки — зелена полива, глина, охра.</p>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:32px"></div>
+        <p class="link-line">virtuaall1.github.io/site</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · КЕЙС: ОБЛІК ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · кейс · облік</p>
+  <div class="board size-9x16" id="st-case-orbita">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Кейс 02</p>
+      <h1 class="display" style="font-size:96px;margin-top:34px">Облік<br>замовлень<br>у майстерні<span class="dot-mark"></span></h1>
+      <img class="shot" src="../../img/cases/orbita.jpg" alt="" style="margin-top:44px">
+      <p class="lede-sm" style="margin-top:36px">Ті самі замовлення в трьох ролях: менеджер веде всі, майстер бачить лише свої, власник — виторг.</p>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:32px"></div>
+        <p class="link-line">virtuaall1.github.io/site</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · КЕЙС: МАГАЗИН-БОТ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · кейс · магазин-бот</p>
+  <div class="board size-9x16" id="st-case-shop">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Кейс 03</p>
+      <h1 class="display" style="font-size:96px;margin-top:34px">Магазин<br>у Telegram<span class="dot-mark"></span></h1>
+      <img class="shot" src="../../img/cases/shop-bot.jpg" alt="" style="margin-top:48px">
+      <p class="lede-sm" style="margin-top:36px">Каталог, кошик, оформлення в три кроки і сповіщення власнику на кожне замовлення.</p>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:32px"></div>
+        <p class="link-line">virtuaall1.github.io/site</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · ЯК ПРАЦЮЄМО ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · як працюємо</p>
+  <div class="board size-9x16" id="st-flow">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Порядок</p>
+      <h1 class="display" style="font-size:104px;margin-top:36px">Як усе<br>відбувається<span class="dot-mark"></span></h1>
+      <ol class="flow" style="margin-top:52px">
+        <li><b>01</b><span>Розмова: що і навіщо</span></li>
+        <li><b>02</b><span>Ціна й термін — фіксовані</span></li>
+        <li><b>03</b><span>Розробка, показуємо проміжне</span></li>
+        <li><b>04</b><span>Запуск і місяць підтримки</span></li>
+      </ol>
+      <div class="tail">
+        <div class="foot"><span class="wordmark" style="color:#f2efe8">v.studio</span><b>@virtuaall01</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · СТЕК ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · стек</p>
+  <div class="board size-9x16" id="st-stack">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Стек</p>
+      <h1 class="display" style="font-size:104px;margin-top:36px">На чому<br>пишемо<span class="dot-mark"></span></h1>
+      <ul class="chips" style="margin-top:52px">
+        <li class="on">Python</li><li class="on">Java</li><li class="on">Spring Boot</li>
+        <li>FastAPI</li><li>PostgreSQL</li><li>aiogram</li>
+        <li>Docker</li><li>REST API</li><li>JavaScript</li>
+      </ul>
+      <p class="lede-sm" style="margin-top:44px">Без конструкторів і без чужих шаблонів: код лишається твій, разом із доступами.</p>
+      <div class="tail">
+        <div class="foot"><span class="wordmark" style="color:#f2efe8">v.studio</span><b>@virtuaall01</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · ТЕЗА ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · теза</p>
+  <div class="board size-9x16" id="st-quote">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="quote-bar"></div>
+      <h1 class="display" style="font-size:96px;margin-top:56px">Спочатку<br>розберемось,<br>що робити<br>не треба<span class="dot-mark"></span></h1>
+      <p class="lede" style="margin-top:44px">Половина задач вирішується меншим обсягом, ніж здається на старті.</p>
+      <div class="tail">
+        <div class="rule" style="margin-bottom:36px"></div>
+        <div class="foot"><span class="wordmark" style="color:#f2efe8">v.studio</span><b>@virtuaall01</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · ПИТАННЯ (під стікер) ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · питання · під стікер</p>
+  <div class="board size-9x16" id="st-ask">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Відповімо</p>
+      <h1 class="display" style="font-size:112px;margin-top:36px">Питай<br>про свою<br>задачу<span class="dot-mark"></span></h1>
+      <div class="sticker" style="margin-top:56px;min-height:300px">Сюди<br>стікер «Питання»</div>
+      <div class="tail">
+        <div class="foot"><span class="wordmark" style="color:#f2efe8">v.studio</span><b>@virtuaall01</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · ОПИТУВАННЯ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · опитування · під стікер</p>
+  <div class="board size-9x16" id="st-poll">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Голосуй</p>
+      <h1 class="display" style="font-size:104px;margin-top:36px">Що складніше<br>для бізнесу:<br>сайт чи бот?<span class="dot-mark"></span></h1>
+      <div class="sticker" style="margin-top:56px;min-height:260px">Сюди<br>стікер «Опитування»</div>
+      <div class="tail">
+        <div class="foot"><span class="wordmark" style="color:#f2efe8">v.studio</span><b>@virtuaall01</b></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · У ДІРЕКТ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · у дірект</p>
+  <div class="board size-9x16" id="st-dm">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Зв'язок</p>
+      <h1 class="display" style="font-size:120px;margin-top:40px">Напиши<br>задачу —<br>скажемо<br>ціну<span class="dot-mark"></span></h1>
+      <p class="lede" style="margin-top:44px">Розбір задачі безкоштовний. Відповідаємо в той самий день.</p>
+      <div class="cta-plate">
+        <span class="cta-name">@virtuaall01</span>
+        <span class="cta-what">v.studio · Telegram</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ СТОРІС · НОВИЙ ПОСТ ============ -->
+<div class="slot">
+  <p class="caption">Сторіс · анонс поста</p>
+  <div class="board size-9x16" id="st-newpost">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Новий пост</p>
+      <h1 class="display" style="font-size:116px;margin-top:40px">Розібрали<br>ціну бота<br>по частинах<span class="dot-mark"></span></h1>
+      <div class="sticker" style="margin-top:56px;min-height:240px">Сюди<br>репост публікації</div>
+      <div class="tail">
+        <div class="swipe">Дивитись <span>↑</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ · САЙТ ============ -->
+<div class="slot">
+  <p class="caption">Пост · послуга · сайт</p>
+  <div class="board size-4x5" id="post-site">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга 01</p>
+      <h1 class="display" style="font-size:104px;margin-top:34px">Сайт-візитка<br>й лендинг<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <ul class="bullets">
+        <li><i>01</i><span>Адаптив під телефон</span></li>
+        <li><i>02</i><span>Форма заявки одразу в Telegram</span></li>
+        <li><i>03</i><span>Швидкість і базове SEO</span></li>
+      </ul>
+      <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+        <div>
+          <p class="price-cap">Від</p>
+          <p class="price">$150</p>
+        </div>
+        <p style="font-size:28px;color:#f2efe8"><span class="wordmark">v.studio</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ · ВЕБЗАСТОСУНОК ============ -->
+<div class="slot">
+  <p class="caption">Пост · послуга · вебзастосунок</p>
+  <div class="board size-4x5" id="post-webapp">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга 03</p>
+      <h1 class="display" style="font-size:96px;margin-top:34px">Вебзастосунок<br>з адмінкою<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <ul class="bullets">
+        <li><i>01</i><span>Авторизація, ролі та права</span></li>
+        <li><i>02</i><span>Панель керування й база даних</span></li>
+        <li><i>03</i><span>Звіти та вивантаження</span></li>
+      </ul>
+      <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+        <div>
+          <p class="price-cap">Від</p>
+          <p class="price">$400</p>
+        </div>
+        <p style="font-size:28px;color:#f2efe8"><span class="wordmark">v.studio</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ · БЕКЕНД ============ -->
+<div class="slot">
+  <p class="caption">Пост · послуга · бекенд</p>
+  <div class="board size-4x5" id="post-backend">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Послуга 04</p>
+      <h1 class="display" style="font-size:104px;margin-top:34px">Бекенд<br>і API<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <ul class="bullets">
+        <li><i>01</i><span>Java · Spring Boot або Python · FastAPI</span></li>
+        <li><i>02</i><span>REST API під мобілку чи фронтенд</span></li>
+        <li><i>03</i><span>Docker і деплой на твій сервер</span></li>
+      </ul>
+      <div style="margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:24px">
+        <div>
+          <p class="price-cap">Від</p>
+          <p class="price">$350</p>
+        </div>
+        <p style="font-size:28px;color:#f2efe8"><span class="wordmark">v.studio</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ · КЕЙС КАВ'ЯРНЯ ============ -->
+<div class="slot">
+  <p class="caption">Пост · кейс · кав'ярня</p>
+  <div class="board size-4x5" id="post-case-cafe">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Кейс</p>
+      <h1 class="display" style="font-size:88px;margin-top:28px">Сторінка<br>кав'ярні<br>в Косові<span class="dot-mark"></span></h1>
+      <img class="shot shot-crop" src="../../img/cases/plitkarka.jpg" alt="" style="margin-top:36px">
+      <ol class="steps" style="margin-top:30px">
+        <li><b>Задача</b><span>Показати меню, події й адресу на одній сторінці</span></li>
+        <li><b>Зроблено</b><span>Оформлення з косівської кераміки, перемикач фото</span></li>
+      </ol>
+      <div class="foot" style="margin-top:auto">
+        <span class="wordmark" style="color:#f2efe8">v.studio</span>
+        <b>@virtuaall01</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ · КЕЙС ОБЛІК ============ -->
+<div class="slot">
+  <p class="caption">Пост · кейс · облік</p>
+  <div class="board size-4x5" id="post-case-orbita">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <p class="eyebrow">Кейс</p>
+      <h1 class="display" style="font-size:88px;margin-top:28px">Одні дані —<br>три ролі<span class="dot-mark"></span></h1>
+      <img class="shot shot-crop" src="../../img/cases/orbita.jpg" alt="" style="margin-top:36px">
+      <ol class="steps" style="margin-top:30px">
+        <li><b>Менеджер</b><span>Веде всі замовлення й рухає статуси</span></li>
+        <li><b>Майстер</b><span>Бачить лише свої, без цін</span></li>
+        <li><b>Власник</b><span>Виторг за тиждень і частка кожного</span></li>
+      </ol>
+      <div class="foot" style="margin-top:auto">
+        <span class="wordmark" style="color:#f2efe8">v.studio</span>
+        <b>@virtuaall01</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПОСТ · ТЕЗА 2 ============ -->
+<div class="slot">
+  <p class="caption">Пост · теза 2</p>
+  <div class="board size-4x5" id="post-quote-2">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="quote-bar"></div>
+      <h1 class="display" style="font-size:84px;margin-top:56px">Код і доступи<br>твої з першого<br>дня. Навіть<br>якщо далі<br>без нас<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:auto"></div>
+      <div class="foot" style="margin-top:36px">
+        <span class="wordmark" style="color:#f2efe8">v.studio</span>
+        <b>@virtuaall01</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПІДБІРКА 1/5 ============ -->
+<div class="slot">
+  <p class="caption">Підбірка 1/5</p>
+  <div class="board size-4x5" id="pack-1">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span class="on"></span><span></span><span></span><span></span><span></span></div>
+      <h1 class="display" style="font-size:100px;margin-top:76px">Що спитати<br>в розробника<br>до того,<br>як платити<span class="dot-mark"></span></h1>
+      <p class="lede-sm" style="margin-top:38px">Чотири питання, після яких видно, з ким ти маєш справу.</p>
+      <div class="rule" style="margin-top:auto"></div>
+      <div class="swipe" style="margin-top:36px">Гортай <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПІДБІРКА 2/5 ============ -->
+<div class="slot">
+  <p class="caption">Підбірка 2/5</p>
+  <div class="board size-4x5" id="pack-2">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span></span><span class="on"></span><span></span><span></span><span></span></div>
+      <p class="eyebrow" style="margin-top:44px">Питання 01</p>
+      <h1 class="display" style="font-size:88px;margin-top:28px">Чий буде<br>код після<br>здачі?<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <p class="lede-sm" style="margin-top:40px">Правильна відповідь — твій. Репозиторій, сервер, домен і доступи мають лишитися в тебе, інакше наступну правку робитимеш тільки в цього виконавця.</p>
+      <div class="swipe" style="margin-top:auto">Далі <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПІДБІРКА 3/5 ============ -->
+<div class="slot">
+  <p class="caption">Підбірка 3/5</p>
+  <div class="board size-4x5" id="pack-3">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span></span><span></span><span class="on"></span><span></span><span></span></div>
+      <p class="eyebrow" style="margin-top:44px">Питання 02</p>
+      <h1 class="display" style="font-size:88px;margin-top:28px">Ціна<br>фіксована<br>чи за<br>години?<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <p class="lede-sm" style="margin-top:40px">За години ризик на тобі: скільки вийде — стільки й заплатиш. Фіксована ціна означає, що обсяг проговорили до старту.</p>
+      <div class="swipe" style="margin-top:auto">Далі <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПІДБІРКА 4/5 ============ -->
+<div class="slot">
+  <p class="caption">Підбірка 4/5</p>
+  <div class="board size-4x5" id="pack-4">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span></span><span></span><span></span><span class="on"></span><span></span></div>
+      <p class="eyebrow" style="margin-top:44px">Питання 03</p>
+      <h1 class="display" style="font-size:88px;margin-top:28px">Що буде,<br>коли щось<br>зламається?<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <p class="lede-sm" style="margin-top:40px">Питай про підтримку після запуску: скільки триває, що в неї входить і скільки коштує правка, коли вона закінчиться.</p>
+      <div class="swipe" style="margin-top:auto">Далі <span>→</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ПІДБІРКА 5/5 ============ -->
+<div class="slot">
+  <p class="caption">Підбірка 5/5</p>
+  <div class="board size-4x5" id="pack-5">
+    <div class="marks"><span></span><span></span><span></span><span></span></div>
+    <div class="pad">
+      <div class="pager"><span></span><span></span><span></span><span></span><span class="on"></span></div>
+      <p class="eyebrow" style="margin-top:44px">Питання 04</p>
+      <h1 class="display" style="font-size:88px;margin-top:28px">Покажеш<br>робочий<br>приклад?<span class="dot-mark"></span></h1>
+      <div class="rule" style="margin-top:44px"></div>
+      <p class="lede-sm" style="margin-top:40px">Не картинку, а посилання, яке відкривається й натискається. У нас такі три — на сайті студії.</p>
+      <div class="cta-plate">
+        <span class="cta-name">@virtuaall01</span>
+        <span class="cta-what">v.studio · Telegram</span>
       </div>
     </div>
   </div>

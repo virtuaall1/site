@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>v.studio — сторіс у русі</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   Рухомі сторіс. Кадр рахується з часу, а не з CSS-анімації:
+   render-video.js викликає setT(0…1) і знімає кожен кадр.
+   Так відео завжди виходить однакове, скільки б не рендерив.
+   ========================================================= */
+:root {
+  --ink: #0a0a0b;
+  --paper: #f2efe8;
+  --muted: #8d8d94;
+  --rule: rgba(242, 239, 232, 0.14);
+  --acid: #d8ff3e;
+  --f-display: 'Unbounded', system-ui, sans-serif;
+  --f-text: 'Onest', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; }
+body { background: var(--ink); color: var(--paper); font-family: var(--f-text); }
+
+.stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(242, 239, 232, 0.055) 1.5px, transparent 1.5px);
+  background-size: 34px 34px;
+}
+
+/* кутові мітки */
+.marks span { position: absolute; width: 46px; height: 46px; border: 0 solid var(--acid); }
+.marks span:nth-child(1) { top: 44px; left: 44px; border-top-width: 2px; border-left-width: 2px; }
+.marks span:nth-child(2) { top: 44px; right: 44px; border-top-width: 2px; border-right-width: 2px; }
+.marks span:nth-child(3) { bottom: 44px; left: 44px; border-bottom-width: 2px; border-left-width: 2px; }
+.marks span:nth-child(4) { bottom: 44px; right: 44px; border-bottom-width: 2px; border-right-width: 2px; }
+
+.pad { position: absolute; inset: 0; padding: 300px 92px 320px; display: flex; flex-direction: column; }
+
+.eyebrow { font-size: 26px; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--acid); }
+.display { font-family: var(--f-display); font-weight: 800; letter-spacing: -0.035em; line-height: 0.98; }
+.wordmark { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.02em; }
+.dot-mark { display: inline-block; width: 22px; height: 22px; margin-left: 14px; background: var(--acid); }
+
+/* рядок, що виїжджає з-під власної маски */
+.reveal { overflow: hidden; }
+.reveal > span { display: block; }
+
+.sweep { height: 2px; background: var(--acid); transform-origin: left center; }
+
+.cta-plate {
+  position: absolute;
+  left: 92px;
+  right: 92px;
+  bottom: 320px;
+  background: var(--acid);
+  color: var(--ink);
+  padding: 44px 52px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+}
+.cta-plate .cta-name { font-family: var(--f-display); font-weight: 800; font-size: 58px; letter-spacing: -0.03em; }
+.cta-plate .cta-what { font-size: 26px; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* велика марка, з якої починається ролик */
+#brand {
+  position: absolute;
+  left: 92px;
+  top: 300px;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 72px;
+  letter-spacing: -0.03em;
+  transform-origin: left top;
+}
+
+.lede { font-size: 34px; line-height: 1.45; color: #cfccc4; max-width: 860px; }
+
+/* сцена з кейсами */
+.shots { position: absolute; left: 92px; right: 92px; top: 640px; height: 800px; }
+.shot-card { position: absolute; inset: 0; }
+.shot-card img { display: block; width: 100%; border: 1px solid var(--rule); }
+.shot-card .name { font-family: var(--f-display); font-weight: 600; font-size: 46px; margin-top: 40px; letter-spacing: -0.02em; }
+.shot-card .what { font-size: 30px; line-height: 1.35; color: #cfccc4; margin-top: 16px; }
+.counter { position: absolute; left: 92px; bottom: 360px; font-size: 26px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.counter b { color: var(--acid); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="marks" id="marks"><span></span><span></span><span></span><span></span></div>
+
+  <div id="brand"><span class="wordmark">v.studio</span></div>
+
+  <!-- ---------- сцена intro ---------- -->
+  <div class="pad" id="sc-intro" hidden>
+    <p class="eyebrow" id="i-eyebrow" style="margin-top:150px">Студія розробки</p>
+    <h1 class="display" style="font-size:116px;margin-top:38px">
+      <span class="reveal" id="i-l1"><span>Telegram-<br>боти</span></span>
+      <span class="reveal" id="i-l2"><span>Сайти</span></span>
+      <span class="reveal" id="i-l3"><span>Вебзастосунки<span class="dot-mark"></span></span></span>
+    </h1>
+    <div class="sweep" id="i-sweep" style="margin-top:52px"></div>
+    <p class="lede" id="i-lede" style="margin-top:40px">Python, Java, Spring Boot. Фіксована ціна, код твій, місяць підтримки.</p>
+  </div>
+
+  <!-- ---------- сцена cases ---------- -->
+  <div class="pad" id="sc-cases" hidden>
+    <p class="eyebrow" id="c-eyebrow" style="margin-top:150px">Робочі приклади</p>
+    <h1 class="display" id="c-title" style="font-size:104px;margin-top:38px">Це можна<br>відкрити<br>й натиснути<span class="dot-mark"></span></h1>
+  </div>
+
+  <div class="shots" id="shots" hidden>
+    <div class="shot-card" data-i="0">
+      <img src="../../img/cases/plitkarka.jpg" alt="">
+      <p class="name">Сторінка кав'ярні</p>
+      <p class="what">Меню, події й адреса на одному екрані</p>
+    </div>
+    <div class="shot-card" data-i="1">
+      <img src="../../img/cases/orbita.jpg" alt="">
+      <p class="name">Облік замовлень</p>
+      <p class="what">Одні дані, три ролі: менеджер, майстер, власник</p>
+    </div>
+    <div class="shot-card" data-i="2">
+      <img src="../../img/cases/shop-bot.jpg" alt="">
+      <p class="name">Магазин у Telegram</p>
+      <p class="what">Каталог, кошик, оплата, сповіщення власнику</p>
+    </div>
+  </div>
+  <p class="counter" id="counter" hidden><b id="counter-n">01</b> / 03</p>
+
+  <div class="cta-plate" id="cta" hidden>
+    <span class="cta-name">@virtuaall01</span>
+    <span class="cta-what">v.studio · написати</span>
+  </div>
+</div>
+
+<script>
+/* --------- дрібні помічники --------- */
+const clamp = v => v < 0 ? 0 : v > 1 ? 1 : v;
+/** частка часу, що минула на відрізку [a, b] */
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const outCubic = p => 1 - Math.pow(1 - p, 3);
+const inOutCubic = p => p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+/** вихід із невеликим перельотом — для плашки, що «дозакривається» */
+const outBack = p => { const c = 1.7; return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2); };
+const lerp = (a, b, p) => a + (b - a) * p;
+const px = v => v.toFixed(2) + 'px';
+
+const el = id => document.getElementById(id);
+const scene = new URLSearchParams(location.search).get('scene') || 'intro';
+
+/** рядок їде вгору з-під маски */
+function line(node, t, a, b) {
+  const p = outCubic(seg(t, a, b));
+  node.firstElementChild.style.transform = 'translateY(' + px(lerp(112, 0, p)) + ')';
+  node.firstElementChild.style.opacity = clamp(p * 1.6);
+}
+
+function fadeUp(node, t, a, b, dist) {
+  const p = outCubic(seg(t, a, b));
+  node.style.opacity = p;
+  node.style.transform = 'translateY(' + px(lerp(dist === undefined ? 34 : dist, 0, p)) + ')';
+}
+
+/* --------- спільне: мітки й марка --------- */
+function common(t) {
+  const m = seg(t, 0.02, 0.16);
+  el('marks').style.opacity = (0.55 * m).toFixed(3);
+  [...el('marks').children].forEach(s => { s.style.transform = 'scale(' + lerp(0.4, 1, outCubic(m)).toFixed(3) + ')'; });
+
+  // марка виїжджає великою по центру, далі сідає у верхній лівий кут
+  const inP = outCubic(seg(t, 0.04, 0.20));
+  const moveP = inOutCubic(seg(t, 0.26, 0.42));
+  const scale = lerp(2.35, 1, moveP);
+  const x = lerp(70, 0, moveP);
+  const y = lerp(600, 0, moveP);
+  const b = el('brand');
+  b.style.opacity = inP.toFixed(3);
+  b.style.transform = 'translate(' + px(x) + ',' + px(lerp(60, 0, inP) + y) + ') scale(' + scale.toFixed(3) + ')';
+}
+
+/* --------- сцена 1: хто ми й що робимо --------- */
+function intro(t) {
+  common(t);
+  fadeUp(el('i-eyebrow'), t, 0.44, 0.52);
+  line(el('i-l1'), t, 0.48, 0.60);
+  line(el('i-l2'), t, 0.55, 0.67);
+  line(el('i-l3'), t, 0.62, 0.74);
+  el('i-sweep').style.transform = 'scaleX(' + outCubic(seg(t, 0.72, 0.82)).toFixed(3) + ')';
+  fadeUp(el('i-lede'), t, 0.78, 0.88);
+  const p = outBack(seg(t, 0.86, 0.97));
+  el('cta').style.opacity = clamp(seg(t, 0.86, 0.92));
+  el('cta').style.transform = 'translateY(' + px(lerp(160, 0, p)) + ')';
+}
+
+/* --------- сцена 2: три кейси по черзі --------- */
+function cases(t) {
+  common(t);
+  fadeUp(el('c-eyebrow'), t, 0.44, 0.52);
+  fadeUp(el('c-title'), t, 0.47, 0.58);
+
+  // заголовок їде вгору й гасне повністю — інакше він проступає
+  // крізь знімок і читається як брудна друга копія тексту
+  const lift = inOutCubic(seg(t, 0.58, 0.66));
+  el('sc-cases').style.transform = 'translateY(' + px(lerp(0, -260, lift)) + ')';
+  el('sc-cases').style.opacity = (1 - lift).toFixed(3);
+
+  // вікно кожного кейсу
+  const wins = [[0.62, 0.74], [0.74, 0.86], [0.86, 0.99]];
+  document.querySelectorAll('.shot-card').forEach((card, i) => {
+    const [a, b] = wins[i];
+    const inP = outCubic(seg(t, a, a + 0.05));
+    const outP = i < 2 ? outCubic(seg(t, b - 0.03, b)) : 0;
+    card.style.opacity = (inP - outP).toFixed(3);
+    card.style.transform = 'translateY(' + px(lerp(70, 0, inP) - 70 * outP) + ')';
+  });
+  const n = t < wins[1][0] ? 1 : t < wins[2][0] ? 2 : 3;
+  el('counter-n').textContent = '0' + n;
+  el('counter').style.opacity = seg(t, 0.62, 0.68).toFixed(3);
+}
+
+const SCENES = { intro, cases };
+
+/* Зайве не ховаємо, а виносимо зі сторінки: атрибут hidden програє
+   класу з display:flex, і сцени накладались одна на одну. */
+const PARTS = ['sc-intro', 'sc-cases', 'shots', 'counter', 'cta'];
+const KEEP = scene === 'intro' ? ['sc-intro', 'cta'] : ['sc-cases', 'shots', 'counter'];
+PARTS.forEach(id => {
+  const node = el(id);
+  if (KEEP.includes(id)) node.removeAttribute('hidden');
+  else node.remove();
+});
+
+window.setT = function (t) { SCENES[scene](t); };
+
+window.setT(0);
+</script>
+</body>
+</html>

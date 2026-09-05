@@ -22,9 +22,16 @@ const SCALE = 3;
 const BOARDS = [
   'avatar',
   'hl-bots', 'hl-sites', 'hl-price', 'hl-cases', 'hl-about', 'hl-contact',
-  'post-about', 'post-service', 'post-case', 'post-quote',
+  'post-about', 'post-service', 'post-site', 'post-webapp', 'post-backend',
+  'post-case', 'post-case-cafe', 'post-case-orbita',
+  'post-quote', 'post-quote-2',
   'carousel-1', 'carousel-2', 'carousel-3',
-  'story'
+  'pack-1', 'pack-2', 'pack-3', 'pack-4', 'pack-5',
+  'story',
+  'st-price-bot', 'st-price-site', 'st-price-app',
+  'st-case-cafe', 'st-case-orbita', 'st-case-shop',
+  'st-flow', 'st-stack', 'st-quote',
+  'st-ask', 'st-poll', 'st-dm', 'st-newpost'
 ];
 
 /** Зменшення в самій сторінці: canvas із високою якістю згладжування. */
