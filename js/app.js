@@ -1211,12 +1211,10 @@
     const mail = $('#mailLink');
     if (mail) mail.href = `mailto:${LINKS.email}`;
 
-    // в подвале подпись короткая, а ссылка — на настоящий аккаунт
-    const footTg = $('#footTg');
-    if (footTg) {
-      footTg.href = LINKS.telegram;
-      footTg.textContent = LINKS.telegramHandle;
-    }
+    // В подвале — домен студии. Ссылка ведёт на сам сайт: так она
+    // рабочая и сейчас, и после того как домен привяжут.
+    const footSite = $('#footSite');
+    if (footSite) footSite.textContent = LINKS.domain;
     const gh = $('#heroGithub');
     if (gh) gh.href = LINKS.github;
     const all = $('#allRepos');
