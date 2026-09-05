@@ -1,0 +1,21 @@
+# Заголовки безопасности.
+#
+# GitHub Pages их не умеет — он отдаёт только то, что зашито в саму
+# страницу, и этот файл там просто лежит без дела. Читает его
+# Cloudflare Pages и Netlify: если сайт переедет туда (а переехать
+# стоит — см. README, раздел про исходники), защита включится сама,
+# ничего дописывать не придётся.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/img/*
+  Cache-Control: public, max-age=2592000

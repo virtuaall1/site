@@ -38,15 +38,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Версия для css и js, чтобы не залипал кеш браузера
-        run: node scripts/stamp.js
-      # enablement: true — если Pages в настройках окажется выключен,
-      # workflow включит его сам, а не упадёт с «Get Pages site failed»
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Инструменты сборки
+        run: npm ci --omit=optional
+
+      # Библиотеки анимации переезжают к нам: после этого шага на
+      # странице не останется скриптов с чужих доменов, а в CSP —
+      # script-src 'self'. Не скачалось — шаг падает, и наружу
+      # остаётся прошлая рабочая версия сайта.
+      - name: Забрать gsap и lenis к себе
+        run: node scripts/vendor.js
+
+      # В dist/ едет сжатая копия: без комментариев, без макетов для
+      # инстаграма и без самих скриптов сборки.
+      - name: Сборка
+        run: node scripts/build.js
+
       - uses: actions/configure-pages@v5
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: dist
       - id: deployment
         uses: actions/deploy-pages@v4

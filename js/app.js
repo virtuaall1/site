@@ -932,6 +932,44 @@
   }
 
   /* =======================================================
+     Внешние библиотеки анимации.
+
+     Раньше три тега <script> висели в разметке и грузились у всех.
+     Но heavyAnim выключает анимации на телефонах и при
+     prefers-reduced-motion — там эти 150 КБ скачивались, парсились
+     и не делали ничего. Теперь их тянет сам скрипт и только когда
+     они нужны.
+
+     Сборка (scripts/build.js) подменяет эти адреса на локальные
+     vendor/, если папка есть, — тогда со стороннего домена на
+     странице не исполняется вообще ничего.
+     ======================================================= */
+  const VENDOR = {
+    gsap: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js',
+    scrollTrigger: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js',
+    lenis: 'https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js'
+  };
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const node = document.createElement('script');
+      node.src = src;
+      node.onload = resolve;
+      node.onerror = () => reject(new Error(src));
+      document.head.append(node);
+    });
+  }
+
+  /** Никогда не отклоняется: не доехало — сайт живёт на фоллбэке. */
+  function loadVendor() {
+    if (!heavyAnim) return Promise.resolve();
+    // ScrollTrigger — плагин к gsap, поэтому строго после него
+    return loadScript(VENDOR.gsap)
+      .then(() => Promise.all([loadScript(VENDOR.scrollTrigger), loadScript(VENDOR.lenis)]))
+      .catch(err => { console.warn('Анимации:', err.message); });
+  }
+
+  /* =======================================================
      Анимации: GSAP + ScrollTrigger, иначе — IntersectionObserver
      ======================================================= */
   let observer = null;
@@ -1110,10 +1148,15 @@
     initGrid();
     initMagnetic();
     initScramble();
-    initAnimations();
-    initSmoothScroll();
-    booted = true;
     loadGithub().catch(err => console.warn('GitHub:', err.message));
+
+    // разметка уже на месте; анимации включаются, как только (и если)
+    // доедут библиотеки — либо сразу по фоллбэку, когда их не ждём
+    loadVendor().then(() => {
+      initAnimations();
+      initSmoothScroll();
+      booted = true;
+    });
   }
 
   if (document.readyState === 'loading') {

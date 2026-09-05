@@ -407,9 +407,10 @@
   </svg>
 </template>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js" defer></script>
+<!-- gsap, ScrollTrigger и lenis грузит уже сам app.js — и только там,
+     где анимации действительно работают. На телефоне и при
+     prefers-reduced-motion они выключены, и качать ради них 150 КБ
+     чужого кода незачем. Адреса лежат в VENDOR внутри app.js. -->
 <script src="js/content.js" defer></script>
 <script src="js/app.js" defer></script>
 </body>

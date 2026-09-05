@@ -985,12 +985,17 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
 
 @media (max-width: 760px) {
   .price-inner {
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr), а не 1fr: у колонки грида минимальная ширина по
+       умолчанию — по содержимому, и ряд с ценой и кнопкой распирал
+       страницу шире экрана. На 390 px её уводило вбок на полсотни
+       пикселей, и весь сайт скроллился по горизонтали. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     padding: 24px 4px 6px;
   }
-  .price-right { justify-content: space-between; width: 100%; }
+  .price-right { flex-wrap: wrap; gap: 14px; width: 100%; }
   .price-money { justify-items: start; }
+  .price-name, .price-desc { overflow-wrap: anywhere; }
   .price-cta { opacity: 1; transform: none; }
   .step { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
   .repo { grid-template-columns: 1fr; gap: 10px; }
