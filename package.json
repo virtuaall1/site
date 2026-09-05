@@ -1,4 +1,12 @@
 {
+  "name": "v-studio-site",
+  "private": true,
+  "scripts": {
+    "check": "node scripts/check.js",
+    "vendor": "node scripts/vendor.js",
+    "build": "node scripts/build.js",
+    "deploy": "npm run check && npm run vendor && npm run build"
+  },
   "devDependencies": {
     "clean-css": "^5.3.3",
     "html-minifier-terser": "^7.2.0",

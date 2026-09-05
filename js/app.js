@@ -8,7 +8,7 @@
   'use strict';
 
   const {
-    LINKS, GITHUB_USER, HIDDEN_REPOS, PROJECTS, SERVICES,
+    LINKS, GITHUB_USER, HIDDEN_REPOS, SELF_REPO, OWN_CODE, PROJECTS, SERVICES,
     PROCESS, FAQ, EXTRA_STACK, PLURALS, I18N
   } = window.SITE;
 
@@ -695,13 +695,15 @@
    * Ответы лежат в sessionStorage полчаса.
    */
   async function renderStack(repos) {
-    const counted = repos.slice(0, 8);
+    // свой код знаем и без GitHub — его посчитала сборка
+    const bytes = Object.assign({}, OWN_CODE);
+    // ...поэтому этот же репозиторий через API уже не спрашиваем
+    const counted = repos.filter(r => !(OWN_CODE && r.name === SELF_REPO)).slice(0, 8);
     const answers = await Promise.allSettled(counted.map(
       r => api(`/repos/${GITHUB_USER}/${r.name}/languages`, `gh:lang:${r.name}`)
     ));
 
-    const bytes = {};
-    let measured = 0;
+    let measured = OWN_CODE ? 1 : 0;
     answers.forEach(res => {
       if (res.status !== 'fulfilled') return;
       measured++;

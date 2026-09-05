@@ -34,16 +34,33 @@ const DROP = /(^|\/)(README\.md|\.DS_Store)$/;
 
 const version = (process.env.GITHUB_SHA || String(Date.now())).slice(0, 8);
 
+/* Адрес сайта. В исходниках он записан как GitHub Pages, потому что
+   сейчас сайт живёт там. При переезде (Cloudflare Pages, Netlify,
+   свой домен) достаточно задать SITE_URL в настройках сборки — и
+   canonical, og:url, sitemap и ссылки на кейсы поедут за ним.
+   Внутренние ссылки везде относительные, их менять не нужно. */
+const HOME = 'https://virtuaall1.github.io/site/';
+const site = (process.env.SITE_URL || HOME).replace(/\/*$/, '/');
+
 /* Библиотеки анимации, если их успел скачать scripts/vendor.js.
    Есть папка — переписываем адреса на свои и убираем чужие домены
    из CSP: на странице не останется ни одного стороннего скрипта.
    Нет папки (обычная локальная разработка) — всё как было, с CDN. */
-const hasVendor = fs.existsSync(path.join(root, 'vendor'));
 const VENDOR_SWAP = [
   ['https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js', 'vendor/gsap.min.js'],
   ['https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js', 'vendor/scrolltrigger.min.js'],
   ['https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js', 'vendor/lenis.min.js']
 ];
+
+/* Проверяем файлы, а не папку: vendor.js создаёт каталог до
+   скачивания, и если скачать не вышло, остаётся пустая папка.
+   По ней сборка раньше решала, что библиотеки на месте, и
+   переписывала адреса на файлы, которых нет, — сайт уезжал наружу
+   без анимаций и молча. */
+const hasVendor = VENDOR_SWAP.every(([, local]) => {
+  const file = path.join(root, local);
+  return fs.existsSync(file) && fs.statSync(file).size > 5000;
+});
 
 const css = new CleanCss({ level: 1, format: false });
 
@@ -60,8 +77,32 @@ const HTML_OPTS = {
 let saved = 0;
 let total = 0;
 
+/* Свой код по языкам — то же, что GitHub рисует у репозитория.
+   Считаем сами, потому что приватный репозиторий языки наружу не
+   отдаёт, а код в нём остаётся нашим: сайт студии и три сайта из
+   кейсов, почти 300 КБ. Раскладку подставляем в content.js. */
+const LANG_BY_EXT = { '.js': 'JavaScript', '.css': 'CSS', '.html': 'HTML' };
+const NOT_CODE = new Set(['node_modules', 'dist', 'vendor', '.git']);
+
+function ownCode(dir = root, acc = {}) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (NOT_CODE.has(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) { ownCode(full, acc); continue; }
+    const lang = LANG_BY_EXT[path.extname(entry.name)];
+    if (lang) acc[lang] = (acc[lang] || 0) + fs.statSync(full).size;
+  }
+  return acc;
+}
+
+const OWN_CODE = ownCode();
+
 async function shrink(file, src) {
   const ext = path.extname(file);
+  if (site !== HOME) src = src.split(HOME).join(site);
+  if (file.endsWith('content.js')) {
+    src = src.replace('const OWN_CODE = null;', `const OWN_CODE = ${JSON.stringify(OWN_CODE)};`);
+  }
   if (ext === '.js') {
     if (hasVendor) for (const [from, to] of VENDOR_SWAP) src = src.split(from).join(to);
     return (await minifyJs(src, { format: { comments: false } })).code;
@@ -101,8 +142,13 @@ async function walk(rel) {
   fs.mkdirSync(path.dirname(to), { recursive: true });
   // vendor/ уже минифицирован автором библиотеки — второй проход
   // ничего не сэкономит и только даёт шанс что-нибудь сломать
-  if (rel.split(path.sep)[0] === 'vendor' || !/\.(js|css|html)$/.test(rel)) {
+  if (rel.split(path.sep)[0] === 'vendor' || !/\.(js|css|html|xml|txt)$/.test(rel)) {
     fs.copyFileSync(from, to);        // картинки и прочее — как есть
+    return;
+  }
+  if (/\.(xml|txt)$/.test(rel)) {    // адрес подменить, но не сжимать
+    const src = fs.readFileSync(from, 'utf8');
+    fs.writeFileSync(to, site === HOME ? src : src.split(HOME).join(site));
     return;
   }
 
@@ -119,6 +165,10 @@ async function walk(rel) {
   fs.mkdirSync(out, { recursive: true });
   for (const item of INCLUDE) await walk(item);
   if (hasVendor) await walk('vendor');
+  const codeLine = Object.entries(OWN_CODE).sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => `${k} ${(v / 1024).toFixed(0)} КБ`).join(', ');
+  console.log(`Свой код: ${codeLine} — подставлен в полосу языков.`);
+  console.log(`Адрес сайта: ${site}${site === HOME ? ' (по умолчанию; переопределяется SITE_URL)' : ' — из SITE_URL'}`);
   console.log(hasVendor
     ? '\nБиблиотеки взяты из vendor/ — сторонних скриптов на странице не осталось.'
     : '\nvendor/ нет: gsap и lenis останутся на CDN (для локальной сборки это нормально).');

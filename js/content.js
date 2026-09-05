@@ -19,6 +19,23 @@ window.SITE = (() => {
      (например, сам этот сайт — он и так перед глазами) */
   const HIDDEN_REPOS = ['site'];
 
+  /* Имя этого самого репозитория. Нужно, чтобы не посчитать его код
+     дважды: свои байты мы и так знаем из OWN_CODE. */
+  const SELF_REPO = 'site';
+
+  /**
+   * Объём собственного кода по языкам — сайт студии и три сайта из
+   * кейсов. Подставляется при сборке (scripts/build.js), поэтому в
+   * исходниках здесь null: при разработке полоса языков живёт на
+   * одних данных GitHub.
+   *
+   * Зачем вообще считать самим: если репозиторий станет приватным,
+   * GitHub перестанет отдавать по нему языки — и почти 300 КБ
+   * своего js, html и css исчезнут из полосы, хотя код никуда не
+   * денется.
+   */
+  const OWN_CODE = null;
+
   /**
    * Проекты, которых нет на GitHub: боты обычно лежат в приватных
    * репозиториях у заказчика. Добавляй сюда РЕАЛЬНЫЕ работы —
@@ -356,7 +373,7 @@ window.SITE = (() => {
       'stack.kicker': 'Інструменти',
       'stack.title': 'Чим пишемо',
       'stack.lead': 'Це те, з чим працюємо щодня.',
-      'stack.langs': 'Пораховано за обсягом коду в наших публічних репозиторіях на GitHub — разом із трьома сайтами з кейсів.',
+      'stack.langs': 'Пораховано за обсягом коду: сайт студії і три сайти з кейсів — із цього репозиторію, решта — з публічних репозиторіїв на GitHub.',
       'studio.kicker': 'Студія',
       'studio.title': 'Три речі, про які варто домовитись на березі',
       'studio.1.t': 'Фіксована ціна, а не години',
@@ -422,7 +439,7 @@ window.SITE = (() => {
       'stack.kicker': 'Tools',
       'stack.title': 'What we build with',
       'stack.lead': 'This is what we work with day to day.',
-      'stack.langs': 'Measured by code volume across our public repositories on GitHub — the three case sites included.',
+      'stack.langs': 'Measured by code volume: the studio site and the three case sites from this repository, the rest from our public repositories on GitHub.',
       'studio.kicker': 'Studio',
       'studio.title': 'Three things worth settling up front',
       'studio.1.t': 'A fixed price, not hours',
@@ -442,5 +459,5 @@ window.SITE = (() => {
     }
   };
 
-  return { LINKS, GITHUB_USER, HIDDEN_REPOS, PROJECTS, SERVICES, PROCESS, FAQ, EXTRA_STACK, PLURALS, I18N };
+  return { LINKS, GITHUB_USER, HIDDEN_REPOS, SELF_REPO, OWN_CODE, PROJECTS, SERVICES, PROCESS, FAQ, EXTRA_STACK, PLURALS, I18N };
 })();
