@@ -1,13 +1,3 @@
-/* Акцент кейса: модерация — красный.
-   Меняется токен, а не отдельная заливка, — за ним идут кнопки,
-   ссылки, чипы и подложка шапки. */
-:root {
-  --tint: #ff3b30;
-  --tint-press: #d92d23;
-  --pastel: color-mix(in srgb, #ff3b30 13%, transparent);
-  --pastel-2: color-mix(in srgb, #ff3b30 6%, transparent);
-}
-
 /* Кейс «Модератор чату». Телефон и панель — в ../_ui/demo.css. */
 
 .hero { display: grid; justify-items: center; }

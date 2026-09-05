@@ -1,54 +1,60 @@
 /* =========================================================
-   Общая система оформления кейсов v.studio.
+   Спільна система оформлення кейсів v.studio.
 
-   Переведена на токены из ../../css/ios.css — те же, что у сайта
-   студии. Имена переменных капсульной поры оставлены как
-   переходник: страницы кейсов написаны на них, и переписывать
-   каждую ради переименования смысла нет.
+   Одна мова на три сайти: капсули, арки, білі картки на
+   теплому сірому, лаймовий акцент і заголовок у два голоси —
+   капс гротеском, друга строка курсивним серифом.
 
-   Каждый кейс подмешивает свой оттенок через --pastel.
+   Кожен кейс підмішує свій пастельний колір через --pastel,
+   решта лишається спільною.
    ========================================================= */
 
 :root {
-  /* переходник со старых имён на системные токены */
-  --sand:    var(--bg);
-  --sand-2:  var(--fill);
-  --white:   var(--surface);
-  --ink:     var(--text);
-  --ink-2:   var(--text);
-  --muted:   var(--text-2);
-  --faint:   var(--text-3);
-  --rule:    var(--sep);
+  --sand:    #ededea;
+  --sand-2:  #e3e3df;
+  --white:   #ffffff;
+  --ink:     #232322;
+  --ink-2:   #2f2f2d;
+  --muted:   #6f6f6b;
+  --faint:   #9d9d97;
+  --rule:    rgba(35, 35, 34, 0.12);
 
-  /* акцент теперь системный синий, а не кислотный */
-  --lime:    var(--tint);
-  --lime-2:  var(--tint-press);
-  --pastel:   color-mix(in srgb, var(--tint) 12%, transparent);
-  --pastel-2: color-mix(in srgb, var(--tint) 5%, transparent);
+  --lime:    #8ef224;
+  --lime-2:  #6fd60e;
+  --pastel:   #bfc9f7;         /* кейс перевизначає обидва */
+  --pastel-2: #b9e3f0;
 
-  --r:       var(--r-xl);
-  --r-sm:    var(--r);
-  --pill:    980px;
+  --r:       28px;
+  --r-sm:    18px;
+  --pill:    999px;
 
-  --pad:     clamp(18px, 5vw, 56px);
-  --gap:     clamp(16px, 2.6vw, 28px);
+  --pad:     clamp(18px, 5vw, 64px);
+  --gap:     clamp(18px, 3vw, 34px);
 
-  --f-caps:  var(--f);
-  --f-serif: var(--f);
-  --f-ui:    var(--f);
+  --f-caps:  'Onest', system-ui, sans-serif;
+  --f-serif: 'Literata', Georgia, serif;
+  --f-ui:    'Golos Text', system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.22, 0.68, 0.24, 1);
 }
 
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--f);
-  font-size: var(--t-body);
-  line-height: 1.47;
-  letter-spacing: -0.01em;
+  margin: 0;
+  background: var(--sand);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
 img { display: block; max-width: 100%; }
-a { color: inherit; text-decoration: none; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px;
@@ -69,7 +75,7 @@ a { color: inherit; text-decoration: none; }
 section[id] { scroll-margin-top: 92px; }
 
 /* =========================================================
-   Шапка — полупрозрачная с размытием, как в iOS
+   Шапка
    ========================================================= */
 .head {
   position: sticky;
@@ -78,346 +84,340 @@ section[id] { scroll-margin-top: 92px; }
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 10px var(--pad);
-  background: var(--glass-strong);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border-bottom: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge);
+  padding: 12px var(--pad);
+  background: var(--sand);
+  border-bottom: 1px solid var(--rule);
 }
 
 .logo {
-  font-size: var(--t-3);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  display: grid;
+  font-family: var(--f-caps);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
   white-space: nowrap;
 }
-.logo i { font-style: normal; color: var(--tint); }
+.logo i { font-style: normal; color: var(--muted); }
 
-.head-note { margin: 0; font-size: var(--t-foot); color: var(--text-2); max-width: 34ch; }
+.head-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--muted);
+  max-width: 30ch;
+}
+
 .head-cta { margin-inline-start: auto; }
 
-/* круглая кнопка-иконка: серая заливка, без градиентов */
+/* кругла кнопка-іконка */
 .round {
   display: grid;
   place-items: center;
-  width: 38px;
-  height: 38px;
+  width: 52px;
+  height: 52px;
   flex: none;
   border: 0;
   border-radius: 50%;
-  background: var(--glass-strong);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 6px 18px rgba(0,0,0,0.12);
-  color: var(--text);
-  font-size: 16px;
+  background: linear-gradient(150deg, #35352f 0%, var(--ink) 70%);
+  color: var(--white);
+  font-size: 19px;
   cursor: pointer;
-  transition: background 0.25s var(--ease), transform 0.25s var(--ease);
+  text-decoration: none;
+  transition: background 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.round:hover { transform: scale(1.06); }
-.round:active { transform: scale(0.94); }
-.round-sm { width: 32px; height: 32px; font-size: 14px; }
+.round:hover {
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+.round-sm { width: 40px; height: 40px; font-size: 16px; }
 
 /* =========================================================
-   Кнопки
+   Капсули
    ========================================================= */
 .pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 13px 24px;
-  border: 0;
+  gap: 12px;
+  padding: 17px 30px;
+  border: 1px solid transparent;
   border-radius: var(--pill);
-  font-family: var(--f);
-  font-size: var(--t-head);
-  font-weight: 600;
-  letter-spacing: -0.015em;
+  font-family: var(--f-ui);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.25s var(--ease), color 0.25s var(--ease), transform 0.25s var(--ease);
+  transition: background 0.22s var(--ease), color 0.22s var(--ease), transform 0.22s var(--ease);
 }
-.pill:active { transform: scale(0.97); }
+.pill:hover { transform: translateY(-2px); }
 
-.pill-dark { background: var(--tint); color: #fff; }
-.pill-dark:hover { background: var(--tint-press); }
-.pill-lime { background: var(--tint); color: #fff; }
-.pill-lime:hover { background: var(--tint-press); }
-.pill-line {
-  background: var(--glass-strong);
-  backdrop-filter: var(--blur-soft);
-  -webkit-backdrop-filter: var(--blur-soft);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 4px 14px rgba(0,0,0,0.08);
-  color: var(--text);
+.pill-dark {
+  background: linear-gradient(150deg, #35352f 0%, var(--ink) 70%);
+  color: var(--white);
 }
-.pill-line:hover { background: var(--surface); }
-.pill-sm { padding: 8px 16px; font-size: var(--t-sub); }
+.pill-dark:hover { background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%); color: var(--ink); }
+
+.pill-lime {
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  color: var(--ink);
+}
+.pill-lime:hover { background: var(--ink); color: var(--white); }
+
+.pill-line { background: none; border-color: var(--rule); color: var(--ink); }
+.pill-line:hover { border-color: var(--ink); background: var(--white); }
+
+.pill-sm { padding: 11px 20px; font-size: 14px; }
 
 /* =========================================================
-   Заголовок. Раньше был в два голоса — капс гротеском и курсивный
-   сериф. В оформлении Apple второй голос убран: остаётся крупный
-   заголовок и приглушённая вторая строка тем же шрифтом.
+   Заголовок у два голоси
    ========================================================= */
-.duo { margin: 0; text-align: center; line-height: 1.06; }
+.duo {
+  margin: 0;
+  text-align: center;
+  line-height: 1.0;
+}
 .duo b {
   display: block;
-  font-weight: 700;
-  font-size: clamp(1.9rem, 5vw, 3.1rem);
-  letter-spacing: -0.035em;
+  font-family: var(--f-caps);
+  font-weight: 800;
+  font-size: clamp(30px, 6vw, 62px);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
 }
 .duo i {
   display: block;
-  margin-top: 6px;
-  font-style: normal;
-  font-weight: 500;
-  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
-  letter-spacing: -0.02em;
-  color: var(--text-2);
+  margin-top: 4px;
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(28px, 5.6vw, 58px);
+  letter-spacing: -0.01em;
 }
 .duo-left { text-align: left; }
+
+/* курсив попереду: «Підкресліть СВОЮ ІДЕНТИЧНІСТЬ» */
 .duo-flip { display: flex; flex-direction: column; }
-.duo-flip i { order: -1; margin: 0 0 8px; }
+.duo-flip i { order: -1; margin: 0 0 2px; }
 
 .lede {
   margin: 18px auto 0;
-  max-width: 62ch;
+  max-width: 54ch;
   text-align: center;
-  font-size: var(--t-body);
-  color: var(--text-2);
+  color: var(--muted);
+  font-size: 16.5px;
 }
 .duo-left + .lede { margin-inline: 0; text-align: left; }
 
 /* =========================================================
-   Полосы и карточки
+   Блоки
    ========================================================= */
-.band { padding: clamp(34px, 6vw, 76px) 0; }
-.band-tight { padding: clamp(22px, 3.4vw, 44px) 0; }
+.band { padding: clamp(38px, 7vw, 92px) 0; }
+.band-tight { padding: clamp(26px, 4vw, 52px) 0; }
 
 .card {
-  padding: clamp(20px, 3vw, 30px);
-  border-radius: var(--r-lg);
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 1px 2px rgba(0,0,0,0.05), 0 12px 32px rgba(0,0,0,0.08);
+  background: var(--white);
+  border-radius: var(--r);
+  padding: clamp(20px, 3vw, 32px);
 }
-.card-dark {
-  background: var(--surface);
-  color: var(--text);
-}
-.card-dark .muted { color: var(--text-2); }
 
-/* Раньше здесь была большая пастельная арка с двумя градиентами.
-   В оформлении Apple глубину дают карточка и тень, а не заливка,
-   поэтому осталась мягкая подложка тоном акцента. */
+.card-dark {
+  background: linear-gradient(158deg, #34342f 0%, var(--ink) 62%);
+  color: var(--white);
+}
+.card-dark .muted { color: #a4a49e; }
+
+/* Велика пастельна арка. Два шари: м'яке світло згори й перехід
+   між спорідненими відтінками — плоска заливка на такому розмірі
+   виглядає порожньою. */
 .arch {
-  position: relative;
-  padding: clamp(30px, 6vw, 64px) clamp(20px, 4vw, 44px);
-  border-radius: var(--r-xl);
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 18px 44px rgba(0,0,0,0.10);
-  overflow: hidden;
+  background:
+    radial-gradient(72% 46% at 50% 6%, rgba(255, 255, 255, 0.62), transparent 70%),
+    linear-gradient(163deg, var(--pastel) 0%, var(--pastel-2) 100%);
+  border-radius: 999px 999px var(--r) var(--r);
+  padding: clamp(34px, 6vw, 76px) clamp(20px, 4vw, 56px) clamp(24px, 4vw, 48px);
+  text-align: center;
 }
 
 .chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 13px;
+  display: inline-block;
+  padding: 7px 16px;
   border-radius: var(--pill);
-  background: color-mix(in srgb, var(--tint) 14%, transparent);
-  color: var(--tint);
-  font-size: var(--t-foot);
-  font-weight: 600;
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  font-size: 13px;
+  font-weight: 500;
 }
 
 .kicker {
   margin: 0;
-  font-size: var(--t-foot);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--tint);
+  color: var(--muted);
 }
 
 /* =========================================================
-   Раскрывающийся список — сгруппированный, как в настройках
+   Гармошка
    ========================================================= */
-.acc {
-  border-radius: var(--r-lg);
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 1px 2px rgba(0,0,0,0.05), 0 12px 32px rgba(0,0,0,0.08);
+.acc { display: grid; gap: 10px; }
+
+.acc details {
+  background: var(--white);
+  border-radius: var(--r-sm);
   overflow: hidden;
-}
-.acc details { position: relative; }
-.acc details + details::before {
-  content: '';
-  position: absolute;
-  left: clamp(18px, 3vw, 28px);
-  right: 0;
-  top: 0;
-  height: 1px;
-  background: var(--sep);
-  transform: scaleY(0.5);
 }
 .acc summary {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 18px;
-  padding: 18px clamp(18px, 3vw, 28px);
-  font-size: var(--t-head);
-  font-weight: 600;
+  justify-content: space-between;
+  padding: 20px clamp(18px, 3vw, 28px);
+  font-family: var(--f-caps);
+  font-weight: 700;
+  font-size: clamp(14px, 1.7vw, 17px);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  line-height: 1.25;
   cursor: pointer;
   list-style: none;
-  transition: background 0.25s var(--ease);
 }
-.acc summary:hover { background: var(--fill); }
 .acc summary::-webkit-details-marker { display: none; }
 .acc summary::after {
-  content: '›';
+  content: '↓';
+  display: grid;
+  place-items: center;
   flex: none;
-  font-size: 1.3em;
-  color: var(--text-3);
-  transition: transform 0.35s var(--ease), color 0.25s;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--sand);
+  font-size: 15px;
+  transition: transform 0.24s var(--ease), background 0.24s var(--ease);
 }
-.acc details[open] summary::after { transform: rotate(90deg); color: var(--tint); }
-.acc .acc-body {
-  padding: 0 clamp(18px, 3vw, 28px) 20px;
-  font-size: var(--t-sub);
-  color: var(--text-2);
+.acc details[open] summary::after {
+  transform: rotate(180deg);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
 }
-.acc code {
-  padding: 1px 5px;
-  border-radius: 5px;
-  background: var(--fill);
-  font-family: var(--f-mono);
-  font-size: 0.92em;
-}
+.acc .acc-body { padding: 0 clamp(18px, 3vw, 28px) 22px; color: var(--muted); }
 
 /* =========================================================
-   Подвал
+   Підвал
    ========================================================= */
 .foot {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 24px;
+  gap: 14px 24px;
+  align-items: center;
   justify-content: space-between;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 22px var(--pad) 34px;
-  border-top: 1px solid var(--sep);
-  font-size: var(--t-foot);
-  color: var(--text-2);
+  padding: 26px var(--pad);
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--muted);
 }
-.foot-mark { font-weight: 700; color: var(--text); }
-.foot-mark i { font-style: normal; color: var(--tint); }
+.foot-mark { font-family: var(--f-caps); font-weight: 800; color: var(--ink); text-decoration: none; }
+.foot-mark i { font-style: normal; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+}
+
+
 
 /* =========================================================
-   Снимки и превью
+   Овальний медіа-блок
    ========================================================= */
 .oval {
-  border-radius: var(--r-lg);
+  margin: 0;
+  border-radius: 999px;
   overflow: hidden;
-  background: var(--fill);
+  background: var(--sand-2);
 }
-.oval img { width: 100%; height: 100%; object-fit: cover; }
-
-.pill-face {
-  display: block;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 1px 2px rgba(0,0,0,0.05), 0 12px 32px rgba(0,0,0,0.08);
-  transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease);
+.oval img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 3 / 4;
 }
-.pill-face:hover { transform: translateY(-3px); }
-.pill-face img { width: 100%; object-fit: cover; }
 
 /* =========================================================
-   Блок с двумя действиями
+   Капсула з обличчям
    ========================================================= */
-.nest {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-.nest a, .nest button {
+.pill-face {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 13px 24px;
-  border: 0;
+  gap: 14px;
+  padding: 7px 26px 7px 7px;
+  border: 1px solid var(--rule);
   border-radius: var(--pill);
-  background: var(--glass-strong);
-  backdrop-filter: var(--blur-soft);
-  -webkit-backdrop-filter: var(--blur-soft);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge);
-  color: var(--text);
-  font-size: var(--t-head);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.25s var(--ease), transform 0.25s var(--ease);
+  background: var(--white);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.nest a:active, .nest button:active { transform: scale(0.97); }
-.nest .nest-main { background: var(--tint); color: #fff; }
-.nest .nest-main:hover { background: var(--tint-press); }
-.nest .nest-alt:hover { background: var(--fill-2); }
+.pill-face:hover { border-color: var(--ink); transform: translateY(-2px); }
+.pill-face img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--lime);
+}
 
 /* =========================================================
-   Метки
+   Капсула всередині капсули — як у картках послуг
    ========================================================= */
-.tags {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  justify-content: center;
-}
-.tag {
-  padding: 6px 14px;
+.nest {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px;
   border-radius: var(--pill);
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-edge-dim);
-  box-shadow: inset 0 1px 0 var(--glass-edge), 0 1px 2px rgba(0,0,0,0.05), 0 12px 32px rgba(0,0,0,0.08);
-  font-size: var(--t-sub);
-  color: var(--text-2);
+  background: linear-gradient(150deg, #35352f 0%, var(--ink) 70%);
 }
-.tag-white { background: var(--surface); }
-
-.skip {
-  position: absolute; left: -9999px; top: 0; z-index: 60;
-  padding: 12px 20px;
-  border-radius: var(--r);
-  background: var(--surface);
-  box-shadow: var(--shadow-lift);
-  font-weight: 600;
+.nest a, .nest button {
+  padding: 11px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--pill);
+  background: none;
+  color: var(--white);
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
-.skip:focus { left: 12px; top: 12px; }
+.nest .nest-main { border-color: rgba(255, 255, 255, 0.35); }
+.nest .nest-main:hover { background: var(--lime); color: var(--ink); border-color: var(--lime); }
+.nest .nest-alt:hover { color: var(--lime); }
 
-.wrap { max-width: 1180px; margin: 0 auto; padding-inline: var(--pad); }
-section[id] { scroll-margin-top: 84px; }
+/* =========================================================
+   Лаймові капсули поверх великого напису
+   ========================================================= */
+.tags { position: relative; display: grid; justify-items: center; gap: 10px; }
+.tag {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: var(--pill);
+  background: linear-gradient(150deg, var(--lime) 0%, var(--lime-2) 100%);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.tag-white { background: var(--white); font-family: var(--f-serif); font-style: italic; }
 
-.visually-hidden {
-  position: absolute; width: 1px; height: 1px;
-  padding: 0; margin: -1px; overflow: hidden;
-  clip-path: inset(50%); white-space: nowrap;
+@media (min-width: 760px) {
+  .tags-loose { display: block; min-height: 190px; }
+  .tags-loose .tag { position: absolute; }
+  .tags-loose .tag:nth-of-type(1) { top: 0; left: 4%; rotate: -3deg; }
+  .tags-loose .tag:nth-of-type(2) { top: 12%; right: 6%; rotate: 2.5deg; }
+  .tags-loose .tag:nth-of-type(3) { bottom: 6%; left: 22%; rotate: 1.5deg; }
+  .tags-loose .tag:nth-of-type(4) { bottom: 0; right: 18%; rotate: -2deg; }
 }
