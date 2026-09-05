@@ -111,6 +111,11 @@ function measure() {
   const plate = $('end').getBoundingClientRect();
   STOPS.push({ at: 0.86, x: plate.left + 62, y: plate.top + plate.height / 2 });
   window.PLATE = plate;
+
+  /* Отдаём наружу моменты приземлений: по ним sound.py ставит звук
+     ровно под шаги, а не «примерно в такт». Считать их второй раз в
+     питоне нельзя — они зависят от измеренной раскладки. */
+  window.TIMING = { stops: STOPS.map(s => s.at), swap: 0.945 };
 }
 
 /* ---------- движение ---------- */

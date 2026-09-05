@@ -59,6 +59,11 @@ const ffmpeg = process.env.FFMPEG_PATH ||
       file
     ]);
 
+    // моменты приземлений — для звука
+    const timing = await page.evaluate(() => window.TIMING);
+    fs.writeFileSync(path.join(out, `tt-${scene}.timing.json`),
+      JSON.stringify({ seconds: SECONDS, ...timing }));
+
     fs.rmSync(frames, { recursive: true, force: true });
     console.log(`→ tt-${scene}.mp4  ${W}×${H}  ${SECONDS}s  ${(fs.statSync(file).size / 1048576).toFixed(1)} MB`);
   }
