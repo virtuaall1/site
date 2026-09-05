@@ -88,7 +88,7 @@ window.SITE = (() => {
         uk: 'Приклад: сторінка стоматології. Один екран із цінами, форма запису — заявка одразу падає в Telegram власнику.',
         en: "Example: a page for a dental clinic. One screen with prices and a booking form — each request lands straight in the owner's Telegram."
       },
-      price: '$150+',
+      price: { uah: 3500, usd: 80 },
       uk: {
         name: 'Сайт-візитка та лендинг',
         desc: 'Швидка сторінка під послугу або товар: адаптив, форми заявок, підключення аналітики.',
@@ -107,7 +107,7 @@ window.SITE = (() => {
         uk: 'Приклад: магазин кави. Клієнт обирає обсяг і помел, оплачує карткою в боті, ти бачиш замовлення з адресою в адмінці.',
         en: "Example: a coffee shop. The buyer picks grind and weight, pays by card inside the bot, and you see the order with its address in the admin panel."
       },
-      price: '$250+',
+      price: { uah: 7000, usd: 160 },
       uk: {
         name: 'Telegram-бот з оплатою',
         desc: 'Каталог, кошик, приймання платежів, сповіщення про замовлення та адмінка для керування товарами.',
@@ -125,7 +125,7 @@ window.SITE = (() => {
         uk: 'Приклад: бот стоматології нагадує про візит за добу і збирає відгуки, а нових у чаті зустрічає капча.',
         en: "Example: a clinic bot reminds patients a day before the visit and collects reviews, while a captcha meets newcomers in the chat."
       },
-      price: '$120+',
+      price: { uah: 3000, usd: 70 },
       uk: {
         name: 'Бот: розсилки, заявки, модерація',
         desc: 'Від автовідповідача до міні-CRM із сегментами, відкладеним постингом і антиспамом у чаті.',
@@ -144,7 +144,7 @@ window.SITE = (() => {
         uk: 'Приклад: облік замовлень для майстерні. Менеджер веде заявки, майстер бачить лише свої, власник — виторг за місяць.',
         en: "Example: an order tracker for a workshop. Managers handle requests, each technician sees only their own, the owner sees monthly revenue."
       },
-      price: '$400+',
+      price: { uah: 11000, usd: 250 },
       featured: true,
       uk: {
         name: 'Вебзастосунок з адмінкою',
@@ -163,7 +163,7 @@ window.SITE = (() => {
         uk: 'Приклад: API для мобільного застосунку. Реєстрація, кошик і історія замовлень — фронтенд просто звертається до готових методів.',
         en: "Example: an API for a mobile app. Sign-up, cart and order history — the frontend just calls ready-made endpoints."
       },
-      price: '$350+',
+      price: { uah: 9000, usd: 200 },
       uk: {
         name: 'Бекенд і API',
         desc: 'Серверна частина на Java зі Spring Boot або на Python: REST API, база, інтеграції із зовнішніми сервісами.',
@@ -181,7 +181,7 @@ window.SITE = (() => {
         uk: 'Приклад: стеження за цінами конкурентів. Щоранку збирає прайси у таблицю і пише в Telegram, якщо щось подешевшало.',
         en: "Example: competitor price tracking. Every morning it collects prices into a spreadsheet and pings Telegram when something drops."
       },
-      price: '$120+',
+      price: { uah: 2500, usd: 55 },
       uk: {
         name: 'Парсинг і автоматизація',
         desc: 'Збирає дані із сайтів, стежить за змінами і переносить рутину у скрипти за розкладом.',
@@ -199,7 +199,7 @@ window.SITE = (() => {
         uk: 'Приклад: старий сайт на чужому коді гальмував і падав. Розібрали, полагодили, перенесли на новий сервер — сторінки відкриваються вчетверо швидше.',
         en: "Example: an inherited site kept stalling and crashing. We dug in, fixed it and moved it to a new server — pages now open four times faster."
       },
-      price: '?',
+      price: null,
       uk: {
         name: 'Нестандартне завдання',
         desc: 'Доопрацювання чужого коду, інтеграції між сервісами, перенесення на новий сервер, прискорення повільного проєкту.',

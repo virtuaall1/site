@@ -193,22 +193,30 @@
 
     SERVICES.forEach(service => {
       const copy = service[lang] || service.uk;
-      const isCustom = service.price === '?';
-
       const name = el('h3', { class: 'price-name' }, copy.name);
       if (service.featured) {
         name.append(el('span', { class: 'price-featured', text: t('services.featured') }));
       }
 
-      const priceText = isCustom
-        ? t('services.custom')
-        : `${t('services.from')} ${service.price.replace('+', '')}`;
+      // Ціна живе у двох валютах. Попереду та, якою зараз розмовляє
+      // сторінка: гривня для своїх, долар для решти.
+      const money = el('div', { class: 'price-money' });
+      if (service.price) {
+        const uah = '₴' + service.price.uah.toLocaleString('uk-UA');
+        const usd = '$' + service.price.usd;
+        money.append(
+          el('span', { class: 'price-value', text: `${t('services.from')} ${lang === 'uk' ? uah : usd}` }),
+          el('span', { class: 'price-alt', text: `≈ ${lang === 'uk' ? usd : uah}` })
+        );
+      } else {
+        money.append(el('span', { class: 'price-value is-quote', text: t('services.custom') }));
+      }
 
       const inner = el('div', { class: 'price-inner' },
         name,
         el('p', { class: 'price-desc', text: copy.desc }),
         el('div', { class: 'price-right' },
-          el('span', { class: 'price-value', text: priceText }),
+          money,
           el('a', {
             class: 'price-cta',
             href: tgLink(t('services.orderText').replace('{name}', copy.name)),

@@ -571,6 +571,9 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
 .price-row:focus-within .price-desc { color: color-mix(in srgb, var(--acid-ink) 72%, transparent); }
 
 .price-right { display: flex; align-items: center; gap: 22px; }
+/* дві валюти одна під одною: гривня великою, друга дрібним рядком —
+   поруч вони не влізали в колонку й ламали ряд */
+.price-money { display: grid; justify-items: end; gap: 2px; }
 .price-value {
   font-family: var(--f-display);
   font-weight: 800;
@@ -578,6 +581,15 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
   letter-spacing: -0.03em;
   white-space: nowrap;
 }
+.price-value.is-quote { font-size: clamp(0.95rem, 1.5vw, 1.15rem); font-weight: 600; }
+.price-alt {
+  font-size: 0.78rem;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: color 0.4s var(--ease);
+}
+.price-row:hover .price-alt,
+.price-row:focus-within .price-alt { color: color-mix(in srgb, var(--acid-ink) 62%, transparent); }
 .price-cta {
   display: inline-flex;
   align-items: center;
@@ -952,6 +964,7 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
     padding: 24px 4px 6px;
   }
   .price-right { justify-content: space-between; width: 100%; }
+  .price-money { justify-items: start; }
   .price-cta { opacity: 1; transform: none; }
   .step { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
   .repo { grid-template-columns: 1fr; gap: 10px; }
