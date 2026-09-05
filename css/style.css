@@ -516,6 +516,32 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
 /* =========================================================
    Прайс-лист (строки, а не карточки)
    ========================================================= */
+/* перемикач валюти — той самий рисунок, що й перемикач мови в шапці */
+.cur-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.cur-btn {
+  min-width: 34px;
+  padding: 5px 10px;
+  border: 1px solid var(--rule);
+  font-family: var(--f-display);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--faint);
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.cur-btn[aria-pressed="true"] {
+  background: var(--acid);
+  border-color: var(--acid);
+  color: var(--acid-ink);
+}
+.cur-btn:not([aria-pressed="true"]):hover { color: var(--text); border-color: var(--acid-text); }
+.cur-note { margin-left: 6px; font-size: 0.76rem; color: var(--muted); }
+
 .price-list { border-top: 1px solid var(--rule); }
 
 .price-row {

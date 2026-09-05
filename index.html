@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com https://bank.gov.ua https://cdn.jsdelivr.net; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="dark">
 
@@ -109,6 +109,11 @@
       <p class="kicker" data-i18n="services.kicker">Що замовляють</p>
       <h2 class="section-title" data-i18n="services.title">Послуги та ціни</h2>
       <p class="section-lead" data-i18n="services.lead">Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаю після короткої розмови.</p>
+      <div class="cur-switch" id="curSwitch" role="group" aria-label="Валюта">
+        <button type="button" class="cur-btn" data-cur="uah" aria-pressed="true">₴</button>
+        <button type="button" class="cur-btn" data-cur="usd" aria-pressed="false">$</button>
+        <span class="cur-note" id="curNote"></span>
+      </div>
     </div>
     <ul class="price-list" id="priceList"></ul>
   </section>

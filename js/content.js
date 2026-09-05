@@ -88,7 +88,7 @@ window.SITE = (() => {
         uk: 'Приклад: сторінка стоматології. Один екран із цінами, форма запису — заявка одразу падає в Telegram власнику.',
         en: "Example: a page for a dental clinic. One screen with prices and a booking form — each request lands straight in the owner's Telegram."
       },
-      price: { uah: 3500, usd: 80 },
+      price: 3500,
       uk: {
         name: 'Сайт-візитка та лендинг',
         desc: 'Швидка сторінка під послугу або товар: адаптив, форми заявок, підключення аналітики.',
@@ -107,7 +107,7 @@ window.SITE = (() => {
         uk: 'Приклад: магазин кави. Клієнт обирає обсяг і помел, оплачує карткою в боті, ти бачиш замовлення з адресою в адмінці.',
         en: "Example: a coffee shop. The buyer picks grind and weight, pays by card inside the bot, and you see the order with its address in the admin panel."
       },
-      price: { uah: 7000, usd: 160 },
+      price: 7000,
       uk: {
         name: 'Telegram-бот з оплатою',
         desc: 'Каталог, кошик, приймання платежів, сповіщення про замовлення та адмінка для керування товарами.',
@@ -125,7 +125,7 @@ window.SITE = (() => {
         uk: 'Приклад: бот стоматології нагадує про візит за добу і збирає відгуки, а нових у чаті зустрічає капча.',
         en: "Example: a clinic bot reminds patients a day before the visit and collects reviews, while a captcha meets newcomers in the chat."
       },
-      price: { uah: 3000, usd: 70 },
+      price: 3000,
       uk: {
         name: 'Бот: розсилки, заявки, модерація',
         desc: 'Від автовідповідача до міні-CRM із сегментами, відкладеним постингом і антиспамом у чаті.',
@@ -144,7 +144,7 @@ window.SITE = (() => {
         uk: 'Приклад: облік замовлень для майстерні. Менеджер веде заявки, майстер бачить лише свої, власник — виторг за місяць.',
         en: "Example: an order tracker for a workshop. Managers handle requests, each technician sees only their own, the owner sees monthly revenue."
       },
-      price: { uah: 11000, usd: 250 },
+      price: 11000,
       featured: true,
       uk: {
         name: 'Вебзастосунок з адмінкою',
@@ -163,7 +163,7 @@ window.SITE = (() => {
         uk: 'Приклад: API для мобільного застосунку. Реєстрація, кошик і історія замовлень — фронтенд просто звертається до готових методів.',
         en: "Example: an API for a mobile app. Sign-up, cart and order history — the frontend just calls ready-made endpoints."
       },
-      price: { uah: 9000, usd: 200 },
+      price: 9000,
       uk: {
         name: 'Бекенд і API',
         desc: 'Серверна частина на Java зі Spring Boot або на Python: REST API, база, інтеграції із зовнішніми сервісами.',
@@ -181,7 +181,7 @@ window.SITE = (() => {
         uk: 'Приклад: стеження за цінами конкурентів. Щоранку збирає прайси у таблицю і пише в Telegram, якщо щось подешевшало.',
         en: "Example: competitor price tracking. Every morning it collects prices into a spreadsheet and pings Telegram when something drops."
       },
-      price: { uah: 2500, usd: 55 },
+      price: 2500,
       uk: {
         name: 'Парсинг і автоматизація',
         desc: 'Збирає дані із сайтів, стежить за змінами і переносить рутину у скрипти за розкладом.',
@@ -335,6 +335,9 @@ window.SITE = (() => {
       'services.title': 'Послуги та ціни',
       'services.lead': 'Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаємо після короткої розмови.',
       'services.from': 'від',
+      'services.currency': 'Валюта',
+      'services.rateLive': 'Курс НБУ на {date} — {rate} ₴/$',
+      'services.rateOld': 'Курс {rate} ₴/$ станом на {date}',
       'services.custom': 'ціна за задачею',
       'services.order': 'Замовити',
       'services.featured': 'хіт',
@@ -398,6 +401,9 @@ window.SITE = (() => {
       'services.title': 'Services and pricing',
       'services.lead': 'These are starting prices — the final one depends on scope. We quote exactly after a short conversation.',
       'services.from': 'from',
+      'services.currency': 'Currency',
+      'services.rateLive': 'NBU rate for {date} — {rate} UAH/USD',
+      'services.rateOld': 'Rate {rate} UAH/USD as of {date}',
       'services.custom': 'quoted per project',
       'services.order': 'Order',
       'services.featured': 'top',

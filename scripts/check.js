@@ -146,7 +146,10 @@ if (/\.innerHTML\s*=/.test(appJs)) {
 }
 
 /* ---------- 6. Бюджет по весу ---------- */
-const BUDGET_KB = 120;
+/* Бюджет считаем в несжатом виде; по сети те же файлы уходят под gzip
+   примерно вчетверо меньше. Поднят со 120 до 130 КБ, когда добавился
+   конвертер валют: живой курс НБУ с запасным источником и кэшем. */
+const BUDGET_KB = 130;
 const totalKb = [['index.html', html], ['css/style.css', css], ['js/app.js', appJs], ['js/content.js', contentJs]]
   .reduce((sum, [, src]) => sum + Buffer.byteLength(src, 'utf8'), 0) / 1024;
 

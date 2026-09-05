@@ -60,7 +60,64 @@
     return 'uk';
   }
 
+  /* =======================================================
+     Валюта. Ціни живуть у гривні одним числом — долар рахується
+     за курсом дня, щоб два записаних числа не розійшлись між собою
+     через півроку. Курс беремо в НБУ; якщо він мовчить — із
+     запасного джерела; якщо мовчать обидва, лишається останній
+     відомий курс і підпис, що він не сьогоднішній.
+     ======================================================= */
+  const RATE_TTL = 12 * 3600 * 1000;
+  const CURRENCIES = ['uah', 'usd'];
+  let rate = { usd: 44.61, date: '2026-09-03', live: false };   // НБУ, 3 вересня 2026
+
+  const RATE_SOURCES = [
+    {
+      url: 'https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json&valcode=USD',
+      read: d => ({ usd: d[0].rate, date: d[0].exchangedate.split('.').reverse().join('-') })
+    },
+    {
+      url: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json',
+      read: d => ({ usd: d.usd.uah, date: d.date })
+    }
+  ];
+
+  async function loadRate() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('rate') || 'null');
+      if (saved && Date.now() - saved.at < RATE_TTL) { rate = saved.rate; return; }
+    } catch (e) { /* приватний режим або зіпсований запис */ }
+
+    for (const src of RATE_SOURCES) {
+      try {
+        const res = await fetch(src.url);
+        if (!res.ok) continue;
+        const got = src.read(await res.json());
+        // курс поза цією вилкою означає, що джерело віддало щось інше
+        // (наприклад, долар за гривню) — краще лишитись зі старим числом
+        if (!(got.usd > 10 && got.usd < 200)) continue;
+        rate = { usd: got.usd, date: got.date, live: true };
+        try { localStorage.setItem('rate', JSON.stringify({ at: Date.now(), rate })); } catch (e) { /* noop */ }
+        return;
+      } catch (e) { /* пробуємо наступне джерело */ }
+    }
+  }
+
+  function detectCurrency() {
+    try {
+      const saved = localStorage.getItem('currency');
+      if (CURRENCIES.includes(saved)) return saved;
+    } catch (e) { /* приватний режим */ }
+    return lang === 'uk' ? 'uah' : 'usd';
+  }
+
+  /** Долар округлюємо до п'ятірки: це ціна, а не результат ділення. */
+  const inUah = n => '₴' + n.toLocaleString('uk-UA');
+  const inUsd = n => '$' + Math.round(n / rate.usd / 5) * 5;
+  const money = (n, cur) => (cur === 'uah' ? inUah : inUsd)(n);
+
   let lang = detectLang();
+  let currency = detectCurrency();
   let booted = false;
   /* при смене языка контент не должен заново «проявляться» — иначе страница прыгает */
   let skipReveal = false;
@@ -114,8 +171,11 @@
     $$('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
     $$('.lang-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
 
+    const curBox = $('#curSwitch');
+    if (curBox) curBox.setAttribute('aria-label', t('services.currency'));
     renderCases();
     renderServices();
+    renderRate();
     renderSteps();
     renderFaq();
     renderFigures();
@@ -185,6 +245,39 @@
     });
   }
 
+  /** Підпис під списком: звідки взявся курс і на яке число. */
+  function renderRate() {
+    const note = $('#curNote');
+    if (!note) return;
+    const locale = LOCALES[lang] || 'uk-UA';
+    const shown = rate.usd.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const date = new Date(rate.date).toLocaleDateString(locale);
+    note.textContent = t(rate.live ? 'services.rateLive' : 'services.rateOld')
+      .replace('{rate}', shown).replace('{date}', date);
+  }
+
+  function applyCurrency(next) {
+    currency = CURRENCIES.includes(next) ? next : 'uah';
+    try { localStorage.setItem('currency', currency); } catch (e) { /* noop */ }
+    $$('.cur-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cur === currency)));
+    skipReveal = booted;
+    renderServices();
+    renderRate();
+    skipReveal = false;
+  }
+
+  function setupCurrency() {
+    const box = $('#curSwitch');
+    if (!box) return;
+    box.addEventListener('click', e => {
+      const btn = e.target.closest('.cur-btn');
+      if (btn) applyCurrency(btn.dataset.cur);
+    });
+    applyCurrency(currency);
+    // курс приходить пізніше за першу відмальовку — тоді перемальовуємо
+    loadRate().then(() => { applyCurrency(currency); });
+  }
+
   function renderServices() {
     const list = $('#priceList');
     if (!list) return;
@@ -198,25 +291,23 @@
         name.append(el('span', { class: 'price-featured', text: t('services.featured') }));
       }
 
-      // Ціна живе у двох валютах. Попереду та, якою зараз розмовляє
-      // сторінка: гривня для своїх, долар для решти.
-      const money = el('div', { class: 'price-money' });
+      // Попереду обрана валюта, другим рядком — та сама сума в іншій.
+      const box = el('div', { class: 'price-money' });
       if (service.price) {
-        const uah = '₴' + service.price.uah.toLocaleString('uk-UA');
-        const usd = '$' + service.price.usd;
-        money.append(
-          el('span', { class: 'price-value', text: `${t('services.from')} ${lang === 'uk' ? uah : usd}` }),
-          el('span', { class: 'price-alt', text: `≈ ${lang === 'uk' ? usd : uah}` })
+        const other = currency === 'uah' ? 'usd' : 'uah';
+        box.append(
+          el('span', { class: 'price-value', text: `${t('services.from')} ${money(service.price, currency)}` }),
+          el('span', { class: 'price-alt', text: `≈ ${money(service.price, other)}` })
         );
       } else {
-        money.append(el('span', { class: 'price-value is-quote', text: t('services.custom') }));
+        box.append(el('span', { class: 'price-value is-quote', text: t('services.custom') }));
       }
 
       const inner = el('div', { class: 'price-inner' },
         name,
         el('p', { class: 'price-desc', text: copy.desc }),
         el('div', { class: 'price-right' },
-          money,
+          box,
           el('a', {
             class: 'price-cta',
             href: tgLink(t('services.orderText').replace('{name}', copy.name)),
@@ -1014,6 +1105,7 @@
   function boot() {
     applyTheme(detectTheme());
     applyLang(lang);
+    setupCurrency();
     initChrome();
     initGrid();
     initMagnetic();
