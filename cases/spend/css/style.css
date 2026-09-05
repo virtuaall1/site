@@ -1,3 +1,13 @@
+/* Акцент кейса: расходы — бирюзовый.
+   Меняется токен, а не отдельная заливка, — за ним идут кнопки,
+   ссылки, чипы и подложка шапки. */
+:root {
+  --tint: #30b0c7;
+  --tint-press: #2695a8;
+  --pastel: color-mix(in srgb, #30b0c7 13%, transparent);
+  --pastel-2: color-mix(in srgb, #30b0c7 6%, transparent);
+}
+
 /* Кейс «Облік витрат». Телефон и панель — в ../_ui/demo.css. */
 
 .hero { display: grid; justify-items: center; }
