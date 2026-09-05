@@ -5,7 +5,7 @@
 <title>v.studio — сторіс у русі</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Onest:wght@300;400;500;600&family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
    Рухомі сторіс. Кадр рахується з часу, а не з CSS-анімації:
@@ -20,6 +20,7 @@
   --acid: #d8ff3e;
   --f-display: 'Unbounded', system-ui, sans-serif;
   --f-text: 'Onest', system-ui, sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
 * { box-sizing: border-box; margin: 0; }
 html, body { width: 1080px; height: 1920px; overflow: hidden; }
@@ -92,6 +93,141 @@ body { background: var(--ink); color: var(--paper); font-family: var(--f-text); 
 .shot-card .what { font-size: 30px; line-height: 1.35; color: #cfccc4; margin-top: 16px; }
 .counter { position: absolute; left: 92px; bottom: 360px; font-size: 26px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 .counter b { color: var(--acid); font-weight: 500; }
+
+/* =========================================================
+   Сцени другої партії. У кожної своя механіка, а не свій текст:
+   переписка, друк, лічильник, лінія, хвиля, підміна рядків,
+   галочки, шторки і сітка, що складається у знак.
+   ========================================================= */
+
+/* --- переписка --- */
+.chat { position: absolute; left: 92px; right: 92px; top: 780px; display: grid; gap: 22px; }
+.bubble {
+  max-width: 78%;
+  padding: 26px 32px;
+  border-radius: 26px;
+  font-size: 32px;
+  line-height: 1.3;
+}
+.bubble.them { justify-self: start; background: #1b1b1f; border-bottom-left-radius: 8px; }
+.bubble.me { justify-self: end; background: var(--acid); color: var(--ink); border-bottom-right-radius: 8px; }
+.bubble.done { background: var(--acid); color: var(--ink); font-weight: 600; }
+.bubble b { display: block; font-family: var(--f-display); font-weight: 600; font-size: 26px; margin-bottom: 10px; }
+
+/* --- термінал --- */
+.term {
+  position: absolute;
+  left: 92px;
+  right: 92px;
+  top: 800px;
+  padding: 44px 40px;
+  border: 1px solid var(--rule);
+  background: #121215;
+  font-family: var(--f-mono);
+  font-size: 30px;
+  line-height: 1.85;
+}
+.term div { white-space: pre; color: #cfccc4; }
+.term .ok { color: var(--acid); }
+.term .cur { display: inline-block; width: 16px; height: 30px; background: var(--acid); vertical-align: -4px; }
+
+/* --- велике число, що накручується --- */
+.roll {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 190px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--acid);
+  font-variant-numeric: tabular-nums;
+}
+.parts { list-style: none; padding: 0; display: grid; }
+.parts li {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 22px;
+  align-items: baseline;
+  padding: 28px 0;
+  border-top: 1px solid var(--rule);
+  font-size: 34px;
+}
+.parts li:last-child { border-bottom: 1px solid var(--rule); }
+.parts b { font-family: var(--f-display); font-weight: 600; font-size: 24px; color: var(--acid); }
+
+/* --- лінія з кроками --- */
+.line-steps { position: absolute; left: 92px; right: 92px; top: 800px; padding-left: 96px; }
+.line-steps .rail { position: absolute; left: 26px; top: 14px; bottom: 14px; width: 2px; background: var(--rule); }
+.line-steps .rail i { display: block; width: 100%; height: 100%; background: var(--acid); transform-origin: top; }
+.line-steps p { position: relative; padding: 30px 0; font-size: 36px; line-height: 1.25; }
+.line-steps p::before {
+  content: '';
+  position: absolute;
+  left: -80px;
+  top: 44px;
+  width: 18px;
+  height: 18px;
+  background: var(--rule);
+}
+.line-steps p.on::before { background: var(--acid); }
+
+/* --- хвиля з плашок --- */
+.wave { position: absolute; left: 92px; right: 92px; top: 800px; display: flex; flex-wrap: wrap; gap: 18px; }
+.wave span { border: 1px solid var(--rule); padding: 18px 30px; font-size: 32px; color: #cfccc4; }
+.wave span.key { border-color: var(--acid); color: var(--acid); }
+
+/* --- підміна рядків на місці --- */
+.swap { position: absolute; left: 92px; right: 92px; top: 800px; height: 300px; }
+.swap div {
+  position: absolute;
+  inset: 0;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 104px;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+.swap div.acid { color: var(--acid); }
+
+/* --- три числа --- */
+.nums { position: absolute; left: 92px; right: 92px; top: 800px; display: grid; gap: 46px; }
+.nums li { list-style: none; display: grid; grid-template-columns: 240px 1fr; gap: 30px; align-items: center; }
+.nums em {
+  font-style: normal;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 150px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  color: var(--acid);
+  font-variant-numeric: tabular-nums;
+}
+.nums span { font-size: 36px; line-height: 1.25; color: #cfccc4; }
+
+/* --- галочки --- */
+.checks { position: absolute; left: 92px; right: 92px; top: 880px; display: grid; }
+.checks li {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 74px 1fr;
+  gap: 26px;
+  align-items: center;
+  padding: 34px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 38px;
+}
+.checks svg { width: 52px; height: 52px; }
+.checks path { fill: none; stroke: var(--acid); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* --- шторки на весь кадр --- */
+.panel { position: absolute; inset: 0; display: grid; align-content: center; padding: 300px 92px 320px; }
+.panel h2 { font-family: var(--f-display); font-weight: 800; font-size: 104px; line-height: 0.98; letter-spacing: -0.04em; }
+.panel p { margin-top: 34px; font-size: 40px; font-family: var(--f-display); font-weight: 600; }
+.panel.dark { background: var(--ink); color: var(--paper); }
+.panel.dark p { color: var(--acid); }
+.panel.light { color: var(--ink); }
+
+/* --- сітка, що складається у знак --- */
+#glyph { position: absolute; inset: 0; }
 </style>
 </head>
 <body>
@@ -102,7 +238,7 @@ body { background: var(--ink); color: var(--paper); font-family: var(--f-text); 
   <div id="brand"><span class="wordmark">v.studio</span></div>
 
   <!-- ---------- сцена intro ---------- -->
-  <div class="pad" id="sc-intro" hidden>
+  <div class="pad" id="sc-intro" data-scene="intro" hidden>
     <p class="eyebrow" id="i-eyebrow" style="margin-top:150px">Студія розробки</p>
     <h1 class="display" style="font-size:116px;margin-top:38px">
       <span class="reveal" id="i-l1"><span>Telegram-<br>боти</span></span>
@@ -114,12 +250,12 @@ body { background: var(--ink); color: var(--paper); font-family: var(--f-text); 
   </div>
 
   <!-- ---------- сцена cases ---------- -->
-  <div class="pad" id="sc-cases" hidden>
+  <div class="pad" id="sc-cases" data-scene="cases" hidden>
     <p class="eyebrow" id="c-eyebrow" style="margin-top:150px">Робочі приклади</p>
     <h1 class="display" id="c-title" style="font-size:104px;margin-top:38px">Це можна<br>відкрити<br>й натиснути<span class="dot-mark"></span></h1>
   </div>
 
-  <div class="shots" id="shots" hidden>
+  <div class="shots" id="shots" data-scene="cases" hidden>
     <div class="shot-card" data-i="0">
       <img src="../../img/cases/plitkarka.jpg" alt="">
       <p class="name">Сторінка кав'ярні</p>
@@ -136,9 +272,124 @@ body { background: var(--ink); color: var(--paper); font-family: var(--f-text); 
       <p class="what">Каталог, кошик, оплата, сповіщення власнику</p>
     </div>
   </div>
-  <p class="counter" id="counter" hidden><b id="counter-n">01</b> / 03</p>
+  <p class="counter" id="counter" data-scene="cases" hidden><b id="counter-n">01</b> / 03</p>
 
-  <div class="cta-plate" id="cta" hidden>
+
+<!-- ============ переписка ============ -->
+<div class="pad" data-scene="chat" hidden>
+  <p class="eyebrow" id="ch-eye" style="margin-top:150px">Демо магазину</p>
+  <h1 class="display" id="ch-title" style="font-size:96px;margin-top:32px">Замовлення<br>без менеджера<span class="dot-mark"></span></h1>
+</div>
+<div class="chat" data-scene="chat" hidden>
+  <div class="bubble me">/start</div>
+  <div class="bubble them"><b>Магазин кави</b>Оберіть розділ: зерно, помел, десерти</div>
+  <div class="bubble me">Зерно</div>
+  <div class="bubble them"><b>Ефіопія, 250 г</b>320 ₴ · додати в кошик</div>
+  <div class="bubble me">Оплатити</div>
+  <div class="bubble them done">Замовлення прийнято. Власнику вже прийшло сповіщення</div>
+</div>
+
+<!-- ============ термінал ============ -->
+<div class="pad" data-scene="terminal" hidden>
+  <p class="eyebrow" id="tm-eye" style="margin-top:150px">Зсередини</p>
+  <h1 class="display" id="tm-title" style="font-size:104px;margin-top:32px">Не магія,<br>а код<span class="dot-mark"></span></h1>
+</div>
+<div class="term" data-scene="terminal" hidden>
+  <div id="tl0"></div>
+  <div id="tl1"></div>
+  <div id="tl2"></div>
+  <div id="tl3"></div>
+  <div id="tl4" class="ok"></div>
+</div>
+
+<!-- ============ ціна ============ -->
+<div class="pad" data-scene="price" hidden>
+  <p class="eyebrow" id="pr-eye" style="margin-top:150px">Telegram-бот з оплатою</p>
+  <h1 class="display" id="pr-title" style="font-size:96px;margin-top:30px">За що саме<br>ти платиш<span class="dot-mark"></span></h1>
+  <ol class="parts" id="pr-parts" style="margin-top:48px">
+    <li><b>01</b><span>Логіка: сценарії, стани, помилки</span></li>
+    <li><b>02</b><span>Дані: база, адмінка, вивантаження</span></li>
+    <li><b>03</b><span>Запуск: сервер, оплата, підтримка</span></li>
+  </ol>
+  <div class="tail" id="pr-total" style="margin-top:56px">
+    <p class="price-cap" style="font-size:26px;letter-spacing:.18em;text-transform:uppercase;color:#8d8d94;margin-bottom:14px">Від</p>
+    <p class="roll" id="pr-num">₴0</p>
+  </div>
+</div>
+
+<!-- ============ порядок роботи ============ -->
+<div class="pad" data-scene="flow" hidden>
+  <p class="eyebrow" id="fl-eye" style="margin-top:150px">Порядок</p>
+  <h1 class="display" id="fl-title" style="font-size:104px;margin-top:32px">Від розмови<br>до запуску<span class="dot-mark"></span></h1>
+</div>
+<div class="line-steps" data-scene="flow" hidden>
+  <div class="rail"><i id="fl-rail"></i></div>
+  <p>Розмова: що і навіщо</p>
+  <p>Ціна й термін — фіксовані</p>
+  <p>Розробка, показуємо проміжне</p>
+  <p>Запуск і місяць підтримки</p>
+</div>
+
+<!-- ============ стек хвилею ============ -->
+<div class="pad" data-scene="stack" hidden>
+  <p class="eyebrow" id="st-eye" style="margin-top:150px">Стек</p>
+  <h1 class="display" id="st-title" style="font-size:104px;margin-top:32px">На чому<br>пишемо<span class="dot-mark"></span></h1>
+</div>
+<div class="wave" data-scene="stack" hidden>
+  <span class="key">Python</span><span class="key">Java</span><span class="key">Spring Boot</span>
+  <span>FastAPI</span><span>aiogram</span><span>PostgreSQL</span>
+  <span>SQLite</span><span>Redis</span><span>Docker</span>
+  <span>nginx</span><span>REST API</span><span>JavaScript</span>
+</div>
+
+<!-- ============ підміна рядків ============ -->
+<div class="pad" data-scene="type" hidden>
+  <p class="eyebrow" id="ty-eye" style="margin-top:150px">v.studio</p>
+</div>
+<div class="swap" data-scene="type" hidden>
+  <div>Не шаблон<span class="dot-mark"></span></div>
+  <div>Не конструктор<span class="dot-mark"></span></div>
+  <div class="acid">Свій код<span class="dot-mark" style="background:#f2efe8"></span></div>
+</div>
+
+<!-- ============ три числа ============ -->
+<div class="pad" data-scene="counter" hidden>
+  <p class="eyebrow" id="cn-eye" style="margin-top:150px">Коротко</p>
+  <h1 class="display" id="cn-title" style="font-size:104px;margin-top:32px">Що є<br>просто зараз<span class="dot-mark"></span></h1>
+</div>
+<ul class="nums" data-scene="counter" hidden>
+  <li><em data-to="3">0</em><span>кейси, які можна відкрити й натиснути</span></li>
+  <li><em data-to="7">0</em><span>послуг із цінами на сайті</span></li>
+  <li><em data-to="1">0</em><span>місяць підтримки після запуску</span></li>
+</ul>
+
+<!-- ============ галочки ============ -->
+<div class="pad" data-scene="checklist" hidden>
+  <p class="eyebrow" id="cl-eye" style="margin-top:150px">Входить у ціну</p>
+  <h1 class="display" id="cl-title" style="font-size:92px;margin-top:32px">Без зірочок<br>і дрібного<br>шрифту<span class="dot-mark"></span></h1>
+</div>
+<ul class="checks" data-scene="checklist" hidden>
+  <li><svg viewBox="0 0 52 52"><path d="M10 27l11 11 21-24"/></svg><span>Код і доступи — твої</span></li>
+  <li><svg viewBox="0 0 52 52"><path d="M10 27l11 11 21-24"/></svg><span>Адмінка, а не правки через нас</span></li>
+  <li><svg viewBox="0 0 52 52"><path d="M10 27l11 11 21-24"/></svg><span>Запуск на твоєму сервері</span></li>
+  <li><svg viewBox="0 0 52 52"><path d="M10 27l11 11 21-24"/></svg><span>Місяць підтримки після здачі</span></li>
+</ul>
+
+<!-- ============ шторки ============ -->
+<div data-scene="wipe" hidden>
+  <div class="panel dark" id="wp0"><h2>Сайт<br>під послугу</h2><p>від ₴3 500</p></div>
+  <div class="panel light" id="wp1" style="background:#f9dcc6"><h2>Telegram-бот<br>з оплатою</h2><p>від ₴7 000</p></div>
+  <div class="panel light" id="wp2" style="background:#c6cef9"><h2>Вебзастосунок<br>з адмінкою</h2><p>від ₴11 000</p></div>
+</div>
+
+<!-- ============ сітка складається у знак ============ -->
+<canvas id="glyph" width="1080" height="1920" data-scene="dots" hidden></canvas>
+<div class="pad" data-scene="dots" hidden>
+  <div class="tail" style="margin-top:auto">
+    <p class="lede" id="dt-lede" style="text-align:center">Студія розробки · @virtuaall01</p>
+  </div>
+</div>
+  <div class="cta-plate" id="cta" data-scene="intro price checklist wipe" hidden>
     <span class="cta-name">@virtuaall01</span>
     <span class="cta-what">v.studio · написати</span>
   </div>
@@ -173,14 +424,17 @@ function fadeUp(node, t, a, b, dist) {
 }
 
 /* --------- спільне: мітки й марка --------- */
-function common(t) {
-  const m = seg(t, 0.02, 0.16);
+function common(t, fast) {
+  // У нових сцен більше змісту, і 2,4 секунди на марку — забагато.
+  // Той самий вступ, тільки вдвічі коротший; сцена сама вирішує.
+  const k = fast ? 0.55 : 1;
+  const m = seg(t, 0.02 * k, 0.16 * k);
   el('marks').style.opacity = (0.55 * m).toFixed(3);
   [...el('marks').children].forEach(s => { s.style.transform = 'scale(' + lerp(0.4, 1, outCubic(m)).toFixed(3) + ')'; });
 
   // марка виїжджає великою по центру, далі сідає у верхній лівий кут
-  const inP = outCubic(seg(t, 0.04, 0.20));
-  const moveP = inOutCubic(seg(t, 0.26, 0.42));
+  const inP = outCubic(seg(t, 0.04 * k, 0.20 * k));
+  const moveP = inOutCubic(seg(t, 0.26 * k, 0.42 * k));
   const scale = lerp(2.35, 1, moveP);
   const x = lerp(70, 0, moveP);
   const y = lerp(600, 0, moveP);
@@ -231,13 +485,240 @@ function cases(t) {
 
 const SCENES = { intro, cases };
 
-/* Зайве не ховаємо, а виносимо зі сторінки: атрибут hidden програє
-   класу з display:flex, і сцени накладались одна на одну. */
-const PARTS = ['sc-intro', 'sc-cases', 'shots', 'counter', 'cta'];
-const KEEP = scene === 'intro' ? ['sc-intro', 'cta'] : ['sc-cases', 'shots', 'counter'];
-PARTS.forEach(id => {
-  const node = el(id);
-  if (KEEP.includes(id)) node.removeAttribute('hidden');
+/* =========================================================
+   Сцени другої партії
+   ========================================================= */
+
+/** Заголовок сцени: підпис і назва виїжджають одна за одною. */
+function head(eye, title, t, a) {
+  fadeUp(el(eye), t, a, a + 0.08);
+  if (title) fadeUp(el(title), t, a + 0.03, a + 0.13);
+}
+
+/* --- переписка: бульбашки випливають по черзі --- */
+function chat(t) {
+  common(t, true);
+  head('ch-eye', 'ch-title', t, 0.24);
+  const list = [...document.querySelectorAll('.bubble')];
+  list.forEach((node, i) => {
+    const a = 0.38 + i * 0.085;
+    const p = outBack(seg(t, a, a + 0.09));
+    node.style.opacity = clamp(seg(t, a, a + 0.05)).toFixed(3);
+    node.style.transform = 'translateY(' + px(lerp(30, 0, p)) + ') scale(' + lerp(0.9, 1, p).toFixed(3) + ')';
+  });
+}
+
+/* --- термінал: рядки набираються по буквах --- */
+const TERM = ['$ python bot.py', '  telegram   ok', '  база даних ok', '  платежі    ok', '✓ бот працює'];
+function terminal(t) {
+  common(t, true);
+  head('tm-eye', 'tm-title', t, 0.24);
+  fadeUp(document.querySelector('.term'), t, 0.34, 0.42, 22);
+  // на кожен рядок по рівному шматку часу; курсор стоїть у тому,
+  // який набирається зараз
+  const from = 0.40, to = 0.96;
+  const chars = TERM.reduce((n, line) => n + line.length, 0);
+  const typed = Math.round(clamp((t - from) / (to - from)) * chars);
+  let left = typed;
+  TERM.forEach((line, i) => {
+    const take = Math.max(0, Math.min(line.length, left));
+    left -= take;
+    const node = el('tl' + i);
+    node.textContent = line.slice(0, take);
+    // курсор стоїть у тому рядку, який набирається зараз
+    if (take > 0 && take < line.length) {
+      const cur = document.createElement('span');
+      cur.className = 'cur';
+      node.append(cur);
+    }
+    node.style.opacity = take > 0 ? '1' : '0';
+  });
+}
+
+/* --- ціна: число накручується до підсумку --- */
+function price(t) {
+  common(t, true);
+  head('pr-eye', 'pr-title', t, 0.22);
+  [...document.querySelectorAll('#pr-parts li')].forEach((node, i) => {
+    fadeUp(node, t, 0.36 + i * 0.07, 0.44 + i * 0.07, 26);
+  });
+  fadeUp(el('pr-total'), t, 0.60, 0.68);
+  // число не просто появляється, а докручується до 7000
+  const p = outCubic(seg(t, 0.62, 0.88));
+  const value = Math.round(7000 * p / 100) * 100;
+  el('pr-num').textContent = '₴' + value.toLocaleString('uk-UA');
+  const plate = outBack(seg(t, 0.88, 0.99));
+  el('cta').style.opacity = clamp(seg(t, 0.88, 0.93)).toFixed(3);
+  el('cta').style.transform = 'translateY(' + px(lerp(160, 0, plate)) + ')';
+}
+
+/* --- порядок: лінія їде вниз і запалює кроки --- */
+function flow(t) {
+  common(t, true);
+  head('fl-eye', 'fl-title', t, 0.22);
+  const grow = outCubic(seg(t, 0.36, 0.92));
+  el('fl-rail').style.transform = 'scaleY(' + grow.toFixed(3) + ')';
+  [...document.querySelectorAll('.line-steps p')].forEach((node, i) => {
+    const a = 0.36 + i * 0.13;
+    fadeUp(node, t, a, a + 0.08, 22);
+    node.classList.toggle('on', t > a + 0.04);
+  });
+}
+
+/* --- стек: плашки залітають хвилею, головні лишаються яскравими --- */
+function stack(t) {
+  common(t, true);
+  head('st-eye', 'st-title', t, 0.22);
+  [...document.querySelectorAll('.wave span')].forEach((node, i) => {
+    const a = 0.34 + i * 0.035;
+    const p = outBack(seg(t, a, a + 0.1));
+    node.style.opacity = clamp(seg(t, a, a + 0.05)).toFixed(3);
+    node.style.transform = 'translateY(' + px(lerp(26, 0, p)) + ') scale(' + lerp(0.86, 1, p).toFixed(3) + ')';
+    // під кінець зайве гасне, і видно три головні
+    if (!node.classList.contains('key')) {
+      node.style.opacity = (Number(node.style.opacity) * (1 - 0.65 * seg(t, 0.84, 0.94))).toFixed(3);
+    }
+  });
+}
+
+/* --- підміна: рядок їде вгору, наступний піднімається на його місце --- */
+function type(t) {
+  common(t, true);
+  fadeUp(el('ty-eye'), t, 0.18, 0.26);
+  const wins = [[0.26, 0.48], [0.50, 0.72], [0.74, 1.01]];
+  [...document.querySelectorAll('.swap div')].forEach((node, i) => {
+    const [a, b] = wins[i];
+    const inP = outCubic(seg(t, a, a + 0.07));
+    const outP = i < 2 ? outCubic(seg(t, b - 0.05, b)) : 0;
+    node.style.opacity = clamp(inP - outP).toFixed(3);
+    node.style.transform = 'translateY(' + px(lerp(70, 0, inP) - 70 * outP) + ')';
+  });
+}
+
+/* --- числа: кожне докручується від нуля --- */
+function counter(t) {
+  common(t, true);
+  head('cn-eye', 'cn-title', t, 0.22);
+  [...document.querySelectorAll('.nums li')].forEach((node, i) => {
+    const a = 0.34 + i * 0.17;
+    fadeUp(node, t, a, a + 0.08, 28);
+    const num = node.querySelector('em');
+    const to = Number(num.dataset.to);
+    num.textContent = String(Math.round(to * outCubic(seg(t, a, a + 0.20))));
+  });
+}
+
+/* --- галочки: кожна домальовується штрихом --- */
+function checklist(t) {
+  common(t, true);
+  head('cl-eye', 'cl-title', t, 0.22);
+  [...document.querySelectorAll('.checks li')].forEach((node, i) => {
+    const a = 0.34 + i * 0.13;
+    fadeUp(node, t, a, a + 0.07, 24);
+    const path = node.querySelector('path');
+    const len = 70;
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = String(len * (1 - outCubic(seg(t, a + 0.04, a + 0.15))));
+  });
+  const plate = outBack(seg(t, 0.88, 0.99));
+  el('cta').style.opacity = clamp(seg(t, 0.88, 0.93)).toFixed(3);
+  el('cta').style.transform = 'translateY(' + px(lerp(160, 0, plate)) + ')';
+}
+
+/* --- шторки: кожен екран витирає попередній знизу вгору --- */
+function wipe(t) {
+  common(t, true);
+  // на світлих шторках паперова марка й кислотні мітки читаються
+  // погано — прибираємо їх рівно тоді, коли з'їжджає перша шторка
+  const off = 1 - seg(t, 0.14, 0.22);
+  el('brand').style.opacity = off.toFixed(3);
+  el('marks').style.opacity = (0.55 * off).toFixed(3);
+  const wins = [0.20, 0.46, 0.72];
+  wins.forEach((a, i) => {
+    const p = inOutCubic(seg(t, a, a + 0.12));
+    el('wp' + i).style.clipPath = 'inset(' + ((1 - p) * 100).toFixed(2) + '% 0 0 0)';
+  });
+  const plate = outBack(seg(t, 0.88, 0.99));
+  el('cta').style.opacity = clamp(seg(t, 0.88, 0.93)).toFixed(3);
+  el('cta').style.transform = 'translateY(' + px(lerp(160, 0, plate)) + ')';
+}
+
+/* --- сітка: розсипані точки збираються у знак «v.» ---
+   Форму беремо не з координат, а з самого шрифту: малюємо літеру на
+   невидимому полотні і питаємо, які вузли сітки в неї потрапили. Тоді
+   знак завжди збігається з тим, що стоїть у шапці сайту. */
+let DOTS = null;
+function buildDots() {
+  const probe = document.createElement('canvas');
+  probe.width = 1080;
+  probe.height = 1920;
+  const c = probe.getContext('2d');
+  c.fillStyle = '#fff';
+  c.font = '800 760px Unbounded, sans-serif';
+  c.textAlign = 'center';
+  c.textBaseline = 'middle';
+  c.fillText('v.', 540, 880);
+  const px32 = c.getImageData(0, 0, 1080, 1920).data;
+
+  const step = 19;
+  const list = [];
+  for (let y = 300; y < 1500; y += step) {
+    for (let x = 60; x < 1020; x += step) {
+      const inGlyph = px32[(y * 1080 + x) * 4 + 3] > 128;
+      // випадковий, але завжди однаковий розкид: відео має збиратись
+      // однаково при кожному рендері
+      const seed = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+      const rnd = seed - Math.floor(seed);
+      const seed2 = Math.sin(x * 39.3468 + y * 11.135) * 24634.6345;
+      const rnd2 = seed2 - Math.floor(seed2);
+      list.push({
+        x, y, inGlyph,
+        fx: x + (rnd - 0.5) * 900,
+        fy: y + (rnd2 - 0.5) * 1400,
+        delay: rnd * 0.22
+      });
+    }
+  }
+  return list;
+}
+
+function dots(t) {
+  // знак тут збирається із самої сітки, тому текстова марка зайва
+  el('brand').style.opacity = '0';
+  el('marks').style.opacity = (0.55 * seg(t, 0.04, 0.2)).toFixed(3);
+  const canvas = el('glyph');
+  const c = canvas.getContext('2d');
+  if (!DOTS) DOTS = buildDots();
+
+  c.clearRect(0, 0, 1080, 1920);
+  DOTS.forEach(d => {
+    const p = outCubic(seg(t, 0.06 + d.delay, 0.52 + d.delay));
+    const x = lerp(d.fx, d.x, p);
+    const y = lerp(d.fy, d.y, p);
+    // знак проявляється не одразу: спершу збирається сітка, потім
+    // всередині літери точки набирають колір
+    const lit = d.inGlyph ? seg(t, 0.55, 0.78) : 0;
+    const size = d.inGlyph ? lerp(1.8, 5.4, lit) : 1.8;
+    // сітку видно достатньо, щоб читалось саме складання, але не
+    // настільки, щоб вона сперечалася зі знаком
+    c.globalAlpha = d.inGlyph ? lerp(0.3, 1, lit) : lerp(0, 0.34, p) * (1 - 0.55 * seg(t, 0.6, 0.85));
+    c.fillStyle = d.inGlyph ? '#d8ff3e' : '#f2efe8';
+    c.beginPath();
+    c.arc(x, y, size, 0, Math.PI * 2);
+    c.fill();
+  });
+  c.globalAlpha = 1;
+  fadeUp(el('dt-lede'), t, 0.82, 0.92);
+}
+
+Object.assign(SCENES, { chat, terminal, price, flow, stack, type, counter, checklist, wipe, dots });
+
+
+/* Чуже зі сторінки виносимо, а не ховаємо: атрибут hidden програє
+   класу з display:flex, і сцени накладались одна на одну. Кожен блок
+   сам каже, якій сцені належить, — списку в коді більше немає. */
+document.querySelectorAll('[data-scene]').forEach(node => {
+  if (node.dataset.scene.split(' ').includes(scene)) node.removeAttribute('hidden');
   else node.remove();
 });
 

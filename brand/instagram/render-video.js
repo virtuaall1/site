@@ -22,10 +22,25 @@ const W = 1080, H = 1920;
 const SS = 1.5;          // наскільки знімаємо більше за кінцевий розмір
 const FPS = 30;
 const SECONDS = 6;
-const SCENES = [
+const ALL = [
   { id: 'reel-intro', scene: 'intro' },
-  { id: 'reel-cases', scene: 'cases' }
+  { id: 'reel-cases', scene: 'cases' },
+  { id: 'reel-chat', scene: 'chat' },
+  { id: 'reel-terminal', scene: 'terminal' },
+  { id: 'reel-price', scene: 'price' },
+  { id: 'reel-flow', scene: 'flow' },
+  { id: 'reel-stack', scene: 'stack' },
+  { id: 'reel-type', scene: 'type' },
+  { id: 'reel-counter', scene: 'counter' },
+  { id: 'reel-checklist', scene: 'checklist' },
+  { id: 'reel-wipe', scene: 'wipe' },
+  { id: 'reel-dots', scene: 'dots' }
 ];
+
+/* Можна назвати сцени аргументами — зручно перезняти одну, не
+   ганяючи всі: node render-video.js chat dots */
+const only = process.argv.slice(2);
+const SCENES = only.length ? ALL.filter(s => only.includes(s.scene)) : ALL;
 
 const ffmpeg = process.env.FFMPEG_PATH ||
   '/usr/local/lib/python3.11/dist-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v7.0.2';
