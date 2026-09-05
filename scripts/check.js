@@ -153,7 +153,9 @@ if (/\.innerHTML\s*=/.test(appJs)) {
    полоса прочитанного, вытирание снимков, перетекание при смене
    языка и валюты). */
 const BUDGET_KB = 145;
-const totalKb = [['index.html', html], ['css/style.css', css], ['js/app.js', appJs], ['js/content.js', contentJs]]
+const iosCss = read('css/ios.css');
+const totalKb = [['index.html', html], ['css/ios.css', iosCss], ['css/style.css', css],
+                 ['js/app.js', appJs], ['js/content.js', contentJs]]
   .reduce((sum, [, src]) => sum + Buffer.byteLength(src, 'utf8'), 0) / 1024;
 
 if (totalKb > BUDGET_KB) fail(`страница весит ${totalKb.toFixed(1)} КБ — больше бюджета ${BUDGET_KB} КБ`);
