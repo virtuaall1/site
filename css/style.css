@@ -1065,8 +1065,20 @@ html { scroll-padding-top: 92px; }
     gap: 12px;
     padding: 24px 4px 6px;
   }
-  .price-right { flex-wrap: wrap; gap: 14px; width: 100%; }
-  .price-money { justify-items: start; }
+  /* Не ряд с переносом, а сетка из двух ячеек: цена своей строкой,
+     под ней две кнопки. Перенос зависел от ширины цены, а она растёт
+     вместе с системным размером шрифта — на телефоне с крупным
+     текстом «Приклад» и «Замовити» уезжали в столбик и налезали на
+     список пунктов. Сетка кладёт их одинаково при любом кегле. */
+  .price-right {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+  }
+  .price-money { order: -1; grid-column: 1 / -1; justify-items: start; }
   .price-name, .price-desc { overflow-wrap: anywhere; }
   .price-cta { opacity: 1; transform: none; }
   .step { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
