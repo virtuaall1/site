@@ -6,11 +6,21 @@
 window.SITE = (() => {
   'use strict';
 
+  /**
+   * Адреса и то, как они подписаны, — разные вещи.
+   *
+   * Показываем короткое «@virtuaall», а ведут ссылки на настоящие
+   * аккаунты. Это работает только там, где есть ссылка: нажал —
+   * попал куда надо. На картинках для инстаграма и тиктока так
+   * делать нельзя, там подпись и есть единственный способ найти
+   * аккаунт, поэтому в brand/ везде стоит полный ник.
+   */
   const LINKS = {
     github: 'https://github.com/virtuaall1',
     telegram: 'https://t.me/virtuaall01',
-    telegramHandle: '@virtuaall01',
-    email: 'virtuaall0@gmail.com'
+    email: 'virtuaall0@gmail.com',
+
+    telegramHandle: '@virtuaall'
   };
 
   const GITHUB_USER = 'virtuaall1';

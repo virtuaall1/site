@@ -1210,6 +1210,13 @@
     if (tg) tg.href = tgLink(t('contact.tgText'));
     const mail = $('#mailLink');
     if (mail) mail.href = `mailto:${LINKS.email}`;
+
+    // в подвале подпись короткая, а ссылка — на настоящий аккаунт
+    const footTg = $('#footTg');
+    if (footTg) {
+      footTg.href = LINKS.telegram;
+      footTg.textContent = LINKS.telegramHandle;
+    }
     const gh = $('#heroGithub');
     if (gh) gh.href = LINKS.github;
     const all = $('#allRepos');
