@@ -17,7 +17,7 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { chromium } = require('playwright-core');
 
-const W = 1080, H = 1920, SS = 1.5, FPS = 30, SECONDS = 9;
+const W = 1080, H = 1920, SS = 1.5, FPS = 30, SECONDS = 12;
 
 const ALL = Object.keys(JSON.parse(JSON.stringify(
   { price: 1, bot: 1, ask: 1, cases: 1, vs: 1, steps: 1, included: 1, auto: 1, mistakes: 1, dm: 1 }
