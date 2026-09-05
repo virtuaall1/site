@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>v.studio — ролики для TikTok</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&family=Unbounded:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TikTok — это не сторис. Три отличия, из которых всё остальное:
+
+   1. Хук в первом кадре. Никакого логотипа в начале: решают
+      первые полторы секунды, и за это время человек должен
+      прочитать, о чём ролик. Марка уходит в конец.
+   2. Другие поля. Справа колонка кнопок, снизу подпись и музыка —
+      туда текст класть нельзя. Слева и сверху почти всё свободно.
+   3. Ролик смотрят по кругу. Строка хука висит весь ролик, поэтому
+      последний кадр стыкуется с первым и повтор не читается как
+      склейка.
+
+   Кадр считается из времени: render.js зовёт setT(0…1) и снимает.
+   Один и тот же рендер даёт один и тот же файл.
+   ========================================================= */
+:root {
+  --ink: #0a0a0b;
+  --paper: #f2efe8;
+  --muted: #8d8d94;
+  --dim: #cfccc4;
+  --rule: rgba(242, 239, 232, 0.16);
+  --acid: #d8ff3e;
+  --f-display: 'Unbounded', system-ui, sans-serif;
+  --f-text: 'Onest', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; }
+body { background: var(--ink); color: var(--paper); font-family: var(--f-text); }
+
+.stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(242, 239, 232, 0.05) 1.5px, transparent 1.5px);
+  background-size: 34px 34px;
+}
+
+/* Поля TikTok: справа 180 под кнопки, снизу 420 под подпись. */
+.safe { position: absolute; left: 64px; right: 180px; top: 150px; bottom: 420px; }
+
+.hook {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 84px;
+  line-height: 1.0;
+  letter-spacing: -0.045em;
+}
+.hook mark {
+  background: var(--acid);
+  color: var(--ink);
+  padding: 0 14px;
+  margin: 0 -6px;
+  border-radius: 4px;
+}
+.sub { margin-top: 26px; font-size: 36px; line-height: 1.35; color: var(--muted); }
+
+/* Строки, которые выбиваются по одной */
+.beats { position: absolute; left: 64px; right: 180px; top: 560px; display: grid; gap: 18px; }
+.beat {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 24px;
+  align-items: center;
+  padding: 30px 32px;
+  background: #17171a;
+  border-left: 6px solid var(--acid);
+  font-size: 46px;
+  line-height: 1.2;
+}
+.beat b {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 40px;
+  color: var(--acid);
+  font-variant-numeric: tabular-nums;
+}
+.beat.no { border-left-color: #4a4a52; }
+.beat.no b { color: #6d6d77; }
+.beat i { font-style: normal; color: var(--muted); font-size: 34px; display: block; margin-top: 8px; }
+
+/* Ценник крупно */
+.tag { display: flex; align-items: baseline; gap: 22px; }
+.tag em {
+  font-style: normal;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: 92px;
+  letter-spacing: -0.05em;
+  color: var(--acid);
+  font-variant-numeric: tabular-nums;
+}
+.tag span { font-size: 40px; color: var(--dim); }
+
+/* Переписка */
+.chat { position: absolute; left: 64px; right: 180px; top: 560px; display: grid; gap: 16px; }
+.msg { max-width: 88%; padding: 22px 30px; border-radius: 26px; font-size: 36px; line-height: 1.25; }
+.msg.them { justify-self: start; background: #1b1b1f; border-bottom-left-radius: 8px; }
+.msg.me { justify-self: end; background: var(--acid); color: var(--ink); border-bottom-right-radius: 8px; font-weight: 600; }
+.msg.hit { background: var(--acid); color: var(--ink); font-weight: 700; }
+
+/* Две колонки для сравнения */
+.versus { position: absolute; left: 64px; right: 180px; top: 560px; display: grid; gap: 22px; }
+.col { padding: 30px; border: 2px solid var(--rule); }
+.col.good { border-color: var(--acid); }
+.col h3 { font-family: var(--f-display); font-weight: 800; font-size: 46px; letter-spacing: -0.03em; margin-bottom: 22px; }
+.col.good h3 { color: var(--acid); }
+.col p { font-size: 38px; line-height: 1.45; color: var(--dim); }
+
+/* Снимки работ */
+.works { position: absolute; left: 64px; right: 180px; top: 550px; height: 760px; }
+.work { position: absolute; inset: 0; }
+.work img { display: block; width: 100%; border: 1px solid var(--rule); }
+.work p { margin-top: 26px; font-family: var(--f-display); font-weight: 600; font-size: 44px; letter-spacing: -0.02em; }
+.work i { font-style: normal; display: block; margin-top: 12px; font-family: var(--f-text); font-weight: 400; font-size: 34px; color: var(--muted); }
+
+/* Плашка в конце */
+[data-type="punch"] #body { top: 760px; }
+[data-type="punch"] .beat { font-size: 66px; padding: 40px 40px; }
+[data-type="punch"] .beat b { font-size: 52px; }
+
+.end {
+  position: absolute;
+  left: 64px;
+  right: 180px;
+  bottom: 440px;
+  background: var(--acid);
+  color: var(--ink);
+  padding: 34px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.end b { font-family: var(--f-display); font-weight: 800; font-size: 52px; letter-spacing: -0.03em; }
+.end span { font-size: 28px; letter-spacing: 0.1em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="safe"><div class="hook" id="hook"></div><p class="sub" id="sub"></p></div>
+  <div id="body"></div>
+  <div class="end" id="end"><b>@virtuaall01</b><span>v.studio</span></div>
+</div>
+<script src="scenes.js"></script>
+<script src="engine.js"></script>
+</body>
+</html>
