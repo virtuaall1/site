@@ -114,7 +114,15 @@ img { display: block; max-width: 100%; }
   opacity: 0.85;
 }
 
-body > *:not(#grid-canvas) { position: relative; z-index: 1; }
+/* Поднимаем содержимое над фоновой сеткой.
+   Раньше здесь стояло body > *:not(#grid-canvas) — и это молча
+   ломало шапку: :not() берёт вес своего аргумента, то есть id, и
+   правило перебивало .topbar { position: fixed }. Шапка не липла
+   никогда и ни на чём, а вся логика вокруг неё — фон при прокрутке,
+   размытие, отступы у якорей — работала вхолостую.
+   Селектор без id весит меньше класса, и .topbar снова главнее. */
+body > * { position: relative; z-index: 1; }
+#grid-canvas { z-index: 0; }
 
 /* На сенсорных экранах курсора нет, а покадровая отрисовка фона сажает
    батарею и дёргает прокрутку. Рисуем ту же сетку одной статичной
@@ -139,6 +147,9 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
 /* =========================================================
    Шапка
    ========================================================= */
+/* якорь не должен уезжать под липкую шапку */
+html { scroll-padding-top: 92px; }
+
 .topbar {
   position: fixed;
   inset: 0 0 auto 0;
@@ -969,8 +980,69 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
    Появление при скролле (фоллбэк, если GSAP не загрузился)
    ========================================================= */
 .reveal { opacity: 0; transform: translateY(24px); }
-.reveal.in { opacity: 1; transform: none; transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.reveal.in {
+  opacity: 1;
+  transform: none;
+  /* Лесенка: соседи в списке выезжают не разом, а по очереди.
+     Индекс проставляет js, когда впервые берёт элемент на карандаш;
+     дальше шестого не считаем, иначе низ списка заметно отстаёт. */
+  transition: opacity 0.7s var(--ease) calc(var(--i, 0) * 70ms),
+              transform 0.7s var(--ease) calc(var(--i, 0) * 70ms);
+}
 .js-off .reveal { opacity: 1; transform: none; }
+
+/* Снимок кейса не просто всплывает, а вытирается снизу вверх —
+   так он читается как открывающийся кадр, а не как всплывашка. */
+.reveal .case-frame {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.9s var(--ease) calc(var(--i, 0) * 70ms + 140ms);
+}
+.reveal.in .case-frame { clip-path: inset(0 0 0 0); }
+.js-off .case-frame { clip-path: none; }
+
+/* Полоса прочитанного по нижней кромке шапки. Считает её сам
+   браузер по позиции скролла — ни одного кадра на js. Где
+   scroll-таймлайнов нет, полоса просто остаётся пустой. */
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.progress i {
+  display: block;
+  height: 100%;
+  background: var(--acid);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+@keyframes progress-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes hero-lift { to { opacity: 0.12; transform: translateY(-30px); } }
+
+@supports (animation-timeline: scroll()) {
+  .progress i {
+    animation: progress-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+/* Заголовок первого экрана уходит вверх и гаснет, пока его
+   пролистывают. Тоже без js: таймлайн привязан к самому элементу. */
+@supports (animation-timeline: view()) {
+  .hero-title {
+    animation: hero-lift linear both;
+    animation-timeline: view(block);
+    animation-range: exit 0% exit 100%;
+  }
+}
+
+/* На тачскрине нет наведения — тот же отклик вешаем на нажатие */
+@media (hover: none) {
+  .price-row:active .price-head::before { transform: scaleY(1); }
+  .price-row:active .price-head { color: var(--acid-ink); }
+}
 
 /* =========================================================
    Адаптив
@@ -1010,5 +1082,11 @@ body > *:not(#grid-canvas) { position: relative; z-index: 1; }
     scroll-behavior: auto !important;
   }
   .reveal { opacity: 1; transform: none; }
+  /* animation-duration: 0.001ms выше не выключает анимацию, а
+     мгновенно доигрывает её до конца: с fill: both заголовок так и
+     остался бы полупрозрачным, а полоса — во всю ширину. Гасим их
+     целиком. */
+  .progress i, .hero-title { animation: none !important; }
+  .reveal .case-frame, .case-frame { clip-path: none !important; }
   #grid-canvas { display: none; }
 }

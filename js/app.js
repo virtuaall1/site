@@ -155,12 +155,30 @@
     return `${extra} reveal${skipReveal ? ' in' : ''}`.trim();
   }
 
+  /**
+   * Смена языка и валюты перерисовывает целые списки: страница
+   * моргает и дёргается. View Transitions превращают это в
+   * перетекание — браузер снимает кадр до и кадр после и сам
+   * разводит их. Где API нет, всё работает как раньше.
+   */
+  function smoothSwap(fn) {
+    if (reduceMotion || !document.startViewTransition) { fn(); return Promise.resolve(); }
+    // updateCallbackDone, а не сам вызов: он отдаёт управление сразу,
+    // а нам важно, чтобы восстановление скролла случилось уже после
+    // перерисовки, иначе высота страницы поедет под ногами
+    return document.startViewTransition(fn).updateCallbackDone;
+  }
+
   function applyLang(next) {
     lang = SUPPORTED.includes(next) ? next : 'uk';
     skipReveal = booted;
-    // перерисовка списков схлопывает высоту документа и сбрасывает скролл —
-    // запоминаем позицию, чтобы человека не выкинуло в начало страницы
+    // Перерисовка списков схлопывает высоту документа, и браузер тут
+    // же прижимает скролл к новому потолку — человека выбрасывало в
+    // начало страницы. Запомнить позицию мало: возвращать её некуда,
+    // пока страница короткая. Поэтому придерживаем высоту распоркой,
+    // пока не вернём позицию.
     const scrollBefore = window.scrollY;
+    if (booted) document.body.style.minHeight = document.body.scrollHeight + 'px';
     try { localStorage.setItem('lang', lang); } catch (e) { /* noop */ }
 
     document.documentElement.lang = lang;
@@ -168,34 +186,42 @@
     const desc = $('meta[name="description"]');
     if (desc) desc.setAttribute('content', t('meta.desc'));
 
-    $$('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
-    $$('.lang-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
+    const redraw = () => {
+      $$('[data-i18n]').forEach(node => { node.textContent = t(node.dataset.i18n); });
+      $$('.lang-btn').forEach(btn => btn.setAttribute('aria-pressed', String(btn.dataset.lang === lang)));
 
-    const curBox = $('#curSwitch');
-    if (curBox) curBox.setAttribute('aria-label', t('services.currency'));
-    renderCases();
-    renderServices();
-    renderRate();
-    renderSteps();
-    renderFaq();
-    renderFigures();
-    refreshStats();
+      const curBox = $('#curSwitch');
+      if (curBox) curBox.setAttribute('aria-label', t('services.currency'));
+      renderCases();
+      renderServices();
+      renderRate();
+      renderSteps();
+      renderFaq();
+      renderFigures();
+      refreshStats();
 
-    // текст готового сообщения тоже зависит от языка
-    const tgBtn = $('#tgLink');
-    if (tgBtn) tgBtn.href = tgLink(t('contact.tgText'));
-    if (state.repos) renderRepos(state.repos);
+      // текст готового сообщения тоже зависит от языка
+      const tgBtn = $('#tgLink');
+      if (tgBtn) tgBtn.href = tgLink(t('contact.tgText'));
+      if (state.repos) renderRepos(state.repos);
+    };
 
-    if (booted) {
+    smoothSwap(redraw).then(() => {
+      if (!booted) { document.body.style.minHeight = ''; return; }
       refreshAnimations();
       // браузер сбрасывает позицию уже после пересчёта раскладки,
       // поэтому возвращаемся на место следующим кадром после него
       const restore = () => {
         if (smoothScroll) smoothScroll.scrollTo(scrollBefore, { immediate: true });
-        else window.scrollTo(0, scrollBefore);
+        // behavior: 'instant' обязателен: в css у html стоит
+        // scroll-behavior: smooth, и обычный scrollTo уехал бы туда
+        // плавной анимацией — посреди смены языка это выглядит как
+        // самопроизвольная прокрутка
+        else window.scrollTo({ top: scrollBefore, behavior: 'instant' });
+        document.body.style.minHeight = '';
       };
       requestAnimationFrame(() => requestAnimationFrame(restore));
-    }
+    });
   }
 
   function renderFigures() {
@@ -260,10 +286,12 @@
     currency = CURRENCIES.includes(next) ? next : 'uah';
     try { localStorage.setItem('currency', currency); } catch (e) { /* noop */ }
     $$('.cur-btn').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cur === currency)));
-    skipReveal = booted;
-    renderServices();
-    renderRate();
-    skipReveal = false;
+    smoothSwap(() => {
+      skipReveal = booted;
+      renderServices();
+      renderRate();
+      skipReveal = false;
+    });
   }
 
   function setupCurrency() {
@@ -284,7 +312,7 @@
     list.textContent = '';
     let isFirstExample = true;
 
-    SERVICES.forEach(service => {
+    SERVICES.forEach((service, i) => {
       const copy = service[lang] || service.uk;
       const name = el('h3', { class: 'price-name' }, copy.name);
       if (service.featured) {
@@ -322,6 +350,10 @@
 
       const head = el('div', { class: 'price-head' }, inner, bullets);
       const row = el('li', { class: revealCls('price-row') }, head);
+      // строки услуг перерисовываются уже показанными (при смене
+      // языка и валюты), и общий обход их не застаёт — нумеруем сразу
+      row.dataset.i = String(Math.min(i, 6));
+      row.style.setProperty('--i', row.dataset.i);
 
       // пример того, что получится: макет плюс короткое описание
       const example = service.example && (service.example[lang] || service.example.uk);
@@ -1023,7 +1055,22 @@
         });
       }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
     }
+    // индекс проставляем всем: строки услуг перерисовываются уже
+    // показанными, и без этого лесенка их обходила стороной
+    $$('.reveal').forEach(stagger);
     $$('.reveal:not(.in)').forEach(node => observer.observe(node));
+  }
+
+  /**
+   * Порядковый номер внутри своего списка — по нему css отмеряет
+   * задержку. Дальше шестого не считаем: иначе низ длинного списка
+   * ждёт своей очереди уже заметно долго.
+   */
+  function stagger(node) {
+    if (node.dataset.i) return;
+    const i = Math.min([...node.parentNode.children].indexOf(node), 6);
+    node.dataset.i = String(i);
+    node.style.setProperty('--i', String(i));
   }
 
   function gsapReveals() {
@@ -1031,11 +1078,15 @@
     $$('.reveal').forEach(node => {
       if (node.dataset.animated || node.classList.contains('in')) return;
       node.dataset.animated = '1';
+      stagger(node);
       gsap.fromTo(node,
         { opacity: 0, y: 26 },
         {
           opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: node, start: 'top 88%', once: true }
+          delay: Number(node.dataset.i || 0) * 0.07,
+          scrollTrigger: { trigger: node, start: 'top 88%', once: true },
+          // вытирание снимка кейса живёт в css и ждёт класс .in
+          onStart: () => node.classList.add('in')
         }
       );
     });
@@ -1075,17 +1126,6 @@
         delay: 0.35,
         ease: 'power3.out',
         stagger: 0.12
-      });
-
-      // заголовки секций слегка «дышат» при скролле
-      $$('.section-title').forEach(title => {
-        gsap.from(title, {
-          opacity: 0,
-          y: 34,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: { trigger: title, start: 'top 86%', once: true }
-        });
       });
 
       gsapReveals();
