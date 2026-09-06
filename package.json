@@ -8,6 +8,7 @@
     "build:offline": "node scripts/build.js",
     "deploy": "npm run build",
     "images": "python3 scripts/images.py",
+    "fonts": "python3 scripts/fonts.py",
     "og": "node brand/og/render.js",
     "look": "node scripts/look.js",
     "smoke": "node scripts/smoke.js",

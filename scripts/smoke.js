@@ -20,6 +20,18 @@ const MIME = {
   '.json': 'application/json', '.ico': 'image/x-icon'
 };
 
+function serve(dir) {
+  return http.createServer((req, res) => {
+    const rel = decodeURIComponent(req.url.split('?')[0]);
+    let file = path.join(dir, rel);
+    if (!file.startsWith(dir)) { res.writeHead(403).end(); return; }
+    if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
+    if (!fs.existsSync(file)) { res.writeHead(404).end(); return; }
+    res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' });
+    fs.createReadStream(file).pipe(res);
+  });
+}
+
 const srv = http.createServer((req, res) => {
   const rel = decodeURIComponent(req.url.split('?')[0]);
   let file = path.join(ROOT, rel);
@@ -151,6 +163,21 @@ srv.listen(0, '127.0.0.1', async () => {
     });
     check('меню отмечает текущий раздел', !!current, current || 'ничего не отмечено');
 
+    // Заголовки должны рисоваться Unbounded, а не системным
+    // шрифтом: файл лежит свой, и если адрес разъехался, подмена
+    // произойдёт молча.
+    const fonts = await page.evaluate(async () => {
+      await document.fonts.ready;
+      const loaded = [...document.fonts].filter(f => f.status === 'loaded').map(f => f.family);
+      return {
+        loaded: [...new Set(loaded)],
+        title: getComputedStyle(document.querySelector('.hero-title')).fontFamily
+      };
+    });
+    check('заголовки набраны Unbounded',
+      /Unbounded/.test(fonts.title) && fonts.loaded.includes('Unbounded'),
+      `${fonts.title} / загружено: ${fonts.loaded.join(', ') || 'ничего'}`);
+
     await ctx.close();
   }
 
@@ -159,11 +186,16 @@ srv.listen(0, '127.0.0.1', async () => {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'uk-UA' });
     const page = await ctx.newPage();
     const hits = [];
-    page.on('request', r => { if (r.url().includes('api.github.com')) hits.push(r.url()); });
+    const outside = [];
+    page.on('request', r => {
+      if (r.url().includes('api.github.com')) hits.push(r.url());
+      if (/fonts\.(googleapis|gstatic)\.com/.test(r.url())) outside.push(r.url());
+    });
 
     await page.goto(`${base}/index.html`, { waitUntil: 'load' });
     await page.waitForTimeout(2000);
     check('на первом экране в GitHub не ходим', hits.length === 0, `${hits.length} запрос(ов)`);
+    check('за шрифтами в гугл не ходим', outside.length === 0, outside.join(', '));
 
     const projects = await page.evaluate(() => document.querySelectorAll('#repos .repo').length);
     check('свои работы показаны сразу', projects > 0, `${projects} шт.`);
@@ -216,6 +248,90 @@ srv.listen(0, '127.0.0.1', async () => {
       getComputedStyle(document.getElementById('mobileMenu')).display !== 'none');
     check('на широком экране мобильного меню нет', !shown);
     await ctx.close();
+  }
+
+  /* ── собранная страница: списки уже в разметке ───────────────
+     Тут проверяется то, чего нет в исходниках: сборка вставляет
+     кейсы, цены, шаги и вопросы прямо в index.html. Смотрим на
+     dist, если он собран. */
+  const dist = path.join(ROOT, 'dist');
+  if (fs.existsSync(path.join(dist, 'index.html'))) {
+    const dsrv = serve(dist);
+    await new Promise(r => dsrv.listen(0, '127.0.0.1', r));
+    const dbase = `http://127.0.0.1:${dsrv.address().port}`;
+
+    // без скрипта вообще: человек с выключенным JS и поисковый робот
+    {
+      const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 1280, height: 900 } });
+      const page = await ctx.newPage();
+      await page.goto(`${dbase}/index.html`, { waitUntil: 'load' });
+      const seen = await page.evaluate(() => ({
+        cases: document.querySelectorAll('#caseGrid .case').length,
+        prices: document.querySelectorAll('#priceList .price-row').length,
+        steps: document.querySelectorAll('#steps .step').length,
+        faq: document.querySelectorAll('#faqList .faq-item').length,
+        money: (document.querySelector('#priceList .price-value') || {}).textContent || ''
+      }));
+      check('без скрипта списки на месте',
+        seen.cases > 0 && seen.prices > 0 && seen.steps > 0 && seen.faq > 0,
+        `кейсів ${seen.cases}, цін ${seen.prices}, кроків ${seen.steps}, питань ${seen.faq}`);
+      check('без скрипта видно цену', /\d/.test(seen.money), seen.money.trim());
+      // .reveal без скрипта проявлять некому — это делает css/nojs.css
+      const vis = await page.evaluate(() =>
+        getComputedStyle(document.querySelector('#steps .step')).opacity);
+      check('без скрипта текст видно', Number(vis) > 0.9, `непрозрачность ${vis}`);
+      await ctx.close();
+    }
+
+    // со скриптом: готовую разметку не должно ни задвоить, ни обездвижить
+    {
+      const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'uk-UA' });
+      await ctx.addInitScript(`try{localStorage.clear();localStorage.setItem('lang','uk');}catch(e){}`);
+      const page = await ctx.newPage();
+      const errors = [];
+      const packs = [];
+      page.on('pageerror', e => errors.push(e.message));
+      page.on('request', r => { if (r.url().includes('lang-en.js')) packs.push(r.url()); });
+      await page.goto(`${dbase}/index.html`, { waitUntil: 'load' });
+      await page.waitForTimeout(1500);
+      check('в сборке нет ошибок js', errors.length === 0, errors.join('; '));
+      check('английский словарь не качается зря', packs.length === 0, `${packs.length} запрос(ов)`);
+
+      const counted = await page.evaluate(() => ({
+        cases: document.querySelectorAll('#caseGrid .case').length,
+        faq: document.querySelectorAll('#faqList .faq-item').length,
+        mark: document.querySelector('#caseGrid').dataset.pre || ''
+      }));
+      check('готовая разметка не задвоилась', counted.cases > 0 && counted.cases < 12, `${counted.cases} кейсів`);
+      check('метка data-pre снята', counted.mark === '', counted.mark);
+
+      // вопросы раскрываются, хотя их рисовал не скрипт
+      const faq = page.locator('#faqList .faq-item').first();
+      await faq.locator('.faq-q').click();
+      await page.waitForTimeout(400);
+      const h = await faq.locator('.faq-a > div').evaluate(n => n.getBoundingClientRect().height);
+      check('в сборке ответ раскрывается', h > 20, `высота ${Math.round(h)}px`);
+
+      // смена языка должна перерисовать то, что пришло готовым
+      await page.click('.lang-btn[data-lang="en"]');
+      await page.waitForTimeout(800);
+      const en = await page.evaluate(() =>
+        document.querySelector('#steps .step-title').textContent);
+      check('готовая разметка переводится', /[a-z]/i.test(en) && !/[а-яіїєґ]/i.test(en), en.trim().slice(0, 40));
+      check('словарь приехал по переключению', packs.length === 1, `${packs.length} запрос(ов)`);
+
+      // и обратно: второй раз за словарём ходить незачем
+      await page.click('.lang-btn[data-lang="uk"]');
+      await page.waitForTimeout(600);
+      await page.click('.lang-btn[data-lang="en"]');
+      await page.waitForTimeout(600);
+      check('второй раз словарь не качается', packs.length === 1, `${packs.length} запрос(ов)`);
+      await ctx.close();
+    }
+
+    dsrv.close();
+  } else {
+    check('сборка собрана (npm run build) — проверки разметки пропущены', false, 'нет dist/index.html');
   }
 
   await browser.close();

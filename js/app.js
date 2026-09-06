@@ -156,6 +156,18 @@
   }
 
   /**
+   * Готовая разметка от сборки. Списки кейсов, шагов и вопросов
+   * уезжают в index.html уже собранными — рисовать их второй раз
+   * незачем: это лишняя работа на старте и лишнее мигание. Метку
+   * снимаем сразу: при следующей смене языка рисуем сами.
+   */
+  function usePrerendered(node) {
+    if (!node || node.dataset.pre !== lang) return false;
+    delete node.dataset.pre;
+    return true;
+  }
+
+  /**
    * Смена языка и валюты перерисовывает целые списки: страница
    * моргает и дёргается. View Transitions превращают это в
    * перетекание — браузер снимает кадр до и кадр после и сам
@@ -169,8 +181,58 @@
     return document.startViewTransition(fn).updateCallbackDone;
   }
 
+  /**
+   * Английский словарь приезжает отдельным файлом.
+   *
+   * В исходниках оба языка лежат в content.js рядом — так удобно
+   * править. Сборка их разделяет: общее и украинское остаются в
+   * content.js, английское уходит в js/lang-en.js. Тому, кто читает
+   * по-украински (а это почти все), эти байты не отдаются вовсе.
+   *
+   * Если файла нет (обычная разработка по исходникам), словарь уже
+   * на месте — и сюда мы просто не заходим.
+   */
+  let langPack = null;
+
+  function graft(base, extra) {
+    for (const key of Object.keys(extra)) {
+      const value = extra[key];
+      if (value == null) continue;                 // пропуск в списке — не трогаем
+      if (typeof value === 'object' && base[key] && typeof base[key] === 'object') {
+        graft(base[key], value);
+      } else {
+        base[key] = value;
+      }
+    }
+  }
+
+  function loadLangPack() {
+    if (langPack) return langPack;
+    const src = (window.SITE && window.SITE.EN_FILE) || 'js/lang-en.js';
+    langPack = loadScript(src).then(() => {
+      const extra = window.SITE_EN;
+      if (!extra) throw new Error('lang-en.js не отдал словарь');
+      graft(window.SITE, extra);
+    }).catch(err => {
+      langPack = null;                             // дать шанс попробовать ещё раз
+      throw err;
+    });
+    return langPack;
+  }
+
   function applyLang(next) {
-    lang = SUPPORTED.includes(next) ? next : 'uk';
+    const want = SUPPORTED.includes(next) ? next : 'uk';
+    // словарь этого языка ещё не приехал — сходим за ним и вернёмся
+    if (!I18N[want]) {
+      loadLangPack().then(() => applyLang(want)).catch(err => {
+        console.warn('Словник не доїхав:', err.message);
+        // остаёмся на прежнем языке; если и его словаря нет (так
+        // бывает только на самом старте) — на украинском
+        applyLang(I18N[lang] ? lang : 'uk');
+      });
+      return;
+    }
+    lang = want;
     skipReveal = booted;
     // Перерисовка списков схлопывает высоту документа, и браузер тут
     // же прижимает скролл к новому потолку — человека выбрасывало в
@@ -256,6 +318,7 @@
   function renderCases() {
     const grid = $('#caseGrid');
     if (!grid) return;
+    if (usePrerendered(grid)) return;
     grid.textContent = '';
 
     const shown = (PROJECTS || []).filter(p => p.shot && p.link);
@@ -434,6 +497,7 @@
   function renderSteps() {
     const wrap = $('#steps');
     if (!wrap) return;
+    if (usePrerendered(wrap)) return;
     wrap.textContent = '';
 
     PROCESS.forEach((step, i) => {
@@ -451,6 +515,7 @@
   function renderFaq() {
     const wrap = $('#faqList');
     if (!wrap) return;
+    if (usePrerendered(wrap)) return;
     wrap.textContent = '';
 
     FAQ.forEach((item, i) => {
@@ -468,14 +533,26 @@
         el('div', {}, el('p', { text: copy.a }))
       );
 
-      const wrapper = el('div', { class: revealCls('faq-item') }, btn, answer);
+      wrap.append(el('div', { class: revealCls('faq-item') }, btn, answer));
+    });
+  }
 
-      btn.addEventListener('click', () => {
-        const open = wrapper.classList.toggle('open');
-        btn.setAttribute('aria-expanded', String(open));
-      });
-
-      wrap.append(wrapper);
+  /**
+   * Раскрытие вопросов — одним обработчиком на весь список.
+   * Раньше слушатель вешался на каждую кнопку при отрисовке, и
+   * готовая разметка от сборки оставалась мёртвой: кнопки есть,
+   * нажимать нечего. Делегирование работает и там, и там.
+   */
+  function initFaqToggles() {
+    const wrap = $('#faqList');
+    if (!wrap) return;
+    wrap.addEventListener('click', e => {
+      const btn = e.target.closest('.faq-q');
+      if (!btn || !wrap.contains(btn)) return;
+      const item = btn.closest('.faq-item');
+      if (!item) return;
+      const open = item.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
     });
   }
 
@@ -1381,6 +1458,7 @@
   function boot() {
     applyTheme(detectTheme());
     applyLang(lang);
+    initFaqToggles();
     setupCurrency();
     initChrome();
     initGrid();

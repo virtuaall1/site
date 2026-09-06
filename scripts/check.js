@@ -237,6 +237,85 @@ try {
   fail(`JSON-LD не собирается: ${e.message}`);
 }
 
+/* ---------- 6е-2. Свои шрифты ----------
+   Шрифты переехали с гугловых доменов к себе. Ломается это тихо:
+   в css остаётся адрес файла, которого нет, — и текст молча едет
+   системным шрифтом. Поэтому сверяем каждый url с папкой. */
+{
+  const cssFile = path.join(ROOT, 'css', 'fonts.css');
+  if (!fs.existsSync(cssFile)) fail('нет css/fonts.css — запусти python3 scripts/fonts.py');
+  else {
+    const fontCss = fs.readFileSync(cssFile, 'utf8');
+    const used = [...new Set([...fontCss.matchAll(/url\(\.\.\/fonts\/([^)]+)\)/g)].map(m => m[1]))];
+    const missing = used.filter(name => !fs.existsSync(path.join(ROOT, 'fonts', name)));
+    const onDisk = fs.existsSync(path.join(ROOT, 'fonts'))
+      ? fs.readdirSync(path.join(ROOT, 'fonts')).filter(n => n.endsWith('.woff2')) : [];
+    const stray = onDisk.filter(name => !used.includes(name));
+    const bytes = onDisk.reduce((a, n) => a + fs.statSync(path.join(ROOT, 'fonts', n)).size, 0);
+
+    if (missing.length) fail(`css/fonts.css зовёт файлы, которых нет: ${missing.join(', ')}`);
+    else if (stray.length) fail(`в fonts/ лежит лишнее: ${stray.join(', ')}`);
+    else if (/fonts\.(googleapis|gstatic)\.com/.test(html)) fail('index.html всё ещё ходит за шрифтами в гугл');
+    else if (!/font-src 'self'/.test(html)) fail("CSP разрешает шрифты не только со своего домена");
+    else if (!/rel="preload"[^>]*fonts\//.test(html)) fail('шрифты свои, но не предзагружаются — текст всё равно ждёт');
+    else ok(`свои шрифты: ${onDisk.length} файлов, ${(bytes / 1024).toFixed(0)} КБ, гугловых доменов на странице нет`);
+  }
+}
+
+/* ---------- 6е-3. Разделение языков ----------
+   Сборка вынимает из content.js всё английское в отдельный файл.
+   Ломается это молча и в одну сторону: новый список с переводами
+   не попал в делёж — и на английском там пусто. Поэтому делим и
+   тут же склеиваем обратно: должно получиться байт в байт. */
+try {
+  const { loadSite } = require('./seo.js');
+  const { split, merge } = require('./lang.js');
+  const data = loadSite(ROOT);
+  const [base, en] = split(data);
+  if (!en) throw new Error('английской части не нашлось вовсе');
+  const back = JSON.stringify(merge(base, en));
+  if (back !== JSON.stringify(data)) throw new Error('склейка не совпала с исходником');
+  if (!/EN_FILE/.test(appJs)) throw new Error('app.js не знает, откуда брать словарь');
+
+  const all = Buffer.byteLength(JSON.stringify(data), 'utf8');
+  const only = Buffer.byteLength(JSON.stringify(base), 'utf8');
+  ok(`языки разделяются: украинскому едет ${(only / 1024).toFixed(1)} КБ вместо ${(all / 1024).toFixed(1)} КБ`);
+} catch (e) {
+  fail(`разделение языков сломано: ${e.message}`);
+}
+
+/* ---------- 6ж. Готовая разметка списков ----------
+   Сборка вставляет кейсы, цены, шаги и вопросы прямо в index.html.
+   Проверяем два места, где это тихо ломается: контейнеры в разметке
+   перестали быть пустыми (тогда вставлять некуда) и число строк
+   разошлось с данными в content.js. */
+try {
+  const { loadSite } = require('./seo.js');
+  const prerender = require('./prerender.js');
+  const data = loadSite(ROOT);
+  const parts = prerender.make(data, 44.61);
+  prerender.inject(html, parts);            // бросит, если контейнер не найден
+
+  const want = prerender.counts(data);
+  const got = {
+    caseGrid: (parts.caseGrid.match(/class="case reveal"/g) || []).length,
+    priceList: (parts.priceList.match(/class="price-row reveal"/g) || []).length,
+    steps: (parts.steps.match(/class="step reveal"/g) || []).length,
+    faqList: (parts.faqList.match(/class="faq-item reveal"/g) || []).length
+  };
+  const off = Object.keys(want).filter(k => want[k] !== got[k]);
+  if (off.length) throw new Error(`строк не столько, сколько данных: ${off.join(', ')}`);
+
+  // app.js должен уметь эту разметку не перерисовывать, иначе смысл теряется
+  if (!/usePrerendered/.test(appJs)) throw new Error('app.js не знает про data-pre');
+  if (!/noscript/.test(html)) throw new Error('нет <noscript> с css/nojs.css — без JS текст останется прозрачным');
+
+  const total = Object.values(got).reduce((a, b) => a + b, 0);
+  ok(`готовая разметка: ${total} строк (кейсів ${got.caseGrid}, цін ${got.priceList}, кроків ${got.steps}, питань ${got.faqList})`);
+} catch (e) {
+  fail(`разметка списков не собирается: ${e.message}`);
+}
+
 /* ---------- 6е. Служебный воркер и заголовки кеша ---------- */
 {
   const sw = path.join(ROOT, 'sw.js');

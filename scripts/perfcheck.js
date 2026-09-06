@@ -13,6 +13,7 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
+const zlib = require('zlib');
 const { chromium } = require('playwright-core');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -26,14 +27,29 @@ const MIME = {
   '.ico': 'image/x-icon'
 };
 
+/* Текст едет к человеку сжатым: это делает и Cloudflare, и любой
+   нормальный сервер. Меряем то же самое, иначе разметка и скрипты
+   выглядят вдвое тяжелее, чем есть на проводе. Картинки и шрифты
+   уже сжаты — их второй раз не трогаем. */
+const PACKABLE = /\.(html|css|js|svg|xml|txt|json)$/;
+
 const srv = http.createServer((req, res) => {
   const rel = decodeURIComponent(req.url.split('?')[0]);
   let file = path.join(DIR, rel);
   if (!file.startsWith(DIR)) { res.writeHead(403).end(); return; }
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file, 'index.html');
   if (!fs.existsSync(file)) { res.writeHead(404).end(); return; }
-  res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' });
-  fs.createReadStream(file).pipe(res);
+
+  const head = { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' };
+  const wantsGzip = /gzip/.test(req.headers['accept-encoding'] || '');
+  let body = fs.readFileSync(file);
+  if (wantsGzip && PACKABLE.test(file)) {
+    body = zlib.gzipSync(body, { level: 9 });
+    head['content-encoding'] = 'gzip';
+  }
+  head['content-length'] = String(body.length);
+  res.writeHead(200, head);
+  res.end(body);
 });
 
 const kb = n => (n / 1024).toFixed(1).padStart(7);
@@ -62,8 +78,12 @@ srv.listen(0, '127.0.0.1', async () => {
     page.on('response', async res => {
       const url = res.url();
       if (!url.startsWith(base)) { foreign.add(new URL(url).host); return; }
-      let size = 0;
-      try { size = (await res.body()).length; } catch (e) { /* редирект или пусто */ }
+      // сколько прошло по проводу, а не сколько лежит на диске:
+      // res.body() отдаёт уже распакованное
+      let size = Number(res.headers()['content-length'] || 0);
+      if (!size) {
+        try { size = (await res.body()).length; } catch (e) { /* редирект или пусто */ }
+      }
       own.push({ url: url.slice(base.length).split('?')[0], size, type: res.request().resourceType() });
     });
 
@@ -77,7 +97,7 @@ srv.listen(0, '127.0.0.1', async () => {
       sum += r.size;
     }
 
-    console.log(`\n  ${phone ? 'телефон 390px' : 'десктоп 1280px'} — перший екран, до прокрутки`);
+    console.log(`\n  ${phone ? 'телефон 390px' : 'десктоп 1280px'} — перший екран, до прокрутки (текст стиснутий, як на сервері)`);
     for (const [type, size] of Object.entries(byType).sort((a, b) => b[1] - a[1])) {
       console.log(`    ${kb(size)} КБ  ${type}`);
     }

@@ -35,6 +35,12 @@
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
 
+# В имени шрифта его же хеш: поменяется файл — поменяется адрес.
+# Поэтому вечный кеш здесь не врёт.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
 # Снимки кейсов меняются редко, но всё же меняются — месяц.
 /img/*
   Cache-Control: public, max-age=2592000

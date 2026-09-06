@@ -23,7 +23,9 @@ const path = require('path');
 const { minify: minifyJs } = require('terser');
 const CleanCss = require('clean-css');
 const { minify: minifyHtml } = require('html-minifier-terser');
-const { loadSite, jsonLd, sitemap } = require('./seo.js');
+const { loadSite, jsonLd, sitemap, RATE } = require('./seo.js');
+const prerender = require('./prerender.js');
+const { split } = require('./lang.js');
 
 const root = path.join(__dirname, '..');
 const out = path.join(root, 'dist');
@@ -33,7 +35,7 @@ const out = path.join(root, 'dist');
    (иначе их не посмотреть с телефона), но закрыты от поиска в
    robots.txt и не значатся в sitemap. */
 const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers', 'sw.js',
-  'css', 'js', 'img', 'cases', 'preview'];
+  'css', 'js', 'img', 'fonts', 'cases', 'preview'];
 
 /* Временно снятые кейсы. Исходники остаются в репозитории — они ещё
    пригодятся, — но в dist не попадают, иначе страница осталась бы
@@ -115,8 +117,18 @@ const OWN_CODE = ownCode();
 async function shrink(file, src) {
   const ext = path.extname(file);
   if (site !== HOME) src = src.split(HOME).join(site);
+  /* content.js собираем заново, а не сжимаем исходник. В нём оба
+     языка лежат вперемешку — так удобно править, но в браузер
+     уезжало вдвое больше нужного. Здесь остаётся общее плюс
+     украинский; английский ждёт отдельным файлом и приезжает,
+     только если человек переключил язык. */
   if (file.endsWith('content.js')) {
-    src = src.replace('const OWN_CODE = null;', `const OWN_CODE = ${JSON.stringify(OWN_CODE)};`);
+    const [base] = split(loadSite(root));
+    base.OWN_CODE = OWN_CODE;
+    base.EN_FILE = `js/lang-en.js?v=${version}`;   // адрес меняется вместе со сборкой
+    let json = JSON.stringify(base);
+    if (site !== HOME) json = json.split(HOME).join(site);
+    return `window.SITE=${json};`;
   }
   if (ext === '.js') {
     if (hasVendor) for (const [from, to] of VENDOR_SWAP) src = src.split(from).join(to);
@@ -144,6 +156,13 @@ async function shrink(file, src) {
       const ld = JSON.stringify(jsonLd(loadSite(root), site));
       stamped = stamped.replace('<!--JSON-LD-->',
         `<script type="application/ld+json">${ld}</script>`);
+    }
+    /* Списки кейсов, цен, шагов и вопросов — сразу в разметку.
+       До этого их рисовал только скрипт, и без него страница была
+       пустой: четыре заголовка и ничего под ними. */
+    if (file === 'index.html') {
+      const data = loadSite(root);
+      stamped = prerender.inject(stamped, prerender.make(data, RATE));
     }
     return minifyHtml(stamped, HTML_OPTS);
   }
@@ -192,6 +211,19 @@ async function walk(rel) {
   fs.mkdirSync(out, { recursive: true });
   for (const item of INCLUDE) await walk(item);
   if (hasVendor) await walk('vendor');
+
+  /* Английский — отдельным файлом. Его никто не подключает в
+     разметке: app.js сходит за ним сам и только при переключении
+     языка. Для того, кто читает по-украински, этих байт нет. */
+  {
+    const [, en] = split(loadSite(root));
+    let json = JSON.stringify(en);
+    if (site !== HOME) json = json.split(HOME).join(site);
+    const body = `window.SITE_EN=${json};`;
+    fs.writeFileSync(path.join(out, 'js', 'lang-en.js'), body);
+    console.log(`Английский вынесен в js/lang-en.js — ${(Buffer.byteLength(body, 'utf8') / 1024).toFixed(1)} КБ, ` +
+                'страница берёт его только при переключении языка.');
+  }
 
   /* Карту сайта пишем последней и по готовому dist: в неё попадает
      ровно то, что уехало, — снятый кейс сам собой выпадает. */
