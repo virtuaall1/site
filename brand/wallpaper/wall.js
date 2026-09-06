@@ -20,8 +20,14 @@
   const q = new URLSearchParams(location.search);
   const W = Math.max(64, +q.get('w') || 1920);
   const H = Math.max(64, +q.get('h') || 1080);
-  const VARIANT = q.get('v') || 'mesh';
-  const ACCENT = /^#[0-9A-Fa-f]{6}$/.test(q.get('a') || '') ? q.get('a') : '#FF7A45';
+  const VARIANT = q.get('v') || 'pulse';
+
+  /* Студійні сюжети малюються кольорами сайту: кислотний лайм по
+     чорнилу, світлий — по паперу. Старі три залишаються на
+     помаранчевому, якими їх зняли. Параметр ?a= перебиває будь-що. */
+  const STUDIO = ['pulse', 'decode', 'paper'];
+  const DEFAULT_ACCENT = STUDIO.includes(VARIANT) ? '#d8ff3e' : '#FF7A45';
+  const ACCENT = /^#[0-9A-Fa-f]{6}$/.test(q.get('a') || '') ? q.get('a') : DEFAULT_ACCENT;
   const MARK = q.get('mark') === '1';
   const SEED = +q.get('seed') || 7;
 
@@ -72,7 +78,15 @@
     return '#' + out.map(v => v.toString(16).padStart(2, '0')).join('');
   }
 
+  /* Ті самі значення, що в css/style.css: чорнило, папір і лайм.
+     Якщо на сайті поміняється палітра — поміняти і тут, іншого
+     зв'язку між ними немає. */
   const INK = '#08080A';
+  const SITE_INK = '#0a0a0b';
+  const PAPER = '#f4f1ea';
+  const DOT_DARK = '#f2efe8';    // точки сітки на чорнилі
+  const DOT_LIGHT = '#14140f';   // ті самі точки на папері
+  const LIGHT = VARIANT === 'paper';
   const A1 = ACCENT;
   const A2 = shift(ACCENT, 42);
   const A3 = shift(ACCENT, -58);
@@ -233,6 +247,264 @@
     ctx.globalCompositeOperation = 'source-over';
   }
 
+  /**
+   * Розмір кегля під ширину: міряємо на пробному кеглі й ділимо.
+   * Без цього на вузькому телефоні найдовший рядок просто виїжджає
+   * за екран — і на 1179 px це видно одразу.
+   */
+  function fitSize(text, weight, wanted, maxWidth) {
+    ctx.font = `${weight} 100px Unbounded, sans-serif`;
+    const at100 = ctx.measureText(text).width;
+    return Math.min(wanted, (maxWidth / at100) * 100);
+  }
+
+  /* ── студійні сюжети ────────────────────────────────────────
+     Тут немає нічого вигаданого: усе це вже живе на сайті.
+     Сітка точок — фон головної (initGrid в js/app.js), хвиля —
+     те, що розходиться від кліку, символи — слід за курсором,
+     «розшифровка» — те, як проявляються заголовки. Шпалера
+     показує ці механіки зупиненими на одному кадрі. */
+
+  /** Сітка точок і зупинена хвиля від кліку. */
+  function pulse() {
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#0d0d10');
+    bg.addColorStop(0.55, SITE_INK);
+    bg.addColorStop(1, '#08080a');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // На сайті крок сітки 34 px при звичайному екрані. Тут рахуємо
+    // від короткої сторони, інакше на 4K сітка вийде вдвічі дрібнішою.
+    const gap = S / 32;
+    const cx = portrait ? W * 0.5 : W * 0.63;
+    const cy = portrait ? H * 0.40 : H * 0.48;
+    const radius = S * 0.30;          // де зараз фронт хвилі
+    const band = gap * 2.6;           // товщина фронту
+    const reach = gap * 0.62;         // наскільки хвиля штовхає точку
+
+    for (let x = -gap; x <= W + gap; x += gap) {
+      for (let y = -gap; y <= H + gap; y += gap) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const delta = Math.abs(dist - radius);
+
+        // сила фронту: різко в піку, м'яко по краях
+        const front = delta > band ? 0 : Math.pow(1 - delta / band, 1.6);
+        // усередині кола точки трохи яскравіші — там хвиля вже пройшла
+        const inside = dist < radius ? 0.10 * (1 - dist / radius) : 0;
+
+        const px = x + (dx / dist) * front * reach;
+        const py = y + (dy / dist) * front * reach;
+
+        const energy = Math.min(1, front + inside);
+        const size = (gap / 17) * (1 + energy * 2.4);
+        const alpha = 0.16 + energy * 0.72;
+
+        ctx.fillStyle = energy > 0.4 ? rgba(A1, alpha) : rgba(DOT_DARK, alpha);
+        ctx.fillRect(px - size / 2, py - size / 2, size, size);
+      }
+    }
+
+    // світло під фронтом — так хвиля читається як подія, а не як коло
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createRadialGradient(cx, cy, radius * 0.72, cx, cy, radius * 1.32);
+    g.addColorStop(0, rgba(A1, 0));
+    g.addColorStop(0.5, rgba(A1, 0.07));
+    g.addColorStop(1, rgba(A1, 0));
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
+
+    // епіцентр: той самий квадратний акцент, що й крапка в назві
+    const dotSize = gap * 0.44;
+    ctx.fillStyle = A1;
+    ctx.fillRect(cx - dotSize / 2, cy - dotSize / 2, dotSize, dotSize);
+
+    const v = ctx.createRadialGradient(cx, cy, S * 0.28, cx, cy, Math.hypot(W, H) * 0.75);
+    v.addColorStop(0, 'rgba(0,0,0,0)');
+    v.addColorStop(1, 'rgba(0,0,0,0.42)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /**
+   * Розшифровка: слова з головної, спіймані на півдорозі. Частина
+   * літер уже стала на місце, частина ще перебирає символи коду —
+   * рівно те, що робить scramble() на сайті.
+   */
+  const NOISE = ['0', '1', '{', '}', '<', '>', '/', ';', '=', '$', '[', ']', '#', '*'];
+
+  function decode() {
+    ctx.fillStyle = SITE_INK;
+    ctx.fillRect(0, 0, W, H);
+
+    // ледь помітна сітка позаду — фон головної
+    const gap = S / 32;
+    ctx.fillStyle = rgba(DOT_DARK, 0.07);
+    for (let x = 0; x <= W; x += gap) {
+      for (let y = 0; y <= H; y += gap) ctx.fillRect(x, y, 1.4, 1.4);
+    }
+
+    // фраза з головної, розбита так само, як там
+    const lines = portrait
+      ? ['САЙТИ,', 'СЕРВІСИ', 'І БОТИ, ЯКІ', 'ПРАЦЮЮТЬ', 'ЗА ВАС.']
+      : ['САЙТИ, СЕРВІСИ', 'І БОТИ, ЯКІ', 'ПРАЦЮЮТЬ ЗА ВАС.'];
+    // останні рядки — акцентом, як у заголовку на сайті
+    const hot = portrait ? 3 : 2;
+
+    const left = portrait ? W * 0.09 : W * 0.08;
+    const longest = lines.reduce((a, b) => (a.length > b.length ? a : b));
+    const size = fitSize(longest, 800, S * (portrait ? 0.105 : 0.115), W - left * 2);
+    const step = size * 1.06;
+    const top = H / 2 - (lines.length - 1) * step / 2;
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.font = `800 ${size}px Unbounded, sans-serif`;
+
+    lines.forEach((line, i) => {
+      let x = left;
+      const y = top + i * step;
+      const accentLine = i >= hot;
+
+      /* Розшифровка йде знизу вгору: головне вже стало на місце,
+         догоряють верхні рядки. Рахуємо підміни, а не кидаємо кубик
+         на кожну літеру: шпалеру дивляться щодня, і фраза має
+         читатись, а не розгадуватись. Тому дві літери у верхньому
+         рядку, одна в наступному — і жодної там, де сенс. */
+      // На коротких рядках дві підміни з шести літер — це вже не
+      // розшифровка, а каша: рахуємо ще й від довжини.
+      const budget = accentLine ? 0 : Math.min(Math.max(0, 2 - i), Math.floor(line.length / 7));
+      const spots = new Set();
+      // початок рядка не чіпаємо: перше слово має читатись, інакше
+      // фраза розсипається і кадр читається як помилка, а не як рух
+      const from = Math.ceil(line.length * 0.45);
+      // розділові знаки теж лишаємо: підмінена кома читається не як
+      // розшифровка, а як друкарська помилка
+      const slots = [...line]
+        .map((ch, k) => (k < from || ' ,.'.includes(ch) ? -1 : k))
+        .filter(k => k >= 0);
+      while (spots.size < Math.min(budget, slots.length)) {
+        spots.add(slots[(rnd() * slots.length) | 0]);
+      }
+
+      [...line].forEach((ch, k) => {
+        if (ch === ' ') { x += ctx.measureText(' ').width; return; }
+
+        const raw = spots.has(k);
+        const glyph = raw ? NOISE[(rnd() * NOISE.length) | 0] : ch;
+
+        if (raw) {
+          ctx.font = `600 ${size * 0.82}px Unbounded, sans-serif`;
+          ctx.fillStyle = rgba(A1, 0.72);
+        } else {
+          ctx.font = `800 ${size}px Unbounded, sans-serif`;
+          ctx.fillStyle = accentLine ? A1 : rgba(DOT_DARK, 0.94);
+        }
+        ctx.fillText(glyph, x, y);
+
+        // ширину рахуємо по справжній літері, щоб рядок не «дихав»
+        ctx.font = `800 ${size}px Unbounded, sans-serif`;
+        x += ctx.measureText(ch).width;
+      });
+    });
+
+    // лінійка й підпис під нею — так само, як розділювачі на сайті
+    const ruleY = top + (lines.length - 1) * step + size * 0.92;
+    ctx.strokeStyle = rgba(DOT_DARK, 0.16);
+    ctx.lineWidth = Math.max(1, S / 1400);
+    ctx.beginPath();
+    ctx.moveTo(left, ruleY);
+    ctx.lineTo(portrait ? W - left : left + S * 0.62, ruleY);
+    ctx.stroke();
+
+    ctx.font = `400 ${size * 0.15}px Onest, sans-serif`;
+    ctx.fillStyle = rgba(DOT_DARK, 0.42);
+    ctx.textBaseline = 'top';
+    ctx.fillText('Python · Java · Spring Boot · Telegram', left, ruleY + size * 0.2);
+
+    const v = ctx.createRadialGradient(W * 0.4, H * 0.5, S * 0.3, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.7);
+    v.addColorStop(0, 'rgba(0,0,0,0)');
+    v.addColorStop(1, 'rgba(0,0,0,0.45)');
+    ctx.fillStyle = v;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /**
+   * Папір: світла тема сайту. Той самий скелет із лінійок, повітря
+   * більше, ніж малюнка, і один акцентний квадрат — крапка з назви.
+   */
+  function paper() {
+    ctx.fillStyle = PAPER;
+    ctx.fillRect(0, 0, W, H);
+
+    // тепле світло згори зліва — папір не буває рівно залитим
+    const warm = ctx.createRadialGradient(W * 0.2, 0, 0, W * 0.2, 0, Math.hypot(W, H) * 0.9);
+    warm.addColorStop(0, 'rgba(255,255,255,0.55)');
+    warm.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = warm;
+    ctx.fillRect(0, 0, W, H);
+
+    const gap = S / 32;
+    ctx.fillStyle = rgba(DOT_LIGHT, 0.10);
+    for (let x = 0; x <= W; x += gap) {
+      for (let y = 0; y <= H; y += gap) ctx.fillRect(x, y, 1.4, 1.4);
+    }
+
+    // колонки-лінійки: те, чим на сайті тримається сітка
+    const cols = portrait ? 4 : 6;
+    ctx.strokeStyle = rgba(DOT_LIGHT, 0.10);
+    ctx.lineWidth = Math.max(1, S / 1600);
+    for (let i = 1; i < cols; i++) {
+      const x = (W / cols) * i;
+      ctx.beginPath(); ctx.moveTo(x, H * 0.08); ctx.lineTo(x, H * 0.92); ctx.stroke();
+    }
+
+    // знак: v.studio, крапка — квадратом кольору акценту
+    // «v.studio» плюс місце під квадрат — усе це має вміститись
+    const size = fitSize('v studio', 800, S * (portrait ? 0.20 : 0.17), W * 0.76);
+    const cx = W / 2;
+    const cy = portrait ? H * 0.44 : H * 0.48;
+
+    /* Знак збираємо з трьох частин: «v», квадрат замість крапки,
+       «studio». Замальовувати намальовану крапку — шлях у плями:
+       на папері будь-яка латка помітна. */
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.font = `800 ${size}px Unbounded, sans-serif`;
+
+    const wV = ctx.measureText('v').width;
+    const wTail = ctx.measureText('studio').width;
+    const sq = size * 0.15;
+    const slot = sq * 2.1;                       // місце під крапку з повітрям
+    const startX = cx - (wV + slot + wTail) / 2;
+
+    ctx.fillStyle = DOT_LIGHT;
+    ctx.fillText('v', startX, cy);
+    ctx.fillText('studio', startX + wV + slot, cy);
+
+    ctx.fillStyle = A1;
+    ctx.fillRect(startX + wV + (slot - sq) / 2, cy + size * 0.30 - sq, sq, sq);
+
+    // рядок під знаком
+    ctx.textAlign = 'center';
+    ctx.font = `400 ${size * 0.115}px Onest, sans-serif`;
+    ctx.fillStyle = rgba(DOT_LIGHT, 0.55);
+    ctx.fillText('сайти · сервіси · боти', cx, cy + size * 0.78);
+
+    // дві лінійки, що обіймають знак
+    ctx.strokeStyle = rgba(DOT_LIGHT, 0.14);
+    ctx.lineWidth = Math.max(1, S / 1400);
+    for (const y of [cy - size * 0.95, cy + size * 1.15]) {
+      ctx.beginPath();
+      ctx.moveTo(W * 0.12, y);
+      ctx.lineTo(W * 0.88, y);
+      ctx.stroke();
+    }
+  }
+
   /* ── зерно ──────────────────────────────────────────────────── */
   function grain() {
     // Рисуем один небольшой тайл и размножаем: полноразмерный шум на
@@ -250,7 +522,7 @@
 
     ctx.save();
     ctx.globalCompositeOperation = 'overlay';
-    ctx.globalAlpha = 0.055;
+    ctx.globalAlpha = LIGHT ? 0.03 : 0.055;
     const p = ctx.createPattern(t, 'repeat');
     ctx.fillStyle = p;
     ctx.fillRect(0, 0, W, H);
@@ -262,15 +534,16 @@
     const size = S * (portrait ? 0.036 : 0.026);
     const pad = S * 0.055;
     const y = portrait ? H - pad * 1.4 : H - pad;
+    const on = LIGHT ? DOT_LIGHT : DOT_DARK;
 
-    ctx.font = `700 ${size}px system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`;
+    ctx.font = `700 ${size}px Unbounded, system-ui, sans-serif`;
     ctx.textAlign = portrait ? 'center' : 'left';
     ctx.textBaseline = 'alphabetic';
 
     const x = portrait ? W / 2 : pad;
     const text = 'v.studio';
 
-    ctx.fillStyle = 'rgba(255,255,255,0.82)';
+    ctx.fillStyle = rgba(on, 0.82);
     ctx.fillText(text, x, y);
 
     // точка в имени — акцентом, как на сайте
@@ -281,15 +554,24 @@
     ctx.fillText('.', left + wv, y);
     void wd;
 
-    ctx.font = `400 ${size * 0.62}px system-ui, -apple-system, sans-serif`;
-    ctx.fillStyle = 'rgba(255,255,255,0.34)';
+    ctx.font = `400 ${size * 0.62}px Onest, system-ui, sans-serif`;
+    ctx.fillStyle = rgba(on, 0.34);
     ctx.fillText('vstudio.dev', x, y + size * 1.15);
   }
 
   /* ── збірка ─────────────────────────────────────────────────── */
-  ({ mesh, flow, grid }[VARIANT] || mesh)();
-  grain();
-  if (MARK) mark();
-
-  window.__ready = true;
+  /* Малюємо тільки після того, як шрифти справді доїхали: canvas не
+     вміє перемальовувати текст заднім числом, і кадр, знятий на
+     півсекунди раніше, вийде системним шрифтом замість Unbounded. */
+  document.fonts.load('800 100px Unbounded')
+    .then(() => document.fonts.load('400 100px Onest'))
+    .then(() => document.fonts.ready)
+    .catch(() => { /* шрифтів немає — малюємо тим, що є */ })
+    .then(() => {
+      ({ pulse, decode, paper, mesh, flow, grid }[VARIANT] || pulse)();
+      grain();
+      // на паперовій шпалері знак і так у центрі — другий підпис зайвий
+      if (MARK && VARIANT !== 'paper') mark();
+      window.__ready = true;
+    });
 })();

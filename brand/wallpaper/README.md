@@ -1,12 +1,27 @@
 # Шпалери v.studio
 
-Готові файли — в `out/`. Три сюжети × пʼять розмірів.
+Готові файли — в `out/`. Шість сюжетів × пʼять розмірів.
+
+Три перші — у стилі студії: ті самі чорнило, папір і кислотний
+`#d8ff3e`, той самий Unbounded і та сама сітка точок, що на сайті.
+Це не абстракція «під бренд», а механіки з головної, зупинені на
+одному кадрі.
 
 | сюжет | що це |
 |---|---|
+| `pulse` | сітка точок і хвиля від кліку, спіймана на півдорозі |
+| `decode` | фраза з головної в момент розшифровки заголовка |
+| `paper` | світла тема: знак `v.studio` і лінійки, більше повітря |
 | `mesh` | мʼяке кольорове світло по темному |
 | `flow` | тисячі тонких ліній, що течуть полем |
 | `grid` | точна сітка й одна акцентна дуга — найспокійніший |
+
+Три студійні малюються кислотним лаймом, три старі — помаранчевим,
+якими їх зняли. Перебити колір можна `WALL_ACCENT`.
+
+Заголовки набрані Unbounded — тим самим файлом, що й на сайті:
+сторінка підключає `css/fonts.css`. Перейменуються шрифти —
+шпалери підхоплять нові адреси самі.
 
 | розмір | під що |
 |---|---|
@@ -21,8 +36,9 @@
 ## Перезняти
 
 ```bash
-NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js         # усі
-NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js flow    # один сюжет
+NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js          # студійні три
+NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js all      # усі шість
+NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js decode   # один сюжет
 WALL_ACCENT='#35E0A1' NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js
 ```
 
@@ -34,4 +50,7 @@ WALL_ACCENT='#35E0A1' NODE_PATH=/tmp/node_modules node brand/wallpaper/render.js
 
 ## Подивитись у браузері
 
-`brand/wallpaper/index.html?v=flow&w=1920&h=1080&a=%23FF7A45&mark=1`
+`brand/wallpaper/index.html?v=decode&w=1920&h=1080&mark=1`
+
+Сторінку треба відкривати з кореня репозиторію (шрифти лежать
+в `/fonts/`), інакше заголовок набереться системним шрифтом.

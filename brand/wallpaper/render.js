@@ -15,13 +15,23 @@ const { chromium } = require('playwright-core');
 const ROOT = path.resolve(__dirname, '..', '..');
 const OUT = path.join(__dirname, 'out');
 
-const ACCENT = process.env.WALL_ACCENT || '#FF7A45';
+/* Акцент не задаємо: кожен сюжет знає свій. Студійні —
+   кислотний лайм із сайту, старі три — помаранчевий, як були.
+   WALL_ACCENT перебиває обидва. */
+const ACCENT = process.env.WALL_ACCENT || '';
 
 const VARIANTS = [
+  { id: 'pulse', n: 'сітка й хвиля' },
+  { id: 'decode', n: 'розшифровка' },
+  { id: 'paper', n: 'папір' },
   { id: 'mesh', n: 'мʼяке світло' },
   { id: 'flow', n: 'течія' },
   { id: 'grid', n: 'сітка' }
 ];
+
+/* За замовчуванням знімаємо тільки студійні: старі три вже лежать
+   у out/ і перезнімати їх щоразу немає сенсу. */
+const STUDIO = ['pulse', 'decode', 'paper'];
 
 const SIZES = [
   { id: 'desktop-1920x1080', w: 1920, h: 1080, mark: 1 },
@@ -32,9 +42,14 @@ const SIZES = [
 ];
 
 const only = process.argv.slice(2);
-const LIST = only.length ? VARIANTS.filter(v => only.includes(v.id)) : VARIANTS;
+const LIST = only.includes('all') ? VARIANTS
+  : only.length ? VARIANTS.filter(v => only.includes(v.id))
+  : VARIANTS.filter(v => STUDIO.includes(v.id));
 
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8' };
+const MIME = {
+  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8', '.woff2': 'font/woff2'
+};
 
 const srv = http.createServer((req, res) => {
   const rel = decodeURIComponent(req.url.split('?')[0]);
@@ -60,7 +75,8 @@ srv.listen(0, '127.0.0.1', async () => {
       });
       const page = await ctx.newPage();
       const url = `${base}/brand/wallpaper/index.html` +
-        `?v=${v.id}&w=${size.w}&h=${size.h}&a=${encodeURIComponent(ACCENT)}&mark=${size.mark}`;
+        `?v=${v.id}&w=${size.w}&h=${size.h}&mark=${size.mark}` +
+        (ACCENT ? `&a=${encodeURIComponent(ACCENT)}` : '');
       await page.goto(url, { waitUntil: 'load' });
       await page.waitForFunction(() => window.__ready === true, { timeout: 120000 });
       await page.waitForTimeout(150);

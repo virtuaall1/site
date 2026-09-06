@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>v.studio — шпалери</title>
+<!-- Ті самі шрифти, що на сайті. Беремо не копію, а той самий
+     css/fonts.css: перейменуються файли — тут нічого правити не
+     доведеться. Адреси всередині нього відносні до /css/, тому
+     ведуть у /fonts/ і з цієї сторінки теж. -->
+<link rel="stylesheet" href="/css/fonts.css">
 <style>
   html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
   canvas { display: block; }
@@ -14,7 +19,7 @@
 
     ?v=mesh&w=1920&h=1080&a=%23FF7A45&mark=1
 
-  v    — mesh | flow | grid
+  v    — pulse | decode | paper | mesh | flow | grid
   w,h  — розмір у пікселях
   a    — акцент
   mark — 1, якщо потрібен підпис v.studio
