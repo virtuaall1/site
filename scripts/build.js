@@ -28,7 +28,11 @@ const root = path.join(__dirname, '..');
 const out = path.join(root, 'dist');
 
 /* Что берём. Всё остальное на сервер не едет. */
-const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers', 'css', 'js', 'img', 'cases'];
+/* preview/ — черновики оформления. Они выкладываются вместе с сайтом
+   (иначе их не посмотреть с телефона), но закрыты от поиска в
+   robots.txt и не значатся в sitemap. */
+const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers',
+  'css', 'js', 'img', 'cases', 'preview'];
 /* Что выкидываем даже изнутри включённых папок. */
 const DROP = /(^|\/)(README\.md|\.DS_Store)$/;
 

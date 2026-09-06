@@ -3,9 +3,11 @@
  *
  *   NODE_PATH=/tmp/node_modules node scripts/look.js
  *   NODE_PATH=/tmp/node_modules node scripts/look.js 390 dark 0,1200,3400
+ *   LOOK_PAGE=preview/print/index.html … node scripts/look.js 1280 light 0
  *
- * Поднимает статику из корня репозитория, открывает index.html в
- * заданной ширине и теме и складывает jpg в /tmp/look.
+ * Поднимает статику из корня репозитория, открывает страницу
+ * (по умолчанию index.html) в заданной ширине и теме и складывает
+ * jpg в /tmp/look — или туда, куда скажет LOOK_OUT.
  */
 const fs = require('fs');
 const http = require('http');
@@ -17,6 +19,7 @@ const OUT = process.env.LOOK_OUT || '/tmp/look';
 const WIDTH = Number(process.argv[2] || 1280);
 const THEME = process.argv[3] || 'light';
 const YS = (process.argv[4] || '0').split(',').map(Number);
+const PAGE = process.env.LOOK_PAGE || 'index.html';
 
 const MIME = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -59,7 +62,7 @@ srv.listen(0, '127.0.0.1', async () => {
   page.on('pageerror', e => problems.push('ошибка js: ' + e.message));
   page.on('console', m => { if (m.type() === 'error') problems.push('консоль: ' + m.text()); });
 
-  await page.goto(`${base}/index.html`, { waitUntil: 'load' });
+  await page.goto(`${base}/${PAGE}`, { waitUntil: 'load' });
   await page.waitForTimeout(2200);
 
   // горизонтальной прокрутки быть не должно ни на одной ширине
@@ -80,7 +83,8 @@ srv.listen(0, '127.0.0.1', async () => {
   for (const y of YS) {
     await page.evaluate(v => window.scrollTo({ top: v, behavior: 'instant' }), y);
     await page.waitForTimeout(700);
-    const file = path.join(OUT, `${WIDTH}-${THEME}-${String(y).padStart(5, '0')}.jpg`);
+    const name = PAGE.replace(/\/?index\.html$/, '').replace(/[\/]/g, '-') || 'main';
+    const file = path.join(OUT, `${name}-${WIDTH}-${THEME}-${String(y).padStart(5, '0')}.jpg`);
     await page.screenshot({ path: file, type: 'jpeg', quality: 72 });
     console.log('  →', file);
   }
