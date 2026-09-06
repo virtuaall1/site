@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="uk" class="ds-auto">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://api.github.com https://bank.gov.ua https://cdn.jsdelivr.net; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.github.com https://bank.gov.ua https://cdn.jsdelivr.net; base-uri 'self'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta name="color-scheme" content="light dark">
+<meta name="color-scheme" content="dark">
 
 <title>v.studio — сайти, сервіси і Telegram-боти на Python, Java, Spring</title>
 <meta name="description" content="Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.">
@@ -15,59 +15,55 @@
 <meta property="og:description" content="Вебзастосунки, бекенд на Java і Spring Boot, сайти та Telegram-боти. Фіксована ціна, вихідники та місяць підтримки.">
 <meta property="og:url" content="https://virtuaall1.github.io/site/">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23C9202F'/%3E%3Cpath d='M6 9.5h4.2l3.6 9.2 3.6-9.2H21l-5.6 13h-3.8z' fill='%23fff'/%3E%3Crect x='22.5' y='19' width='3.5' height='3.5' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0b'/%3E%3Cpath d='M6 9.5h4.2l3.6 9.2 3.6-9.2H21l-5.6 13h-3.8z' fill='%23d8ff3e'/%3E%3Crect x='22.5' y='19' width='3.5' height='3.5' fill='%23d8ff3e'/%3E%3C/svg%3E">
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.github.com">
-
-<!-- Шрифт системный: на технике Apple это San Francisco, на
-     остальном — то, что стоит в системе. Ничего не качаем: своя
-     типографика тут не нужна, а первый экран рисуется сразу. -->
-<link rel="stylesheet" href="css/apple-ds.css">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <a class="skip-link" href="#main">Перейти до вмісту</a>
 
-<header class="ds-header topbar" id="topbar">
-  <div class="ds-container ds-header__inner">
-    <a class="ds-brand brand" href="#main">v<span class="brand-dot">.</span>studio</a>
+<canvas id="grid-canvas" aria-hidden="true"></canvas>
 
-    <nav class="ds-nav nav" aria-label="Основна навігація">
-      <a href="#cases" data-i18n="nav.cases">Кейси</a>
-      <a href="#services" data-i18n="nav.services">Послуги</a>
-      <a href="#process" data-i18n="nav.process">Як працюю</a>
-      <a href="#work" data-i18n="nav.work">Кейси</a>
-      <a href="#faq" data-i18n="nav.faq">Питання</a>
-    </nav>
+<header class="topbar">
+  <a class="brand" href="#main">v<span class="brand-dot">.</span>studio</a>
 
-    <div class="topbar-right">
-      <div class="ds-segmented lang" role="group" aria-label="Мова / Language">
-        <button type="button" class="lang-btn" data-lang="uk" role="tab" aria-selected="true">UA</button>
-        <button type="button" class="lang-btn" data-lang="en" role="tab" aria-selected="false">EN</button>
-      </div>
-      <button type="button" class="ds-btn ds-btn--gray ds-btn--icon ds-btn--sm theme-btn" id="themeBtn"
-              aria-pressed="false" aria-label="Тема">
-        <span class="ds-sr" data-i18n="nav.theme">Тема</span>
-        <svg class="icon-sun" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.2"/>
-          <path d="M12 2.6v2.6M12 18.8v2.6M4.4 4.4l1.9 1.9M17.7 17.7l1.9 1.9M2.6 12h2.6M18.8 12h2.6M4.4 19.6l1.9-1.9M17.7 6.3l1.9-1.9"/>
-        </svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true">
-          <path d="M20.5 13.4A8.4 8.4 0 1110.6 3.5a6.6 6.6 0 009.9 9.9z"/>
-        </svg>
-      </button>
-      <a class="ds-btn ds-btn--primary ds-btn--sm" id="topOrder" href="#contact" data-i18n="nav.order">Написати</a>
-      <button type="button" class="ds-btn ds-btn--gray ds-btn--icon ds-btn--sm burger" id="burger"
-              aria-label="Меню" aria-expanded="false">
-        <span></span><span></span>
-      </button>
+  <nav class="nav" aria-label="Основна навігація">
+    <a href="#cases" data-i18n="nav.cases">Кейси</a>
+    <a href="#services" data-i18n="nav.services">Послуги</a>
+    <a href="#process" data-i18n="nav.process">Як працюю</a>
+    <a href="#work" data-i18n="nav.work">Кейси</a>
+    <a href="#faq" data-i18n="nav.faq">Питання</a>
+  </nav>
+
+  <div class="topbar-right">
+    <div class="lang" role="group" aria-label="Мова / Language">
+      <button type="button" class="lang-btn" data-lang="uk">UA</button>
+      <button type="button" class="lang-btn" data-lang="en">EN</button>
     </div>
-  </div>
+    <button type="button" class="theme-btn" id="themeBtn" aria-pressed="false">
+      <span class="visually-hidden" data-i18n="nav.theme">Тема</span>
+      <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.6v2.6M12 18.8v2.6M4.4 4.4l1.9 1.9M17.7 17.7l1.9 1.9M2.6 12h2.6M18.8 12h2.6M4.4 19.6l1.9-1.9M17.7 6.3l1.9-1.9"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <path d="M20.5 13.4A8.4 8.4 0 1110.6 3.5a6.6 6.6 0 009.9 9.9z"/>
+      </svg>
+    </button>
+    <a class="btn btn-solid btn-sm magnetic" id="topOrder" href="#contact" data-i18n="nav.order">Написати</a>
   <div class="progress" aria-hidden="true"><i></i></div>
+    <button type="button" class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+      <span></span><span></span>
+    </button>
+  </div>
 </header>
 
-<div class="mobile-menu ds-glass" id="mobileMenu" hidden>
+<div class="mobile-menu" id="mobileMenu" hidden>
   <a href="#services" data-i18n="nav.services">Послуги</a>
   <a href="#process" data-i18n="nav.process">Як працюю</a>
   <a href="#work" data-i18n="nav.work">Кейси</a>
@@ -78,173 +74,149 @@
 <main id="main">
 
   <!-- ============ HERO ============ -->
-  <section class="ds-section hero">
-    <div class="ds-container ds-stack ds-stack--lg">
-      <p class="status ds-row"><span class="ds-dot status-dot" aria-hidden="true"></span><span data-i18n="hero.status">Студія розробки · беремо проєкти</span></p>
+  <section class="hero">
+    <p class="status"><span class="status-dot" aria-hidden="true"></span><span data-i18n="hero.status">Студія розробки · беремо проєкти</span></p>
 
-      <h1 class="ds-display hero-title ds-balance">
-        <span class="line"><span class="line-in" data-i18n="hero.title.1">Сайти, сервіси</span></span>
-        <span class="line"><span class="line-in" data-i18n="hero.title.2">і боти, які</span></span>
-        <span class="line"><span class="line-in accent" data-i18n="hero.title.3">працюють за вас</span></span>
-      </h1>
+    <h1 class="hero-title">
+      <span class="line"><span class="line-in" data-i18n="hero.title.1">Сайти, сервіси</span></span>
+      <span class="line"><span class="line-in" data-i18n="hero.title.2">і боти, які</span></span>
+      <span class="line"><span class="line-in accent" data-i18n="hero.title.3">працюють за вас</span></span>
+    </h1>
 
-      <div class="hero-bottom">
-        <p class="ds-lead hero-lead" data-i18n="hero.lead">Пишу вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.</p>
-        <div class="ds-row hero-actions">
-          <a class="ds-btn ds-btn--primary ds-btn--lg" href="#contact" data-i18n="hero.cta">Обговорити задачу</a>
-          <a class="ds-btn ds-btn--gray ds-btn--lg" id="heroGithub" href="https://github.com/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta2">Код на GitHub</a>
-        </div>
+    <div class="hero-bottom">
+      <p class="hero-lead" data-i18n="hero.lead">Пишу вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.</p>
+      <div class="hero-actions">
+        <a class="btn btn-solid magnetic" href="#contact" data-i18n="hero.cta">Обговорити задачу</a>
+        <a class="btn btn-line magnetic" id="heroGithub" href="https://github.com/virtuaall1" target="_blank" rel="noopener noreferrer" data-i18n="hero.cta2">Код на GitHub</a>
       </div>
-
-      <div class="hero-figures" id="heroFigures" aria-hidden="true"></div>
     </div>
+
+    <div class="hero-figures" id="heroFigures" aria-hidden="true"></div>
   </section>
 
   <!-- ============ ЖИВІ КЕЙСИ ============ -->
-  <section class="ds-section ds-section--sunken section" id="cases">
-    <div class="ds-container">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="cases.kicker">Можна відкрити</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="cases.title">Живі кейси</h2>
-        <p class="ds-lead section-lead" data-i18n="cases.lead">Не картинки, а робочі сторінки: бота можна пройти до кінця, а в застосунку перемкнути роль.</p>
-      </div>
-      <ul class="ds-grid ds-grid--2 case-grid" id="caseGrid"></ul>
+  <section class="section" id="cases">
+    <div class="section-head">
+      <p class="kicker" data-i18n="cases.kicker">Можна відкрити</p>
+      <h2 class="section-title reveal" data-i18n="cases.title">Живі кейси</h2>
+      <p class="section-lead" data-i18n="cases.lead">Не картинки, а робочі сторінки: бота можна пройти до кінця, а в застосунку перемкнути роль.</p>
     </div>
+    <ul class="case-grid" id="caseGrid"></ul>
   </section>
 
   <!-- ============ SERVICES ============ -->
-  <section class="ds-section section" id="services">
-    <div class="ds-container">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="services.kicker">Що замовляють</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="services.title">Послуги та ціни</h2>
-        <p class="ds-lead section-lead" data-i18n="services.lead">Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаю після короткої розмови.</p>
-        <div class="cur-switch ds-row" id="curSwitch">
-          <span class="ds-segmented" role="group" aria-label="Валюта">
-            <button type="button" class="cur-btn" data-cur="uah" role="tab" aria-selected="true" aria-pressed="true">₴</button>
-            <button type="button" class="cur-btn" data-cur="usd" role="tab" aria-selected="false" aria-pressed="false">$</button>
-          </span>
-          <span class="ds-caption cur-note" id="curNote"></span>
-        </div>
+  <section class="section" id="services">
+    <div class="section-head">
+      <p class="kicker" data-i18n="services.kicker">Що замовляють</p>
+      <h2 class="section-title reveal" data-i18n="services.title">Послуги та ціни</h2>
+      <p class="section-lead" data-i18n="services.lead">Ціни стартові, фінальна залежить від обсягу. Точний кошторис називаю після короткої розмови.</p>
+      <div class="cur-switch" id="curSwitch" role="group" aria-label="Валюта">
+        <button type="button" class="cur-btn" data-cur="uah" aria-pressed="true">₴</button>
+        <button type="button" class="cur-btn" data-cur="usd" aria-pressed="false">$</button>
+        <span class="cur-note" id="curNote"></span>
       </div>
-      <ul class="price-list ds-stack" id="priceList"></ul>
     </div>
+    <ul class="price-list" id="priceList"></ul>
   </section>
 
   <!-- ============ PROCESS ============ -->
-  <section class="ds-section ds-section--sunken section section-alt" id="process">
-    <div class="ds-container">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="process.kicker">Як це влаштовано</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="process.title">Чотири кроки до запуску</h2>
-      </div>
-      <ol class="steps ds-list" id="steps"></ol>
+  <section class="section section-alt" id="process">
+    <div class="section-head">
+      <p class="kicker" data-i18n="process.kicker">Як це влаштовано</p>
+      <h2 class="section-title reveal" data-i18n="process.title">Чотири кроки до запуску</h2>
     </div>
+    <ol class="steps" id="steps"></ol>
   </section>
 
   <!-- ============ WORK / GITHUB ============ -->
-  <section class="ds-section section ds-defer" id="work">
-    <div class="ds-container">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="work.kicker">Портфоліо</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="work.title">Кейси</h2>
-        <p class="ds-lead section-lead" data-i18n="work.lead">Проєкти й відкритий код. Репозиторії підтягуються з GitHub автоматично.</p>
-      </div>
-
-      <div class="stats-row ds-grid ds-grid--4" id="statsRow" hidden>
-        <div class="stat ds-card"><b class="stat-num ds-tabular" data-stat="repos">—</b><span data-stat-label="repos">репозиторіїв</span></div>
-        <div class="stat ds-card"><b class="stat-num ds-tabular" data-stat="stars">—</b><span data-stat-label="stars">зірок</span></div>
-        <div class="stat ds-card"><b class="stat-num ds-tabular" data-stat="followers">—</b><span data-stat-label="followers">підписників</span></div>
-        <div class="stat ds-card"><b class="stat-num ds-tabular" data-stat="years">—</b><span data-stat-label="years">років на GitHub</span></div>
-      </div>
-
-      <div class="repos ds-grid" id="repos" aria-live="polite"></div>
-      <a class="ds-btn ds-btn--plain link-arrow" id="allRepos" href="https://github.com/virtuaall1?tab=repositories" target="_blank" rel="noopener noreferrer" data-i18n="work.all">Увесь профіль</a>
+  <section class="section" id="work">
+    <div class="section-head">
+      <p class="kicker" data-i18n="work.kicker">Портфоліо</p>
+      <h2 class="section-title reveal" data-i18n="work.title">Кейси</h2>
+      <p class="section-lead" data-i18n="work.lead">Проєкти й відкритий код. Репозиторії підтягуються з GitHub автоматично.</p>
     </div>
+
+    <div class="stats-row" id="statsRow" hidden>
+      <div class="stat"><b class="stat-num" data-stat="repos">—</b><span data-stat-label="repos">репозиторіїв</span></div>
+      <div class="stat"><b class="stat-num" data-stat="stars">—</b><span data-stat-label="stars">зірок</span></div>
+      <div class="stat"><b class="stat-num" data-stat="followers">—</b><span data-stat-label="followers">підписників</span></div>
+      <div class="stat"><b class="stat-num" data-stat="years">—</b><span data-stat-label="years">років на GitHub</span></div>
+    </div>
+
+    <div class="repos" id="repos" aria-live="polite"></div>
+    <a class="link-arrow" id="allRepos" href="https://github.com/virtuaall1?tab=repositories" target="_blank" rel="noopener noreferrer" data-i18n="work.all">Увесь профіль</a>
   </section>
 
   <!-- ============ STACK ============ -->
-  <section class="ds-section ds-section--sunken section section-alt ds-defer" id="stack">
-    <div class="ds-container">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="stack.kicker">Інструменти</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="stack.title">Чим пишу</h2>
-        <p class="ds-lead section-lead" data-i18n="stack.lead">Мови пораховані за моїми публічними репозиторіями, решта — те, з чим працюю щодня.</p>
-      </div>
-      <div class="stack-wrap ds-card ds-stack">
-        <div class="langs" id="langs"></div>
-        <p class="ds-caption langs-note" id="langsNote" data-i18n="stack.langs" hidden>Мови пораховані за нашими публічними репозиторіями на GitHub.</p>
-        <ul class="chips ds-row" id="chips"></ul>
-      </div>
+  <section class="section section-alt" id="stack">
+    <div class="section-head">
+      <p class="kicker" data-i18n="stack.kicker">Інструменти</p>
+      <h2 class="section-title reveal" data-i18n="stack.title">Чим пишу</h2>
+      <p class="section-lead" data-i18n="stack.lead">Мови пораховані за моїми публічними репозиторіями, решта — те, з чим працюю щодня.</p>
+    </div>
+    <div class="stack-wrap">
+      <div class="langs" id="langs"></div>
+      <p class="langs-note" id="langsNote" data-i18n="stack.langs" hidden>Мови пораховані за нашими публічними репозиторіями на GitHub.</p>
+      <ul class="chips" id="chips"></ul>
     </div>
   </section>
 
   <!-- ============ СТУДІЯ ============ -->
-  <section class="ds-section section" id="studio">
-    <div class="ds-container">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="studio.kicker">Студія</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="studio.title">Три речі, про які варто домовитись на березі</h2>
-      </div>
-      <ol class="steps ds-list creed">
+  <section class="section" id="studio">
+    <div class="section-head">
+      <p class="kicker" data-i18n="studio.kicker">Студія</p>
+      <h2 class="section-title reveal" data-i18n="studio.title">Три речі, про які варто домовитись на березі</h2>
+    </div>
+    <ol class="steps creed">
       <li class="step">
-        <span class="step-num ds-tile ds-tile--sm ds-g-orange" aria-hidden="true">01</span>
+        <span class="step-num" aria-hidden="true">01</span>
         <div>
           <h3 class="step-title" data-i18n="studio.1.t">Фіксована ціна, а не години</h3>
           <p class="step-desc" data-i18n="studio.1.d">Кошторис називаємо до старту й тримаємо його. Якщо задача виросла — узгоджуємо окремо, а не дописуємо в рахунок.</p>
         </div>
       </li>
       <li class="step">
-        <span class="step-num ds-tile ds-tile--sm ds-g-pink" aria-hidden="true">02</span>
+        <span class="step-num" aria-hidden="true">02</span>
         <div>
           <h3 class="step-title" data-i18n="studio.2.t">Код і доступи — твої</h3>
           <p class="step-desc" data-i18n="studio.2.d">Віддаємо вихідники, репозиторій і всі акаунти. Захочеш продовжити з іншими — нічого не лишається в заручниках.</p>
         </div>
       </li>
       <li class="step">
-        <span class="step-num ds-tile ds-tile--sm ds-g-gold" aria-hidden="true">03</span>
+        <span class="step-num" aria-hidden="true">03</span>
         <div>
           <h3 class="step-title" data-i18n="studio.3.t">Без конструкторів</h3>
           <p class="step-desc" data-i18n="studio.3.d">Пишемо руками: Python, Java, Spring Boot. Тому проєкт не впирається в ліміти шаблону, коли задача виростає.</p>
         </div>
       </li>
-      </ol>
-    </div>
+    </ol>
   </section>
 
   <!-- ============ FAQ ============ -->
-  <section class="ds-section ds-section--sunken section" id="faq">
-    <div class="ds-container ds-container--narrow">
-      <div class="section-head ds-stack">
-        <p class="ds-section-label kicker" data-i18n="faq.kicker">Без сюрпризів</p>
-        <h2 class="ds-h1 section-title reveal ds-balance" data-i18n="faq.title">Часті питання</h2>
-      </div>
-      <div class="faq-list ds-list" id="faqList"></div>
+  <section class="section" id="faq">
+    <div class="section-head">
+      <p class="kicker" data-i18n="faq.kicker">Без сюрпризів</p>
+      <h2 class="section-title reveal" data-i18n="faq.title">Часті питання</h2>
     </div>
+    <div class="faq-list" id="faqList"></div>
   </section>
 
   <!-- ============ CONTACT ============ -->
-  <section class="ds-section section contact" id="contact">
-    <div class="ds-container">
-      <div class="ds-hero-card contact-card">
-        <p class="ds-section-label kicker" data-i18n="contact.kicker">Далі</p>
-        <h2 class="ds-h1 contact-title ds-balance" data-i18n="contact.title">Розкажи, що треба автоматизувати</h2>
-        <p data-i18n="contact.lead">Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.</p>
-        <div class="ds-row contact-actions">
-          <a class="ds-btn ds-btn--lg contact-btn" id="tgLink" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer" data-i18n="contact.tg">Написати в Telegram</a>
-          <a class="ds-btn ds-btn--lg contact-btn contact-btn--ghost" id="mailLink" href="mailto:virtuaall0@gmail.com" data-i18n="contact.mail">Пошта</a>
-        </div>
-      </div>
+  <section class="section contact" id="contact">
+    <p class="kicker" data-i18n="contact.kicker">Далі</p>
+    <h2 class="contact-title" data-i18n="contact.title">Розкажи, що треба автоматизувати</h2>
+    <p class="section-lead" data-i18n="contact.lead">Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.</p>
+    <div class="contact-actions">
+      <a class="btn btn-solid btn-lg magnetic" id="tgLink" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer" data-i18n="contact.tg">Написати в Telegram</a>
+      <a class="btn btn-line btn-lg magnetic" id="mailLink" href="mailto:virtuaall0@gmail.com" data-i18n="contact.mail">Пошта</a>
     </div>
   </section>
 
 </main>
 
 <footer class="footer">
-  <div class="ds-container ds-row ds-row--between">
-    <span class="ds-caption">© <span id="year">2026</span> v<span class="brand-dot">.</span>studio</span>
-    <a class="ds-caption foot-tg" id="footSite" href="./">vstudio.dev</a>
-  </div>
+  <span>© <span id="year">2026</span> v<span class="brand-dot">.</span>studio</span>
+  <a class="foot-tg" id="footSite" href="./">vstudio.dev</a>
 </footer>
 
 <!-- ===========================================================
