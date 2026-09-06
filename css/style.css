@@ -1,1104 +1,891 @@
-/* =========================================================
-   virtuaall1 — дизайн-система
-   Ink + бумага + один кислотный акцент. Никаких градиентных
-   пятен и одинаковых стеклянных карточек: структуру держат
-   линейки, крупная типографика и сетка.
-   ========================================================= */
+/* ═══════════════════════════════════════════════════════════════════════
+   v.studio — проектный слой поверх apple-ds.css
 
-:root {
-  --ink: #0a0a0b;
-  --ink-2: #111113;
-  --ink-3: #17171a;
-  --paper: #f2efe8;
-  --text: #f2efe8;
-  --muted: #8d8d94;
-  --faint: #5a5a61;
-  --rule: rgba(242, 239, 232, 0.14);
-  --rule-soft: rgba(242, 239, 232, 0.07);
-  --acid: #d8ff3e;
-  --acid-ink: #0a0a0b;
-  /* акцент для текста и тонких линий: на светлом фоне кислотный лайм
-     нечитаем, поэтому там он подменяется тёмно-оливковым */
-  --acid-text: #d8ff3e;
+   Здесь нет ни одного своего hex-цвета, ни одного отступа «на глаз» и
+   ни одной самодельной тени: всё берётся токенами из дизайн-системы.
+   Правило простое — если задачу решает готовый класс `.ds-*`, он
+   стоит в разметке, а сюда попадает только то, чего в системе нет:
+   строки прайса с раскрывающимся примером, полоса языков с GitHub,
+   мини-макеты в svg и мелочи вроде переключателя темы.
 
-  --bg: var(--ink);
-  --surface: var(--ink-2);
+   Порядок разделов:
+   00 · Фирменная палитра
+   01 · База и мелочи
+   02 · Появление блоков
+   03 · Шапка, меню, подвал
+   04 · Первый экран
+   05 · Заголовки секций
+   06 · Живые кейсы
+   07 · Услуги и цены
+   08 · Шаги и «Три речі»
+   09 · GitHub: репозитории и статистика
+   10 · Стек: полоса языков и плашки
+   11 · Вопросы и ответы
+   12 · Контакт
+   13 · Мини-макеты (svg)
+   ═══════════════════════════════════════════════════════════════════════ */
 
-  /* точки фоновой сетки и заливки в макетах примеров */
-  --dot: 242, 239, 232;
-  --mock-strong: rgba(242, 239, 232, 0.55);
-  --mock-dim: rgba(242, 239, 232, 0.2);
-  --mock-fill: rgba(242, 239, 232, 0.1);
-  --mock-field: rgba(242, 239, 232, 0.05);
 
-  --f-display: 'Unbounded', 'Onest', system-ui, sans-serif;
-  --f-text: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+/* ═══ 00 · ФИРМЕННАЯ ПАЛИТРА ═══════════════════════════════════════════
+   Система разрешает перекрашивать себя под бренд, переопределяя
+   токены, — этим и пользуемся. Направление задано референсом: тёмная
+   винная база, насыщенный красный акцент, тёплые нейтрали вместо
+   серых. Ни один компонент ниже про это не знает: они читают токены.
 
-  --pad: clamp(20px, 5vw, 90px);
-  --maxw: 1400px;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+   Три блока — не дублирование, а требование системы: голый :root
+   держит светлую тему, медиазапрос отвечает за системную тёмную при
+   .ds-auto, а .ds-dark перебивает систему ручным выбором.
 
-  color-scheme: dark;
+   Акцент разный на заливке и в тексте. На красной кнопке белая
+   надпись читается только при достаточно тёмном красном, а такой же
+   тёмный красный текстом по чёрному фону уже не читается. Поэтому
+   заливка — --ds-accent, а текст — --v-accent-text. */
+
+:root{
+  --ds-accent:#C9202F;
+  --ds-accent-hover:#A81725;
+  --ds-accent-soft:rgba(201,32,47,0.10);
+  --v-accent-text:#C9202F;
+
+  --ds-text:#17090C;
+  --ds-text-2:rgba(58,42,45,0.64);
+  --ds-text-3:rgba(58,42,45,0.34);
+
+  --ds-bg:#FFFFFF;
+  --ds-bg-sunken:#F8F2F3;
+  --ds-surface:#FFFFFF;
+  --ds-surface-2:#F8F2F3;
+  --ds-fill:rgba(150,90,100,0.10);
+  --ds-fill-strong:rgba(150,90,100,0.18);
+  --ds-border:rgba(90,40,48,0.16);
+  --ds-border-strong:#DCC9CC;
+  --ds-glass:rgba(255,250,251,0.82);
+
+  /* Градиент карточки-призыва — единственная яркая точка страницы */
+  --v-grad-brand:linear-gradient(135deg,#E23744 0%,#8E1626 52%,#3E0A14 100%);
 }
 
-/* Светлая тема — не инверсия, а тёплая бумага: тот же скелет из линеек,
-   но акцентный текст затемнён, иначе лайм на светлом не прочитать. */
-[data-theme="light"] {
-  --ink: #f4f1ea;
-  --ink-2: #ebe7dc;
-  --ink-3: #e1dcce;
-  --text: #14140f;
-  --muted: #56544b;
-  --faint: #85827a;
-  --rule: rgba(20, 20, 15, 0.18);
-  --rule-soft: rgba(20, 20, 15, 0.09);
-  --acid-text: #4f6b00;
+@media (prefers-color-scheme:dark){
+  .ds-auto:where(:not(.ds-light)){
+    --ds-accent:#D62839;
+    --ds-accent-hover:#E8404F;
+    --ds-accent-soft:rgba(214,40,57,0.22);
+    --v-accent-text:#FF6B76;
 
-  --dot: 20, 20, 15;
-  --mock-strong: rgba(20, 20, 15, 0.6);
-  --mock-dim: rgba(20, 20, 15, 0.25);
-  --mock-fill: rgba(20, 20, 15, 0.12);
-  --mock-field: rgba(20, 20, 15, 0.05);
+    --ds-text:#FFFFFF;
+    --ds-text-2:rgba(255,235,238,0.62);
+    --ds-text-3:rgba(255,235,238,0.32);
 
-  color-scheme: light;
+    --ds-bg:#0E0709;
+    --ds-bg-sunken:#0E0709;
+    --ds-surface:#1A1014;
+    --ds-surface-2:#241419;
+    --ds-fill:rgba(255,180,190,0.10);
+    --ds-fill-strong:rgba(255,180,190,0.18);
+    --ds-border:rgba(255,190,196,0.14);
+    --ds-border-strong:#3C2329;
+    --ds-glass:rgba(20,12,15,0.78);
+  }
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+.ds-dark{
+  --ds-accent:#D62839;
+  --ds-accent-hover:#E8404F;
+  --ds-accent-soft:rgba(214,40,57,0.22);
+  --v-accent-text:#FF6B76;
 
-[hidden] { display: none !important; }
+  --ds-text:#FFFFFF;
+  --ds-text-2:rgba(255,235,238,0.62);
+  --ds-text-3:rgba(255,235,238,0.32);
 
-html { -webkit-text-size-adjust: 100%; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--f-text);
-  font-weight: 400;
-  line-height: 1.55;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  --ds-bg:#0E0709;
+  --ds-bg-sunken:#0E0709;
+  --ds-surface:#1A1014;
+  --ds-surface-2:#241419;
+  --ds-fill:rgba(255,180,190,0.10);
+  --ds-fill-strong:rgba(255,180,190,0.18);
+  --ds-border:rgba(255,190,196,0.14);
+  --ds-border-strong:#3C2329;
+  --ds-glass:rgba(20,12,15,0.78);
 }
 
-h1, h2, h3, p, ul, ol, figure { margin: 0; padding: 0; }
-ul, ol { list-style: none; }
-a { color: inherit; text-decoration: none; }
-button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
-img { display: block; max-width: 100%; }
-::selection { background: var(--acid); color: var(--acid-ink); }
 
-:focus-visible {
-  outline: 2px solid var(--acid);
-  outline-offset: 3px;
-}
+/* ═══ 01 · БАЗА И МЕЛОЧИ ═══════════════════════════════════════════════ */
+
+/* Плавность к якорям даёт браузер; при отключённой анимации — глава 15
+   apple-ds.css сама всё гасит. */
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--ds-header-h) + var(--ds-4)); }
+
+body { background: var(--ds-bg); }
 
 .skip-link {
   position: absolute;
-  left: -9999px;
-  top: 12px;
-  z-index: 999;
-  padding: 10px 16px;
-  background: var(--acid);
-  color: var(--acid-ink);
+  left: var(--ds-4);
+  top: var(--ds-4);
+  z-index: var(--ds-z-toast);
+  padding: var(--ds-3) var(--ds-5);
+  border-radius: var(--ds-r-md);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-sh-lg);
+  transform: translateY(-200%);
+  transition: transform var(--ds-dur) var(--ds-ease);
 }
-.skip-link:focus { left: 12px; }
-
-/* ---------- фон: реагирующая на курсор сетка ---------- */
-#grid-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.85;
-}
-
-/* Поднимаем содержимое над фоновой сеткой.
-   Раньше здесь стояло body > *:not(#grid-canvas) — и это молча
-   ломало шапку: :not() берёт вес своего аргумента, то есть id, и
-   правило перебивало .topbar { position: fixed }. Шапка не липла
-   никогда и ни на чём, а вся логика вокруг неё — фон при прокрутке,
-   размытие, отступы у якорей — работала вхолостую.
-   Селектор без id весит меньше класса, и .topbar снова главнее. */
-body > * { position: relative; z-index: 1; }
-#grid-canvas { z-index: 0; }
-
-/* На сенсорных экранах курсора нет, а покадровая отрисовка фона сажает
-   батарею и дёргает прокрутку. Рисуем ту же сетку одной статичной
-   картинкой — выглядит так же, стоит ноль. */
-@media (hover: none), (pointer: coarse) {
-  #grid-canvas { display: none; }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(circle, rgba(var(--dot), 0.16) 1px, transparent 1px);
-    background-size: 34px 34px;
-  }
-
-  /* без Lenis плавность к якорям даёт сам браузер */
-  html { scroll-behavior: smooth; }
-}
-
-/* =========================================================
-   Шапка
-   ========================================================= */
-/* якорь не должен уезжать под липкую шапку */
-html { scroll-padding-top: 92px; }
-
-.topbar {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 16px var(--pad);
-  border-bottom: 1px solid transparent;
-  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
-}
-.topbar.is-stuck {
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: blur(14px);
-  border-bottom-color: var(--rule-soft);
-}
-
-.brand {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: 1.06rem;
-  letter-spacing: -0.03em;
-}
-
-/* Крапка з назви — не пунктуація, а знак: в Unbounded вона квадратна,
-   тож збігається за формою з акцентними блоками сайта. */
-.brand-dot { color: var(--acid-text); }
-
-
-.nav { display: flex; gap: 6px; }
-.nav a {
-  position: relative;
-  padding: 7px 13px;
-  font-size: 0.88rem;
-  color: var(--muted);
-  transition: color 0.25s var(--ease);
-}
-.nav a::after {
-  content: '';
-  position: absolute;
-  left: 13px;
-  right: 13px;
-  bottom: 3px;
-  height: 1px;
-  background: var(--acid-text);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.35s var(--ease);
-}
-.nav a:hover { color: var(--text); }
-.nav a:hover::after { transform: scaleX(1); }
-
-.topbar-right { display: flex; align-items: center; gap: 12px; }
-
-.lang {
-  display: flex;
-  border: 1px solid var(--rule);
-}
-.lang-btn {
-  padding: 5px 10px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--faint);
-  transition: color 0.2s, background 0.2s;
-}
-.lang-btn[aria-pressed="true"] {
-  background: var(--acid);
-  color: var(--acid-ink);
-}
-.lang-btn:not([aria-pressed="true"]):hover { color: var(--text); }
-
-.theme-btn {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--rule);
-  color: var(--muted);
-  transition: color 0.25s, border-color 0.25s;
-}
-.theme-btn:hover { color: var(--text); border-color: var(--acid-text); }
-.theme-btn svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
-/* в тёмной теме предлагаем светлую — и наоборот */
-.theme-btn .icon-sun { display: block; }
-.theme-btn .icon-moon { display: none; }
-[data-theme="light"] .theme-btn .icon-sun { display: none; }
-[data-theme="light"] .theme-btn .icon-moon { display: block; }
+.skip-link:focus-visible { transform: translateY(0); }
 
 .visually-hidden {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
 }
 
-.burger { display: none; flex-direction: column; gap: 5px; padding: 8px 4px; }
-.burger span {
-  display: block;
-  width: 22px;
-  height: 1.5px;
-  background: var(--text);
-  transition: transform 0.3s var(--ease), opacity 0.3s;
-}
-.burger[aria-expanded="true"] span:first-child { transform: translateY(3.2px) rotate(45deg); }
-.burger[aria-expanded="true"] span:last-child { transform: translateY(-3.2px) rotate(-45deg); }
+/* Кнопки без заливки берут акцент как цвет текста — значит, им нужен
+   светлый вариант, иначе в тёмной теме надпись тонет в фоне. */
+.ds-btn--gray,
+.ds-btn--plain,
+.ds-btn--tinted { --_fg: var(--v-accent-text); }
 
-.mobile-menu {
-  position: fixed;
-  inset: 58px 0 auto 0;
-  z-index: 45;
-  display: flex;
-  flex-direction: column;
-  padding: 10px var(--pad) 26px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--rule);
-}
-.mobile-menu a {
-  padding: 14px 0;
-  font-family: var(--f-display);
-  font-size: 1.3rem;
-  font-weight: 600;
-  border-bottom: 1px solid var(--rule-soft);
-}
-
-/* =========================================================
-   Кнопки
-   ========================================================= */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px 24px;
-  font-family: var(--f-text);
-  font-size: 0.92rem;
-  font-weight: 500;
-  border: 1px solid transparent;
-  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
-  will-change: transform;
-}
-.btn-sm { padding: 8px 16px; font-size: 0.82rem; }
-.btn-lg { padding: 17px 32px; font-size: 1rem; }
-
-.btn-solid { background: var(--acid); color: var(--acid-ink); }
-.btn-solid:hover { background: var(--text); color: var(--bg); }
-
-.btn-line { border-color: var(--rule); color: var(--text); }
-.btn-line:hover { border-color: var(--acid-text); color: var(--acid-text); }
-
+/* Ссылка-стрелка: «Увесь профіль», «Відкрити демо» */
 .link-arrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 34px;
-  font-size: 0.9rem;
-  color: var(--muted);
-  border-bottom: 1px solid var(--rule);
-  padding-bottom: 3px;
-  transition: color 0.25s, border-color 0.25s;
+  gap: var(--ds-2);
+  min-height: 44px;
+  color: var(--v-accent-text);
+  font-size: var(--ds-t-lg);
+  font-weight: var(--ds-w-medium);
 }
-.link-arrow::after { content: '→'; transition: transform 0.3s var(--ease); }
-.link-arrow:hover { color: var(--acid-text); border-color: var(--acid-text); }
-.link-arrow:hover::after { transform: translateX(5px); }
-
-/* =========================================================
-   Hero
-   ========================================================= */
-.hero {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 36px;
-  padding: clamp(96px, 12vh, 140px) var(--pad) clamp(48px, 7vh, 76px);
-  max-width: var(--maxw);
-  margin: 0 auto;
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  text-transform: lowercase;
-}
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--acid-text);
-  animation: blip 2.4s infinite;
-}
-@keyframes blip {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
-}
-
-.hero-title {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(2.4rem, 7.4vw, 6.6rem);
-  line-height: 0.94;
-  letter-spacing: -0.045em;
-  text-wrap: balance;
-}
-.hero-title .line { display: block; overflow: hidden; }
-.hero-title .line-in { display: block; }
-.hero-title .accent { color: var(--acid-text); }
-.hero-title .accent::after {
-  content: '';
-  display: inline-block;
-  width: 0.19em;
-  height: 0.19em;
-  margin-left: 0.14em;
-  background: var(--acid-text);
-  vertical-align: baseline;
-}
-
-.hero-bottom {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 40px;
-  align-items: end;
-  padding-top: 34px;
-  border-top: 1px solid var(--rule);
-}
-.hero-lead {
-  max-width: 54ch;
-  font-size: clamp(0.98rem, 1.15vw, 1.1rem);
-  color: var(--muted);
-}
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-.hero-figures {
-  display: flex;
-  gap: 34px;
-  flex-wrap: wrap;
-  font-size: 0.8rem;
-  color: var(--faint);
-}
-
-/* =========================================================
-   Секции
-   ========================================================= */
-.section {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: clamp(80px, 11vw, 160px) var(--pad);
-}
-.section-alt { background: var(--surface); max-width: none; }
-.section-alt > * { max-width: var(--maxw); margin-inline: auto; }
-
-.section-head { margin-bottom: clamp(38px, 5vw, 68px); }
-.kicker {
-  font-size: 0.74rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--acid-text);
-  margin-bottom: 14px;
-}
-.section-title {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(1.9rem, 4.6vw, 3.6rem);
+.link-arrow::after {
+  content: '›';
+  font-size: 1.35em;
   line-height: 1;
-  letter-spacing: -0.035em;
+  transition: transform var(--ds-dur) var(--ds-ease);
 }
-.section-title::after,
-.contact-title::after {
-  content: '';
-  display: inline-block;
-  width: 0.22em;
-  height: 0.22em;
-  margin-left: 0.11em;
-  background: var(--acid-text);
-  vertical-align: baseline;
-}
-.section-lead {
-  margin-top: 18px;
-  max-width: 62ch;
-  color: var(--muted);
-  font-size: 1rem;
-}
+.link-arrow:hover::after { transform: translateX(3px); }
 
-/* =========================================================
-   Живые кейсы
 
-   Те же линейки и сдвиг при наведении, что и в списке работ:
-   блок новый, а язык прежний — рамка в волос, подпись
-   дисплейным шрифтом, акцент только на ховере.
-   ========================================================= */
-.case-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: clamp(20px, 3vw, 38px);
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-}
+/* ═══ 02 · ПОЯВЛЕНИЕ БЛОКОВ ════════════════════════════════════════════
+   Один общий приём на весь сайт: блок приподнимается на 12px и
+   проявляется. Класс `in` вешает IntersectionObserver в app.js. */
 
-.case-link {
-  display: grid;
-  align-content: start;
-  height: 100%;
-  text-decoration: none;
-  transition: padding-left 0.4s var(--ease);
-}
-.case-link:hover { padding-left: 10px; }
-
-.case-frame {
-  display: block;
-  overflow: hidden;
-  border: 1px solid var(--rule);
-  background: var(--surface);
-}
-.case-shot {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  transition: transform 0.6s var(--ease), filter 0.4s;
-  filter: grayscale(0.25);
-}
-.case-link:hover .case-shot { transform: scale(1.03); filter: none; }
-
-.case-name {
-  margin: 18px 0 0;
-  min-height: 2.4em;
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(1rem, 1.6vw, 1.18rem);
-  letter-spacing: -0.025em;
-  line-height: 1.25;
-  transition: color 0.3s;
-}
-.case-link:hover .case-name { color: var(--acid-text); }
-
-.case-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 10px;
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
-
-.case-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  font-size: 0.85rem;
-  color: var(--muted);
-  transition: color 0.3s;
-}
-.case-open span:last-child { transition: transform 0.3s var(--ease); }
-.case-link:hover .case-open { color: var(--acid-text); }
-.case-link:hover .case-open span:last-child { transform: translate(4px, -4px); }
-
-/* подпись про языки живёт внутри блока, который появляется с данными */
-.langs-note { margin-top: 14px; font-size: 0.8rem; color: var(--faint); }
-
-/* ссылка на живой кейс в примере услуги — обычная стрелка, без нового вида */
-.ex-case { margin-top: 18px; }
-
-/* =========================================================
-   Прайс-лист (строки, а не карточки)
-   ========================================================= */
-/* перемикач валюти — той самий рисунок, що й перемикач мови в шапці */
-.cur-switch {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 22px;
-  flex-wrap: wrap;
-}
-.cur-btn {
-  min-width: 34px;
-  padding: 5px 10px;
-  border: 1px solid var(--rule);
-  font-family: var(--f-display);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--faint);
-  transition: color 0.2s, background 0.2s, border-color 0.2s;
-}
-.cur-btn[aria-pressed="true"] {
-  background: var(--acid);
-  border-color: var(--acid);
-  color: var(--acid-ink);
-}
-.cur-btn:not([aria-pressed="true"]):hover { color: var(--text); border-color: var(--acid-text); }
-.cur-note { margin-left: 6px; font-size: 0.76rem; color: var(--muted); }
-
-.price-list { border-top: 1px solid var(--rule); }
-
-.price-row {
-  position: relative;
-  border-bottom: 1px solid var(--rule);
-  transition: color 0.4s var(--ease);
-}
-.price-head { position: relative; }
-.price-head::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--acid);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 0.45s var(--ease);
-  z-index: 0;
-}
-.price-row:hover .price-head::before,
-.price-row:focus-within .price-head::before { transform: scaleY(1); }
-.price-row:hover .price-head,
-.price-row:focus-within .price-head { color: var(--acid-ink); }
-
-.price-inner {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.35fr) auto;
-  align-items: center;
-  gap: 28px;
-  padding: 30px 4px;
-}
-.price-name {
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  letter-spacing: -0.025em;
-}
-.price-featured {
-  display: inline-block;
-  margin-left: 10px;
-  padding: 3px 8px;
-  font-family: var(--f-text);
-  font-size: 0.63rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: 1px solid currentColor;
-  vertical-align: middle;
-}
-.price-desc { font-size: 0.93rem; color: var(--muted); transition: color 0.4s var(--ease); }
-.price-row:hover .price-desc,
-.price-row:focus-within .price-desc { color: color-mix(in srgb, var(--acid-ink) 72%, transparent); }
-
-.price-right { display: flex; align-items: center; gap: 22px; }
-/* дві валюти одна під одною: гривня великою, друга дрібним рядком —
-   поруч вони не влізали в колонку й ламали ряд */
-.price-money { display: grid; justify-items: end; gap: 2px; }
-.price-value {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(1.2rem, 2.3vw, 1.8rem);
-  letter-spacing: -0.03em;
-  white-space: nowrap;
-}
-.price-value.is-quote { font-size: clamp(0.95rem, 1.5vw, 1.15rem); font-weight: 600; }
-.price-alt {
-  font-size: 0.78rem;
-  color: var(--muted);
-  white-space: nowrap;
-  transition: color 0.4s var(--ease);
-}
-.price-row:hover .price-alt,
-.price-row:focus-within .price-alt { color: color-mix(in srgb, var(--acid-ink) 62%, transparent); }
-.price-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
-  font-size: 0.84rem;
-  border: 1px solid currentColor;
+.reveal {
   opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  transform: translateY(12px);
+  transition:
+    opacity var(--ds-dur-slow) var(--ds-ease),
+    transform var(--ds-dur-slow) var(--ds-ease);
+  transition-delay: calc(var(--i, 0) * 40ms);
 }
-.price-row:hover .price-cta,
-.price-row:focus-within .price-cta { opacity: 1; transform: none; }
+.reveal.in { opacity: 1; transform: none; }
 
-.price-bullets {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 20px;
-  padding: 0 4px 26px;
-  font-size: 0.82rem;
-  color: var(--faint);
-  transition: color 0.4s var(--ease);
-}
-.price-row:hover .price-bullets,
-.price-row:focus-within .price-bullets { color: color-mix(in srgb, var(--acid-ink) 62%, transparent); }
-.price-bullets li { display: flex; align-items: center; gap: 7px; }
-.price-bullets li::before { content: '—'; opacity: 0.5; }
-
-/* ---------- Пример под услугой ---------- */
-.price-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  font-size: 0.8rem;
-  color: inherit;
-  border: 1px solid currentColor;
-  opacity: 0.55;
-  transition: opacity 0.3s var(--ease);
-}
-.price-toggle:hover { opacity: 1; }
-.price-row.open .price-toggle { opacity: 1; }
-
-.toggle-sign {
-  position: relative;
-  width: 9px;
-  height: 9px;
-  flex: none;
-}
-.toggle-sign::before,
-.toggle-sign::after {
-  content: '';
-  position: absolute;
-  inset: 50% 0 auto 0;
-  height: 1.4px;
-  background: currentColor;
-  transition: transform 0.35s var(--ease);
-}
-.toggle-sign::after { transform: rotate(90deg); }
-.price-row.open .toggle-sign::after { transform: rotate(0deg); }
-
-.price-example {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s var(--ease);
-  background: var(--ink-2);
-}
-.price-example > div { overflow: hidden; }
-.price-row.open .price-example { grid-template-rows: 1fr; }
-
-.ex-body {
-  display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-  gap: clamp(20px, 4vw, 48px);
-  align-items: center;
-  padding: 30px 26px 34px;
-  border-left: 2px solid var(--acid-text);
-}
-
-.ex-mock {
-  border: 1px solid var(--rule-soft);
-  background: var(--ink);
-  padding: 10px;
-}
-.ex-mock svg { display: block; width: 100%; height: auto; }
-
-.ex-text {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--muted);
-  max-width: 56ch;
-}
-
-/* ---------- Части макетов ---------- */
-.mock .m-plate { fill: var(--ink-2); stroke: var(--rule-soft); }
-.mock .m-frame { fill: none; stroke: var(--rule); }
-.mock .m-frame-line { fill: none; stroke: var(--rule); }
-.mock .m-acid-frame { fill: none; stroke: var(--acid); }
-.mock .m-acid-stroke { fill: none; stroke: var(--acid); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.mock .m-rule { stroke: var(--rule-soft); }
-.mock .m-rule-fill { fill: var(--mock-field); stroke: var(--rule); }
-.mock .m-line { fill: var(--mock-strong); }
-.mock .m-dim { fill: var(--mock-dim); }
-.mock .m-fill { fill: var(--mock-fill); }
-.mock .m-field { fill: var(--mock-field); stroke: var(--rule-soft); }
-.mock .m-bubble { fill: var(--mock-field); }
-.mock .m-acid { fill: var(--acid); }
-.mock .m-acid-fill { fill: var(--acid); }
-.mock .m-arrow { stroke: var(--rule); fill: none; }
-.mock .m-arrow-head { stroke: var(--acid); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.mock .m-broken { stroke-dasharray: 4 3; }
-
-/* макет собирается на глазах, когда пример разворачивают */
-.price-row.open .mock > * {
-  animation: mock-in 0.5s var(--ease) both;
-}
-.price-row.open .mock > *:nth-child(n+4) { animation-delay: 0.05s; }
-.price-row.open .mock > *:nth-child(n+8) { animation-delay: 0.1s; }
-.price-row.open .mock > *:nth-child(n+12) { animation-delay: 0.15s; }
-@keyframes mock-in {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: none; }
-}
-
-@media (max-width: 860px) {
-  .ex-body { grid-template-columns: 1fr; padding: 22px 16px 26px; }
-}
-
-/* =========================================================
-   Шаги
-   ========================================================= */
-.steps { display: grid; gap: 0; }
-.step {
-  display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
-  gap: 26px;
-  padding: 30px 0;
-  border-top: 1px solid var(--rule);
-  align-items: start;
-}
-.step:last-child { border-bottom: 1px solid var(--rule); }
-.step-num {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--rule);
-  transition: color 0.4s var(--ease), -webkit-text-stroke-color 0.4s var(--ease);
-}
-.step:hover .step-num { color: var(--acid-text); -webkit-text-stroke-color: transparent; }
-.step-title {
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(1.05rem, 1.9vw, 1.35rem);
-  letter-spacing: -0.02em;
-  margin-bottom: 8px;
-}
-.step-desc { color: var(--muted); font-size: 0.95rem; max-width: 60ch; }
-
-/* =========================================================
-   Статистика и репозитории
-   ========================================================= */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
-  margin-bottom: 56px;
-  background: var(--rule-soft);
-  border: 1px solid var(--rule-soft);
-}
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 22px 20px;
-  background: var(--bg);
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-.section-alt .stat { background: var(--surface); }
-.stat-num {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--text);
-}
-
-.repos { border-top: 1px solid var(--rule); }
-.repo {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px;
-  align-items: baseline;
-  padding: 24px 4px;
-  border-bottom: 1px solid var(--rule);
-  transition: padding-left 0.4s var(--ease), color 0.3s;
-}
-.repo:hover { padding-left: 18px; }
-.repo-name {
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(1rem, 1.7vw, 1.25rem);
-  letter-spacing: -0.025em;
-  transition: color 0.3s;
-}
-.repo:hover .repo-name { color: var(--acid-text); }
-.repo-desc { margin-top: 6px; color: var(--muted); font-size: 0.9rem; max-width: 65ch; }
-.repo-meta {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 0.78rem;
-  color: var(--faint);
-  white-space: nowrap;
-}
-.repo-lang { display: inline-flex; align-items: center; gap: 7px; }
-.lang-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-
-.state-msg { padding: 28px 4px; color: var(--muted); font-size: 0.92rem; }
-.skeleton {
-  height: 14px;
-  margin: 26px 4px;
-  background: linear-gradient(90deg, var(--rule-soft), var(--rule), var(--rule-soft));
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
-}
-@keyframes shimmer { to { background-position: -200% 0; } }
-
-/* =========================================================
-   Стек
-   ========================================================= */
-.stack-wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 5vw, 70px); align-items: start; }
-
-.lang-bar {
-  display: flex;
-  height: 10px;
-  overflow: hidden;
-  margin-bottom: 26px;
-}
-.lang-bar span { height: 100%; transition: flex-grow 0.8s var(--ease); }
-
-.lang-legend { display: grid; gap: 14px; }
-.lang-legend li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--rule-soft);
-  font-size: 0.9rem;
-}
-.lang-legend .pct { color: var(--muted); font-variant-numeric: tabular-nums; }
-
-.chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
-.chips li {
-  padding: 8px 15px;
-  border: 1px solid var(--rule);
-  font-size: 0.82rem;
-  color: var(--muted);
-  transition: color 0.25s, border-color 0.25s, transform 0.25s var(--ease);
-}
-.chips li:hover { color: var(--acid-text); border-color: var(--acid-text); transform: translateY(-2px); }
-
-/* =========================================================
-   FAQ
-   ========================================================= */
-.faq-list { border-top: 1px solid var(--rule); }
-.faq-item { border-bottom: 1px solid var(--rule); }
-.faq-q {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  width: 100%;
-  padding: 26px 4px;
-  text-align: left;
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(0.98rem, 1.7vw, 1.2rem);
-  letter-spacing: -0.02em;
-  transition: color 0.25s;
-}
-.faq-q:hover { color: var(--acid-text); }
-.faq-sign {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  position: relative;
-}
-.faq-sign::before, .faq-sign::after {
-  content: '';
-  position: absolute;
-  inset: 50% 0 auto 0;
-  height: 1.5px;
-  background: currentColor;
-  transition: transform 0.35s var(--ease);
-}
-.faq-sign::after { transform: rotate(90deg); }
-.faq-q[aria-expanded="true"] .faq-sign::after { transform: rotate(0deg); }
-
-.faq-a {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.45s var(--ease);
-}
-.faq-a > div { overflow: hidden; }
-.faq-item.open .faq-a { grid-template-rows: 1fr; }
-.faq-a p {
-  padding: 0 4px 26px;
-  max-width: 70ch;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-/* =========================================================
-   Контакты и подвал
-   ========================================================= */
-.contact { text-align: left; }
-.contact-title {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(2rem, 6.4vw, 5rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  max-width: 16ch;
-  margin-bottom: 8px;
-}
-.contact-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
-
-.foot-tg { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; transition: color 0.25s var(--ease), border-color 0.25s var(--ease); }
-.foot-tg:hover { color: var(--acid-text); border-bottom-color: var(--acid-text); }
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 26px var(--pad);
-  border-top: 1px solid var(--rule);
-  font-size: 0.8rem;
-  color: var(--faint);
-}
-
-/* =========================================================
-   Появление при скролле (фоллбэк, если GSAP не загрузился)
-   ========================================================= */
-.reveal { opacity: 0; transform: translateY(24px); }
-.reveal.in {
-  opacity: 1;
-  transform: none;
-  /* Лесенка: соседи в списке выезжают не разом, а по очереди.
-     Индекс проставляет js, когда впервые берёт элемент на карандаш;
-     дальше шестого не считаем, иначе низ списка заметно отстаёт. */
-  transition: opacity 0.7s var(--ease) calc(var(--i, 0) * 70ms),
-              transform 0.7s var(--ease) calc(var(--i, 0) * 70ms);
-}
+/* Без JS всё должно быть видно сразу */
 .js-off .reveal { opacity: 1; transform: none; }
 
-/* Снимок кейса не просто всплывает, а вытирается снизу вверх —
-   так он читается как открывающийся кадр, а не как всплывашка. */
-.reveal .case-frame {
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 0.9s var(--ease) calc(var(--i, 0) * 70ms + 140ms);
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
-.reveal.in .case-frame { clip-path: inset(0 0 0 0); }
-.js-off .case-frame { clip-path: none; }
 
-/* Полоса прочитанного по нижней кромке шапки. Считает её сам
-   браузер по позиции скролла — ни одного кадра на js. Где
-   scroll-таймлайнов нет, полоса просто остаётся пустой. */
+
+/* ═══ 03 · ШАПКА, МЕНЮ, ПОДВАЛ ═════════════════════════════════════════ */
+
+/* .ds-brand — флекс с зазором, а точка в «v.studio» должна стоять
+   вплотную к буквам, иначе читается как «v . studio» */
+.brand { gap: 0; }
+.brand-dot { color: var(--v-accent-text); }
+
+.topbar { --ds-header-h: 56px; }
+.topbar.is-stuck { box-shadow: 0 1px 0 var(--ds-border); }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-2);
+}
+
+/* Переключатель языка — сегменты системы, только уже кегль */
+.lang { flex-shrink: 0; }
+.lang .lang-btn {
+  min-width: 42px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Кнопка темы: показываем ту иконку, в которую переключимся */
+.theme-btn svg { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.theme-btn .icon-sun { display: none; }
+[data-theme="dark"] .theme-btn .icon-sun { display: block; }
+[data-theme="dark"] .theme-btn .icon-moon { display: none; }
+
+/* Бургер — только на узких экранах */
+.burger { display: none; flex-direction: column; gap: 5px; }
+.burger span {
+  display: block;
+  width: 17px; height: 1.7px;
+  border-radius: var(--ds-r-full);
+  background: currentColor;
+  transition: transform var(--ds-dur) var(--ds-ease), opacity var(--ds-dur) var(--ds-ease);
+}
+.burger[aria-expanded="true"] span:first-child { transform: translateY(3.4px) rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child { transform: translateY(-3.3px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed;
+  top: var(--ds-header-h);
+  left: var(--ds-3);
+  right: var(--ds-3);
+  z-index: var(--ds-z-header);
+  display: flex;
+  flex-direction: column;
+  padding: var(--ds-2);
+  border-radius: var(--ds-r-xl);
+  box-shadow: var(--ds-sh-xl);
+}
+.mobile-menu a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--ds-4);
+  border-radius: var(--ds-r-md);
+  font-size: var(--ds-t-lg);
+  color: var(--ds-text);
+}
+.mobile-menu a:hover { background: var(--ds-fill); opacity: 1; }
+.mobile-menu a + a { box-shadow: inset 0 1px 0 var(--ds-border); }
+
+/* `hidden` обязан побеждать `display: flex` — иначе меню видно всегда */
+[hidden] { display: none !important; }
+
+/* Полоса прочитанного: тонкая, у самого низа шапки */
 .progress {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
+  left: 0; right: 0; bottom: 0;
   height: 2px;
   overflow: hidden;
-  pointer-events: none;
 }
 .progress i {
   display: block;
   height: 100%;
-  background: var(--acid);
+  width: 100%;
+  background: var(--ds-accent);
   transform: scaleX(0);
-  transform-origin: left center;
+  transform-origin: 0 50%;
 }
-@keyframes progress-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes hero-lift { to { opacity: 0.12; transform: translateY(-30px); } }
-
+/* Полосу ведёт сама прокрутка — без единого слушателя scroll.
+   Там, где scroll() не поддерживается, полосы просто нет. */
 @supports (animation-timeline: scroll()) {
   .progress i {
-    animation: progress-grow linear both;
+    animation: ds-read linear;
     animation-timeline: scroll(root block);
   }
 }
-/* Заголовок первого экрана уходит вверх и гаснет, пока его
-   пролистывают. Тоже без js: таймлайн привязан к самому элементу. */
-@supports (animation-timeline: view()) {
-  .hero-title {
-    animation: hero-lift linear both;
-    animation-timeline: view(block);
-    animation-range: exit 0% exit 100%;
-  }
+@keyframes ds-read { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Общее «0.001ms» такую анимацию не гасит, а перематывает в конец —
+   поэтому здесь выключаем явно. */
+@media (prefers-reduced-motion: reduce) {
+  .progress i { animation: none !important; }
 }
 
-/* На тачскрине нет наведения — тот же отклик вешаем на нажатие */
-@media (hover: none) {
-  .price-row:active .price-head::before { transform: scaleY(1); }
-  .price-row:active .price-head { color: var(--acid-ink); }
+.footer {
+  padding-block: var(--ds-8);
+  border-top: 1px solid var(--ds-border);
 }
+.foot-tg { color: var(--v-accent-text); }
 
-/* =========================================================
-   Адаптив
-   ========================================================= */
-@media (max-width: 1000px) {
+@media (max-width: 860px) {
   .nav { display: none; }
-  .burger { display: flex; }
-  .hero-bottom { grid-template-columns: 1fr; align-items: start; }
-  .stack-wrap { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .burger { display: inline-flex; }
+  #topOrder { display: none; }
+}
+@media (min-width: 861px) {
+  .mobile-menu { display: none !important; }
 }
 
-@media (max-width: 760px) {
-  .price-inner {
-    /* minmax(0, 1fr), а не 1fr: у колонки грида минимальная ширина по
-       умолчанию — по содержимому, и ряд с ценой и кнопкой распирал
-       страницу шире экрана. На 390 px её уводило вбок на полсотни
-       пикселей, и весь сайт скроллился по горизонтали. */
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 24px 4px 6px;
-  }
-  /* Не ряд с переносом, а сетка из двух ячеек: цена своей строкой,
-     под ней две кнопки. Перенос зависел от ширины цены, а она растёт
-     вместе с системным размером шрифта — на телефоне с крупным
-     текстом «Приклад» и «Замовити» уезжали в столбик и налезали на
-     список пунктов. Сетка кладёт их одинаково при любом кегле. */
-  .price-right {
-    display: grid;
-    grid-template-columns: auto auto;
-    justify-content: start;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-  }
-  .price-money { order: -1; grid-column: 1 / -1; justify-items: start; }
-  .price-name, .price-desc { overflow-wrap: anywhere; }
-  .price-cta { opacity: 1; transform: none; }
-  .step { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
-  .repo { grid-template-columns: 1fr; gap: 10px; }
-  .topbar .btn-sm { display: none; }
+
+/* ═══ 04 · ПЕРВЫЙ ЭКРАН ════════════════════════════════════════════════ */
+
+/* Шапка перекрывает начало страницы, поэтому её высоту добавляем
+   сверху сами, а нижний отступ берём обычный секционный. */
+.hero {
+  padding-top: calc(var(--ds-header-h) + var(--ds-10));
+  padding-bottom: clamp(3rem, 2rem + 5vw, 6.5rem);
 }
+
+.status {
+  gap: var(--ds-2);
+  font-size: var(--ds-t-sm);
+  color: var(--ds-text-2);
+}
+.status-dot { color: var(--ds-success); }
+
+.hero-title .line { display: block; overflow: hidden; }
+.hero-title .line-in { display: block; }
+.hero-title .accent { color: var(--v-accent-text); }
+
+.hero-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-8);
+  align-items: flex-start;
+}
+.hero-lead { margin: 0; }
+
+/* На узком экране две кнопки разной ширины выглядят случайными —
+   растягиваем обе на всю строку */
+@media (max-width: 560px) {
+  .hero-actions .ds-btn,
+  .contact-actions .ds-btn { flex: 1 1 100%; }
+}
+
+.hero-figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-3) var(--ds-6);
+  font-size: var(--ds-t-sm);
+  color: var(--ds-text-2);
+}
+.hero-figures span { display: inline-flex; align-items: center; }
+
+/* Заголовок и подпись въезжают снизу при первой отрисовке */
+.hero-title .line-in,
+.status,
+.hero-bottom {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity var(--ds-dur-slow) var(--ds-ease),
+    transform var(--ds-dur-slow) var(--ds-ease);
+}
+.hero-title .line:nth-child(2) .line-in { transition-delay: 60ms; }
+.hero-title .line:nth-child(3) .line-in { transition-delay: 120ms; }
+.hero-bottom { transition-delay: 180ms; }
+.hero-title .line-in.in,
+.status.in,
+.hero-bottom.in { opacity: 1; transform: none; }
+
+.js-off :is(.hero-title .line-in, .status, .hero-bottom) { opacity: 1; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-  .reveal { opacity: 1; transform: none; }
-  /* animation-duration: 0.001ms выше не выключает анимацию, а
-     мгновенно доигрывает её до конца: с fill: both заголовок так и
-     остался бы полупрозрачным, а полоса — во всю ширину. Гасим их
-     целиком. */
-  .progress i, .hero-title { animation: none !important; }
-  .reveal .case-frame, .case-frame { clip-path: none !important; }
-  #grid-canvas { display: none; }
+  .hero-title .line-in,
+  .status,
+  .hero-bottom { opacity: 1; transform: none; transition: none; }
 }
+
+
+/* ═══ 05 · ЗАГОЛОВКИ СЕКЦИЙ ════════════════════════════════════════════ */
+
+.section-head { margin-bottom: var(--ds-10); }
+.section-head > * { margin: 0; }
+.kicker { color: var(--v-accent-text); }
+.section-lead { color: var(--ds-text-2); }
+
+
+/* ═══ 06 · ЖИВЫЕ КЕЙСЫ ═════════════════════════════════════════════════ */
+
+.case-grid { list-style: none; padding: 0; margin: 0; }
+
+.case-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-3);
+  height: 100%;
+  padding: var(--ds-3) var(--ds-3) var(--ds-5);
+  border-radius: var(--ds-r-xl);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-sh-md);
+  color: var(--ds-text);
+  transition:
+    transform var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease);
+}
+.case-link:hover { transform: translateY(-3px); box-shadow: var(--ds-sh-lg); opacity: 1; }
+.case-link:active { transform: translateY(-1px) scale(0.995); }
+
+.case-frame {
+  display: block;
+  overflow: hidden;
+  border-radius: var(--ds-r-lg);
+  background: var(--ds-surface-2);
+  aspect-ratio: 16 / 10;
+}
+.case-shot { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+
+.case-name {
+  margin: 0;
+  padding-inline: var(--ds-2);
+  font-size: var(--ds-t-h4);
+  font-weight: var(--ds-w-semi);
+  letter-spacing: var(--ds-ls-head);
+}
+.case-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-2);
+  padding-inline: var(--ds-2);
+}
+.case-tags span {
+  padding: var(--ds-1) var(--ds-3);
+  border-radius: var(--ds-r-full);
+  background: var(--ds-fill);
+  font-size: var(--ds-t-2xs);
+  color: var(--ds-text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.case-open {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-2);
+  margin-top: auto;
+  padding-inline: var(--ds-2);
+  color: var(--v-accent-text);
+  font-size: var(--ds-t-sm);
+  font-weight: var(--ds-w-medium);
+}
+
+
+/* ═══ 07 · УСЛУГИ И ЦЕНЫ ═══════════════════════════════════════════════ */
+
+.cur-switch { gap: var(--ds-4); margin-top: var(--ds-2); }
+.cur-btn { min-width: 46px; font-size: var(--ds-t-lg); }
+.cur-note { color: var(--ds-text-2); }
+
+.price-list { list-style: none; padding: 0; margin: 0; gap: var(--ds-4); }
+
+.price-row {
+  overflow: hidden;
+  border-radius: var(--ds-r-xl);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-sh-sm);
+  transition: box-shadow var(--ds-dur) var(--ds-ease);
+}
+.price-row:hover { box-shadow: var(--ds-sh-md); }
+
+.price-head { padding: var(--ds-6); }
+
+/* Две колонки: слева название и описание, справа цена и кнопки.
+   На узком экране — одна колонка, цена уходит под текст. */
+.price-inner {
+  display: grid;
+  gap: var(--ds-4) var(--ds-8);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+@media (min-width: 721px) {
+  .price-inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'name right' 'desc right';
+  }
+  .price-name { grid-area: name; }
+  .price-desc { grid-area: desc; }
+  .price-right { grid-area: right; }
+}
+
+.price-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-3);
+  margin: 0;
+  font-size: var(--ds-t-h3);
+  font-weight: var(--ds-w-semi);
+  letter-spacing: var(--ds-ls-head);
+}
+.price-featured {
+  padding: var(--ds-1) var(--ds-3);
+  border-radius: var(--ds-r-full);
+  background: var(--ds-accent-soft);
+  color: var(--v-accent-text);
+  font-size: var(--ds-t-2xs);
+  font-weight: var(--ds-w-semi);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.price-desc { margin: 0; color: var(--ds-text-2); max-width: 60ch; }
+
+/* Правая колонка — сетка, а не флекс: при крупном системном шрифте
+   флекс переносил цену под кнопки и строка разъезжалась.
+   Порядок в разметке — кнопка примера, цена, «Замовити»; областями
+   ставим цену первой: она тут главное, а не кнопки. */
+.price-right {
+  display: grid;
+  gap: var(--ds-3);
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'money  money'
+    'toggle cta';
+  justify-content: start;
+  justify-items: start;
+}
+.price-money { grid-area: money; }
+.price-toggle { grid-area: toggle; }
+.price-cta { grid-area: cta; }
+
+@media (min-width: 721px) {
+  .price-right { justify-content: end; justify-items: end; text-align: right; }
+}
+
+.price-money { display: flex; flex-direction: column; gap: var(--ds-1); }
+.price-value {
+  font-size: var(--ds-t-h3);
+  font-weight: var(--ds-w-bold);
+  letter-spacing: var(--ds-ls-head);
+  font-variant-numeric: tabular-nums;
+}
+.price-value.is-quote { font-size: var(--ds-t-h4); font-weight: var(--ds-w-semi); }
+.price-alt { font-size: var(--ds-t-sm); color: var(--ds-text-3); font-variant-numeric: tabular-nums; }
+
+.price-cta,
+.price-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-2);
+  min-height: 44px;
+  padding: 0 var(--ds-5);
+  border-radius: var(--ds-r-full);
+  font-size: var(--ds-t-sm);
+  font-weight: var(--ds-w-medium);
+  transition: background var(--ds-dur-fast) var(--ds-ease), transform var(--ds-dur-fast) var(--ds-ease);
+}
+.price-cta { background: var(--ds-accent); color: var(--ds-text-on-accent); }
+.price-cta:hover { background: var(--ds-accent-hover); opacity: 1; }
+.price-toggle { background: var(--ds-fill); color: var(--v-accent-text); }
+.price-toggle:hover { background: var(--ds-fill-strong); }
+.price-cta:active,
+.price-toggle:active { transform: scale(0.975); }
+
+.toggle-sign {
+  display: inline-block;
+  width: 11px; height: 11px;
+  border-right: 1.8px solid currentColor;
+  border-bottom: 1.8px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--ds-dur) var(--ds-ease);
+}
+.price-row.open .toggle-sign { transform: translateY(2px) rotate(-135deg); }
+
+.price-bullets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-2) var(--ds-6);
+  margin: var(--ds-5) 0 0;
+  padding: var(--ds-5) 0 0;
+  border-top: 1px solid var(--ds-border);
+  list-style: none;
+  font-size: var(--ds-t-sm);
+  color: var(--ds-text-2);
+}
+.price-bullets li { display: flex; align-items: center; gap: var(--ds-2); }
+.price-bullets li::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--ds-accent);
+  flex-shrink: 0;
+}
+
+/* Раскрывающийся пример. Анимируем grid-шаблон, а не height:
+   так не нужно знать высоту заранее. */
+.price-example {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ds-dur-slow) var(--ds-ease);
+}
+.price-row.open .price-example { grid-template-rows: 1fr; }
+.price-example > div { overflow: hidden; }
+
+.ex-body {
+  display: grid;
+  gap: var(--ds-6);
+  padding: var(--ds-6);
+  margin: 0 var(--ds-6) var(--ds-6);
+  border-radius: var(--ds-r-lg);
+  background: var(--ds-surface-2);
+}
+@media (min-width: 721px) {
+  .ex-body { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: center; }
+}
+.ex-mock { min-width: 0; }
+.ex-text { margin: 0; color: var(--ds-text-2); font-size: var(--ds-t-sm); }
+.ex-case { margin-top: var(--ds-2); font-size: var(--ds-t-sm); }
+
+
+/* ═══ 08 · ШАГИ И «ТРИ РЕЧІ» ═══════════════════════════════════════════
+   Сгруппированный список iOS: одна карточка, разделители внутри,
+   и начинаются они от текста, а не от края. */
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--ds-r-xl);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-sh-sm);
+  overflow: hidden;
+}
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ds-4);
+  padding: var(--ds-5) var(--ds-6);
+  position: relative;
+}
+.step + .step::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--ds-6) + 38px + var(--ds-4));
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--ds-border);
+}
+/* Номера шагов процесса — спокойные, серые. Исключение — .ds-tile:
+   у «Трьох речей» плашки цветные, и там фон задаёт сама система. */
+.step-num {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px; height: 38px;
+  border-radius: var(--ds-r-sm);
+  font-size: var(--ds-t-xs);
+  font-weight: var(--ds-w-semi);
+  font-variant-numeric: tabular-nums;
+}
+.step-num:not(.ds-tile) { background: var(--ds-fill); color: var(--ds-text-2); }
+.step-title {
+  margin: 0 0 var(--ds-1);
+  font-size: var(--ds-t-lg);
+  font-weight: var(--ds-w-semi);
+  letter-spacing: var(--ds-ls-body);
+}
+.step-desc { margin: 0; color: var(--ds-text-2); font-size: var(--ds-t-sm); }
+
+
+/* ═══ 09 · GITHUB ══════════════════════════════════════════════════════ */
+
+.stats-row { margin-bottom: var(--ds-8); }
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-1);
+  padding: var(--ds-5);
+  text-align: center;
+  font-size: var(--ds-t-xs);
+  color: var(--ds-text-2);
+}
+.stat-num {
+  font-size: var(--ds-t-h2);
+  font-weight: var(--ds-w-bold);
+  color: var(--ds-text);
+  letter-spacing: var(--ds-ls-head);
+}
+
+.repo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-3);
+  padding: var(--ds-5);
+  border-radius: var(--ds-r-lg);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-sh-sm);
+  color: var(--ds-text);
+  transition:
+    transform var(--ds-dur) var(--ds-ease),
+    box-shadow var(--ds-dur) var(--ds-ease);
+}
+a.repo:hover { transform: translateY(-2px); box-shadow: var(--ds-sh-md); opacity: 1; }
+.repo-name {
+  margin: 0;
+  font-size: var(--ds-t-lg);
+  font-weight: var(--ds-w-semi);
+  letter-spacing: var(--ds-ls-body);
+  overflow-wrap: anywhere;
+}
+/* Описания у проектов разной длины, и без ограничения одна карточка
+   растягивает весь ряд. Четыре строки — и «читати далі» не нужно:
+   полный текст всё равно по ссылке. */
+.repo-desc {
+  margin: 0;
+  color: var(--ds-text-2);
+  font-size: var(--ds-t-sm);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.repo-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-2) var(--ds-4);
+  margin-top: auto;
+  font-size: var(--ds-t-xs);
+  color: var(--ds-text-3);
+}
+.repo-lang { display: inline-flex; align-items: center; gap: var(--ds-2); }
+.lang-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+.state-msg { color: var(--ds-text-2); }
+
+.skeleton {
+  height: 118px;
+  border-radius: var(--ds-r-lg);
+  background: var(--ds-fill);
+  animation: ds-pulse 1.4s var(--ds-ease-in-out) infinite;
+}
+@keyframes ds-pulse { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
+
+
+/* ═══ 10 · СТЕК ════════════════════════════════════════════════════════ */
+
+.stack-wrap { padding: var(--ds-6); }
+
+.lang-bar {
+  display: flex;
+  height: 10px;
+  border-radius: var(--ds-r-full);
+  overflow: hidden;
+  background: var(--ds-fill);
+}
+.lang-bar span { display: block; }
+.lang-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ds-2) var(--ds-5);
+  margin: var(--ds-4) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--ds-t-sm);
+}
+.lang-legend li { display: inline-flex; align-items: center; gap: var(--ds-2); }
+.pct { color: var(--ds-text-3); font-variant-numeric: tabular-nums; }
+.langs-note { margin: 0; }
+
+.chips { margin: 0; padding: 0; list-style: none; gap: var(--ds-2); }
+.chips li {
+  padding: var(--ds-2) var(--ds-4);
+  border-radius: var(--ds-r-full);
+  background: var(--ds-fill);
+  font-size: var(--ds-t-sm);
+  color: var(--ds-text-2);
+}
+
+
+/* ═══ 11 · ВОПРОСЫ И ОТВЕТЫ ════════════════════════════════════════════ */
+
+.faq-list {
+  border-radius: var(--ds-r-xl);
+  background: var(--ds-surface);
+  box-shadow: var(--ds-sh-sm);
+  overflow: hidden;
+}
+.faq-item + .faq-item { box-shadow: inset 0 1px 0 var(--ds-border); }
+
+.faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-4);
+  width: 100%;
+  min-height: 60px;
+  padding: var(--ds-4) var(--ds-6);
+  text-align: left;
+  font-size: var(--ds-t-lg);
+  font-weight: var(--ds-w-medium);
+  letter-spacing: var(--ds-ls-body);
+  transition: background var(--ds-dur-fast) var(--ds-ease);
+}
+.faq-q:hover { background: var(--ds-fill); }
+
+.faq-sign {
+  flex-shrink: 0;
+  width: 11px; height: 11px;
+  border-right: 1.8px solid var(--ds-text-3);
+  border-bottom: 1.8px solid var(--ds-text-3);
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--ds-dur) var(--ds-ease);
+}
+.faq-item.open .faq-sign { transform: translateY(2px) rotate(-135deg); }
+
+.faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--ds-dur-slow) var(--ds-ease);
+}
+.faq-item.open .faq-a { grid-template-rows: 1fr; }
+.faq-a > div { overflow: hidden; }
+.faq-a p {
+  margin: 0;
+  padding: 0 var(--ds-6) var(--ds-5);
+  color: var(--ds-text-2);
+  max-width: 68ch;
+}
+
+
+/* ═══ 12 · КОНТАКТ ═════════════════════════════════════════════════════
+   Единственная яркая карточка на странице — всё остальное спокойное.
+
+   Здесь белый задан числом, а не токеном, и это осознанно: карточка
+   всегда лежит на цветном градиенте и в светлой теме, и в тёмной,
+   поэтому `--ds-text` на ней читался бы то белым, то чёрным. Так же
+   сделано и в самой системе (`.ds-hero-card p`). */
+
+.contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-4);
+  align-items: flex-start;
+  background: var(--v-grad-brand);
+  border-radius: var(--ds-r-2xl);
+  padding: clamp(var(--ds-5), 4vw, var(--ds-16));
+}
+/* align-items: flex-start даёт детям их «естественную» ширину, а
+   «автоматизувати» в неё не влезает на 320px — и заголовок с
+   кнопками уезжали за карточку. */
+.contact-card > * { max-width: 100%; align-self: stretch; }
+.contact-title { overflow-wrap: anywhere; }
+.contact-card .kicker { color: rgb(255 255 255 / 0.72); }
+.contact-title { margin: 0; }
+.contact-actions { margin-top: var(--ds-2); }
+
+/* Карточка красная в обеих темах, поэтому главная кнопка на ней
+   всегда белая: в тёмной теме `--ds-surface` дал бы почти чёрную
+   кнопку на красном — читалось бы как «выключено». */
+.contact-btn { background: #FFFFFF; color: #17090C; }
+.contact-btn:hover { opacity: 0.92; }
+.contact-btn--ghost {
+  background: rgb(255 255 255 / 0.16);
+  color: var(--ds-text-on-accent);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28);
+}
+.contact-btn--ghost:hover { background: rgb(255 255 255 / 0.24); opacity: 1; }
+
+
+/* ═══ 13 · МИНИ-МАКЕТЫ (SVG) ═══════════════════════════════════════════
+   Схематичные картинки к примерам услуг. Цвета — те же токены, что и
+   у интерфейса, поэтому они сами переключаются вместе с темой. */
+
+.mock { display: block; width: 100%; height: auto; }
+
+.m-plate  { fill: var(--ds-surface); stroke: var(--ds-border); stroke-width: 1; }
+.m-frame  { fill: none; stroke: var(--ds-border-strong); stroke-width: 1; }
+.m-frame-line { fill: none; stroke: var(--ds-border-strong); stroke-width: 1; }
+.m-broken { stroke-dasharray: 4 3; }
+.m-rule   { stroke: var(--ds-border); stroke-width: 1; }
+.m-rule-fill { fill: var(--ds-fill); }
+.m-fill   { fill: var(--ds-fill-strong); }
+.m-field  { fill: var(--ds-fill); }
+.m-bubble { fill: var(--ds-fill); }
+.m-line   { fill: var(--ds-text-2); }
+.m-dim    { fill: var(--ds-text-3); }
+
+.m-acid       { fill: var(--ds-accent); }
+.m-acid-fill  { fill: var(--ds-accent); }
+.m-acid-frame { fill: none; stroke: var(--ds-accent); stroke-width: 1.4; }
+.m-acid-stroke { fill: none; stroke: var(--ds-accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.m-arrow      { fill: none; stroke: var(--ds-border-strong); stroke-width: 1.2; }
+.m-arrow-head { fill: none; stroke: var(--ds-border-strong); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
