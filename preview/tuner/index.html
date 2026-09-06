@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="dark light">
+<title>Крутилка оформлення — v.studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23111'/%3E%3Ccircle cx='11' cy='16' r='4' fill='%23fff'/%3E%3Ccircle cx='22' cy='11' r='3' fill='%23fff'/%3E%3Ccircle cx='22' cy='22' r='3' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ══ ЗРАЗОК САЙТА ══════════════════════════════════════════════
+     Вміст справжній: ті самі тексти, ціни й знімки кейсів, що на
+     сайті. Усе оформлення тримається на змінних, які крутить панель
+     праворуч — тому міняється саме вигляд, а не верстка. -->
+<div class="demo" id="demo">
+
+  <header class="d-bar">
+    <a class="d-brand" href="#">v<span>.</span>studio</a>
+    <nav class="d-nav">
+      <a href="#">Кейси</a><a href="#">Послуги</a><a href="#">Як працюємо</a><a href="#">Питання</a>
+    </nav>
+    <a class="d-btn d-btn-main d-sm" href="#">Написати</a>
+  </header>
+
+  <section class="d-hero">
+    <p class="d-eyebrow"><i class="d-dot"></i>Студія розробки · беремо проєкти</p>
+    <h1 class="d-h1">Сайти, сервіси і боти,<br>які <em>працюють за вас</em></h1>
+    <p class="d-lead">
+      Пишемо вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot,
+      бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки,
+      місяць підтримки після запуску.
+    </p>
+    <div class="d-row">
+      <a class="d-btn d-btn-main" href="#">Обговорити задачу</a>
+      <a class="d-btn d-btn-line" href="#">Подивитись кейси</a>
+    </div>
+  </section>
+
+  <section class="d-sec">
+    <p class="d-kicker">Можна відкрити</p>
+    <h2 class="d-h2">Живі кейси</h2>
+    <div class="d-cards">
+      <a class="d-card d-case" href="#">
+        <span class="d-shot"><img src="../../img/cases/booking.jpg" alt="Бот запису до майстра" width="960" height="600"></span>
+        <span class="d-cbody">
+          <b>Запис до майстра</b>
+          <span>Бот тримає розклад і не дає двом людям зайняти один слот.</span>
+          <span class="d-tags"><i>Python</i><i>aiogram</i><i>SQLite</i></span>
+        </span>
+      </a>
+      <a class="d-card d-case" href="#">
+        <span class="d-shot"><img src="../../img/cases/guard.jpg" alt="Бот-модератор чату" width="960" height="600" loading="lazy"></span>
+        <span class="d-cbody">
+          <b>Модератор чату</b>
+          <span>Ловить спам, капс і флуд, зустрічає новачків капчею.</span>
+          <span class="d-tags"><i>Python</i><i>aiogram</i><i>SQLite</i></span>
+        </span>
+      </a>
+      <a class="d-card d-case" href="#">
+        <span class="d-shot"><img src="../../img/cases/spend.jpg" alt="Бот обліку витрат" width="960" height="600" loading="lazy"></span>
+        <span class="d-cbody">
+          <b>Облік витрат</b>
+          <span>Пишеш «120 кава» — бот розкладає по категоріях і рахує.</span>
+          <span class="d-tags"><i>Python</i><i>aiogram</i><i>SQLite</i></span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="d-sec d-sunken">
+    <p class="d-kicker">Що замовляють</p>
+    <h2 class="d-h2">Послуги та ціни</h2>
+    <div class="d-cards d-cards-2">
+      <article class="d-card d-price">
+        <b>Сайт-візитка та лендинг</b>
+        <p>Швидка сторінка під послугу або товар: адаптив, форми заявок, аналітика.</p>
+        <p class="d-money">від ₴3 500 <span>≈ $80</span></p>
+        <span class="d-btn d-btn-line d-full">Замовити</span>
+      </article>
+      <article class="d-card d-price d-hot">
+        <span class="d-flag">беруть найчастіше</span>
+        <b>Telegram-бот з оплатою</b>
+        <p>Каталог, кошик, приймання платежів, сповіщення та адмінка для товарів.</p>
+        <p class="d-money">від ₴7 000 <span>≈ $155</span></p>
+        <span class="d-btn d-btn-main d-full">Замовити</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="d-sec">
+    <div class="d-card d-cta">
+      <h2 class="d-h2">Розкажи, що треба автоматизувати</h2>
+      <p>Опиши задачу в двох словах — відповімо, чи реально це, скільки коштуватиме і скільки триватиме.</p>
+      <div class="d-row">
+        <a class="d-btn d-btn-main" href="#">Написати в Telegram</a>
+        <a class="d-btn d-btn-line" href="#">Пошта</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="d-foot"><span>© 2026 v.studio</span><span>vstudio.dev</span></footer>
+</div>
+
+<!-- ══ ПАНЕЛЬ ═══════════════════════════════════════════════════ -->
+<button class="panel-toggle" id="panelToggle" type="button" aria-expanded="true">Налаштування</button>
+
+<aside class="panel" id="panel">
+  <header>
+    <h2>Крути, поки не сподобається</h2>
+    <p>Нічого не зламаєш. Внизу — рядок із вибраним, надішли його мені.</p>
+  </header>
+
+  <div class="ctl">
+    <p class="lbl">Фон</p>
+    <div class="swatches" id="bgSet"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Акцент</p>
+    <div class="swatches" id="acSet"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Щільність</p>
+    <div class="segs" id="density"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Скруглення</p>
+    <div class="segs" id="radius"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Шрифт</p>
+    <div class="segs" id="font"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Картки</p>
+    <div class="segs" id="card"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Розмір заголовка</p>
+    <div class="segs" id="title"></div>
+  </div>
+
+  <div class="ctl">
+    <p class="lbl">Картинки кейсів</p>
+    <div class="segs" id="shots"></div>
+  </div>
+
+  <footer>
+    <p class="lbl">Надішли мені цей рядок</p>
+    <textarea id="out" readonly rows="3" aria-label="Рядок із налаштуваннями"></textarea>
+    <div class="prow">
+      <button class="pbtn" id="copy" type="button">Скопіювати</button>
+      <button class="pbtn ghost" id="reset" type="button">Спочатку</button>
+    </div>
+    <a class="pback" href="../">← до інших варіантів</a>
+  </footer>
+</aside>
+
+<script src="tuner.js"></script>
+</body>
+</html>

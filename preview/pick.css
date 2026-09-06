@@ -85,10 +85,13 @@ main {
 .card--b::before { background: linear-gradient(90deg, #B4471F, #E8E2D6); }
 .card--c::before { background: linear-gradient(90deg, #35E0A1, #0EA5E9); }
 .card--d::before { background: linear-gradient(90deg, #FF7A45, #FFC46B); }
+.card--e::before { background: linear-gradient(90deg, #FFFFFF, #7C5CFF 45%, #35E0A1); }
 
 /* Свежий вариант занимает всю строку: он не «ещё один из списка»,
    а ответ на то, что три предыдущих не подошли. */
-.wide { grid-column: 1 / -1; border-color: rgba(255, 122, 69, 0.34); }
+.wide { grid-column: 1 / -1; }
+.card--d { border-color: rgba(255, 122, 69, 0.34); }
+.card--e { border-color: rgba(255, 255, 255, 0.30); }
 .wide .name { font-size: 30px; }
 .wide .desc { max-width: 68ch; }
 
