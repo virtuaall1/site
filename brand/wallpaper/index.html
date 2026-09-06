@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>v.studio — шпалери</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<!--
+  Генератор шпалер. Розмір і вигляд задаються адресою:
+
+    ?v=mesh&w=1920&h=1080&a=%23FF7A45&mark=1
+
+  v    — mesh | flow | grid
+  w,h  — розмір у пікселях
+  a    — акцент
+  mark — 1, якщо потрібен підпис v.studio
+
+  Малюється на canvas, тому один і той самий файл дає і Full HD, і 4K
+  без розмиття: нічого не масштабується, все креслиться під розмір.
+-->
+<canvas id="c"></canvas>
+<script src="wall.js"></script>
+</body>
+</html>
