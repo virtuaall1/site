@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<title>v.studio — сторіс-обзор сайту</title>
+<!--
+  Сцена для записи сторис. Внутри рамки телефона — не картинка, а
+  сам сайт в iframe: настоящая вёрстка, настоящая прокрутка,
+  настоящие кнопки. Поэтому и переключатель валюты, и смена темы в
+  ролике работают по-честному, а не нарисованы.
+
+  Кадры снимает render.js: он зовёт setT(0…1) и фотографирует. Всё,
+  что видно, должно считаться только из t — иначе два прогона дадут
+  разные ролики.
+-->
+<style>
+  :root{
+    --k: 1.8;                  /* во сколько раз экран крупнее CSS-пикселя */
+    --ink: #0C0C0E;
+    --acid: #d8ff3e;
+    --ui: 'Liberation Sans', 'DejaVu Sans', system-ui, sans-serif;
+  }
+  *{ box-sizing: border-box; margin: 0; padding: 0; }
+  html,body{ width:1080px; height:1920px; overflow:hidden; background:var(--ink); }
+  body{ font-family: var(--ui); -webkit-font-smoothing: antialiased; }
+
+  /* ---------- фон ---------- */
+  .bg{ position:absolute; inset:0;
+       background:
+         radial-gradient(120% 62% at 50% -6%, #24242B 0%, #131317 42%, #0A0A0C 78%),
+         #0A0A0C; }
+  .glow{ position:absolute; left:50%; top:1500px; width:1100px; height:520px;
+         transform:translateX(-50%);
+         background: radial-gradient(50% 50% at 50% 50%, rgba(216,255,62,.13), rgba(216,255,62,0) 70%);
+         filter: blur(20px); }
+  .vig{ position:absolute; inset:0;
+        background: radial-gradient(75% 55% at 50% 46%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 100%); }
+
+  /* ---------- фирменная строка сверху ---------- */
+  .brand{ position:absolute; left:56px; right:56px; top:26px; height:44px;
+          display:flex; align-items:center; justify-content:space-between; }
+  .brand b{ color:#fff; font-size:30px; font-weight:700; letter-spacing:-.02em; }
+  .brand b i{ color:var(--acid); font-style:normal; }
+  .brand span{ color:rgba(235,235,245,.45); font-size:24px; letter-spacing:.02em; }
+
+  /* ---------- камера ---------- */
+  .cam{ position:absolute; inset:0; will-change: transform; }
+
+  /* ---------- телефон ---------- */
+  .shadow{ position:absolute; left:50%; top:1648px; width:820px; height:170px;
+           transform:translateX(-50%); border-radius:50%;
+           background: rgba(0,0,0,.62); filter: blur(46px); }
+  .phone{ position:absolute; left:165px; top:176px; width:750px; height:1567px;
+          border-radius:98px; padding:24px;
+          background: linear-gradient(146deg,#8A8A90 0%,#3A3A3C 16%,#232326 38%,
+                                      #4A4A4E 62%,#1D1D20 82%,#77777D 100%);
+          box-shadow: 0 40px 90px rgba(0,0,0,.55); }
+  .phone::after{ content:''; position:absolute; inset:6px; border-radius:92px;
+                 box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.16); pointer-events:none; }
+  /* боковые клавиши */
+  .key{ position:absolute; background:linear-gradient(180deg,#6C6C72,#2E2E31); border-radius:4px; }
+  .key.vu{ left:-4px; top:340px; width:6px; height:110px; }
+  .key.vd{ left:-4px; top:474px; width:6px; height:110px; }
+  .key.mute{ left:-4px; top:250px; width:6px; height:62px; }
+  .key.pw{ right:-4px; top:400px; width:6px; height:170px; }
+
+  .screen{ position:relative; width:702px; height:1519px; border-radius:76px;
+           overflow:hidden; background:#F5F2EC; }
+  .scr{ position:absolute; left:0; top:0; width:390px; height:844px;
+        transform: scale(var(--k)); transform-origin: 0 0; }
+
+  /* ---------- строка статуса iOS ---------- */
+  .sb{ position:absolute; left:0; top:0; width:390px; height:54px; z-index:3;
+       display:flex; align-items:center; justify-content:space-between;
+       padding: 12px 30px 0; font-size:15px; font-weight:700; letter-spacing:.01em; }
+  /* при записи экрана iOS подсвечивает часы красной плашкой */
+  .sb .time{ background:#FF3B30; color:#fff; border-radius:9px; padding:2.5px 8px; }
+  .sb .icons{ display:flex; align-items:center; gap:7px; }
+  .bars{ display:flex; align-items:flex-end; gap:2px; height:11px; }
+  .bars i{ width:3px; border-radius:1px; background:currentColor; }
+  .bars i:nth-child(1){ height:4px } .bars i:nth-child(2){ height:6px }
+  .bars i:nth-child(3){ height:8px } .bars i:nth-child(4){ height:11px }
+  .batt{ width:26px; height:13px; border-radius:4px; border:1.4px solid currentColor;
+         opacity:.9; position:relative; }
+  .batt::after{ content:''; position:absolute; right:-3.5px; top:4px; width:2px; height:5px;
+                border-radius:0 2px 2px 0; background:currentColor; }
+  .batt b{ position:absolute; left:1.6px; top:1.6px; bottom:1.6px; width:70%;
+           border-radius:2px; background:currentColor; }
+  .island{ position:absolute; left:50%; top:11px; width:126px; height:37px; z-index:4;
+           transform:translateX(-50%); border-radius:19px; background:#000; }
+
+  /* ---------- сам сайт ---------- */
+  .site{ position:absolute; left:0; top:54px; width:390px; height:690px; border:0; z-index:1; }
+
+  /* ---------- нижняя панель Safari ---------- */
+  .safari{ position:absolute; left:0; bottom:0; width:390px; height:100px; z-index:3;
+           padding:8px 14px 0; }
+  .pill{ height:40px; border-radius:12px; display:flex; align-items:center;
+         padding:0 12px; gap:8px; font-size:15px; }
+  .pill .aa{ font-size:13px; letter-spacing:-.03em; opacity:.55; width:26px; }
+  .pill .host{ flex:1; text-align:center; letter-spacing:-.01em; }
+  .pill .host .lock{ display:inline-block; width:9px; height:7px; border-radius:1.5px;
+                     border:1.4px solid currentColor; position:relative; margin-right:5px;
+                     vertical-align:0; opacity:.65; }
+  .pill .host .lock::before{ content:''; position:absolute; left:1.4px; top:-4px; width:4.4px;
+                             height:5px; border:1.4px solid currentColor; border-bottom:0;
+                             border-radius:3px 3px 0 0; }
+  .pill .re{ width:18px; opacity:.55; font-size:15px; text-align:right; }
+  .tools{ display:flex; align-items:center; justify-content:space-between;
+          padding:9px 20px 0; opacity:.9; }
+  .tools i{ display:block; }
+  .chev{ width:11px; height:11px; border-left:2px solid currentColor;
+         border-bottom:2px solid currentColor; }
+  .chev.l{ transform: rotate(45deg); } .chev.r{ transform: rotate(-135deg); opacity:.3 }
+  .tools svg{ display:block; }
+  .home{ position:absolute; left:50%; bottom:8px; width:134px; height:5px; border-radius:3px;
+         transform:translateX(-50%); background: currentColor; opacity:.28; }
+
+  /* ---------- палец ---------- */
+  .thumb{ position:absolute; width:96px; height:96px; margin:-48px 0 0 -48px;
+          border-radius:50%; opacity:0; pointer-events:none; z-index:9;
+          background: radial-gradient(50% 50% at 50% 50%,
+                      rgba(255,255,255,.42), rgba(255,255,255,.14) 62%, rgba(255,255,255,0) 72%);
+          box-shadow: 0 0 0 2px rgba(255,255,255,.35) inset; }
+
+  /* ---------- подписи ---------- */
+  .caps::before{ content:''; position:absolute; left:0; right:0; top:-90px; bottom:-40px;
+                 background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.45) 45%, rgba(0,0,0,.6));
+                 pointer-events:none; }
+  .caps{ position:absolute; left:0; right:0; top:1686px; height:200px; z-index:12;
+         display:flex; align-items:flex-start; justify-content:center; }
+  .cap{ position:absolute; max-width:900px; padding:22px 34px 24px; border-radius:30px;
+        background: rgba(20,20,23,.84); border:1px solid rgba(255,255,255,.15);
+        backdrop-filter: blur(24px) saturate(180%);
+        box-shadow: 0 18px 50px rgba(0,0,0,.45);
+        text-align:center; opacity:0; }
+  .cap .t{ color:#fff; font-size:46px; line-height:1.16; font-weight:700;
+           letter-spacing:-.025em; white-space:pre-line; }
+  .cap .s{ margin-top:9px; color:rgba(235,235,245,.55); font-size:23px;
+           letter-spacing:.09em; text-transform:uppercase; }
+
+  /* ---------- финальная плашка ---------- */
+  .outro{ position:absolute; inset:0; z-index:20; opacity:0;
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          gap:18px; background: rgba(8,8,10,.72); backdrop-filter: blur(18px); }
+  .outro .t{ color:#fff; font-size:96px; font-weight:700; letter-spacing:-.035em; }
+  .outro .t i{ color:var(--acid); font-style:normal; }
+  .outro .s{ color:rgba(235,235,245,.6); font-size:30px; letter-spacing:.1em;
+             text-transform:uppercase; }
+  .outro .line{ width:0; height:3px; background:var(--acid); border-radius:2px; }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="glow"></div>
+
+  <div class="cam" id="cam">
+    <div class="shadow"></div>
+    <div class="phone">
+      <i class="key mute"></i><i class="key vu"></i><i class="key vd"></i><i class="key pw"></i>
+      <div class="screen">
+        <div class="scr" id="scr">
+          <div class="sb" id="sb">
+            <div class="time"><span id="clock">20:14</span></div>
+            <div class="icons">
+              <span class="bars"><i></i><i></i><i></i><i></i></span>
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none" aria-hidden="true">
+                <path d="M1 4.2a11 11 0 0 1 15 0M3.6 6.9a7.4 7.4 0 0 1 9.8 0M6.2 9.5a3.6 3.6 0 0 1 4.6 0"
+                      stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <circle cx="8.5" cy="11.2" r="1" fill="currentColor"/>
+              </svg>
+              <span class="batt"><b></b></span>
+            </div>
+          </div>
+          <div class="island"></div>
+
+          <iframe class="site" id="site" title="сайт студії" src="about:blank"></iframe>
+
+          <div class="safari" id="safari">
+            <div class="pill" id="pill">
+              <span class="aa">ᴀA</span>
+              <span class="host"><span class="lock"></span><span id="host">vstudio.dev</span></span>
+              <span class="re">⟳</span>
+            </div>
+            <div class="tools" id="tools">
+              <i class="chev l"></i>
+              <i class="chev r"></i>
+              <svg width="17" height="21" viewBox="0 0 17 21" fill="none" aria-hidden="true">
+                <path d="M8.5 1v12M4.5 4.6 8.5 1l4 3.6" stroke="currentColor" stroke-width="1.7"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3.5 8.4H2v11h13v-11h-1.5" stroke="currentColor" stroke-width="1.7"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <svg width="17" height="19" viewBox="0 0 17 19" fill="none" aria-hidden="true">
+                <path d="M2 2.4h5.2c.9 0 1.3.5 1.3 1.3v13c0-.9-.5-1.3-1.3-1.3H2v-13Z"
+                      stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M15 2.4H9.8c-.9 0-1.3.5-1.3 1.3v13c0-.9.5-1.3 1.3-1.3H15v-13Z"
+                      stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              </svg>
+              <svg width="19" height="18" viewBox="0 0 19 18" fill="none" aria-hidden="true">
+                <rect x="1" y="4" width="12" height="12" rx="2.6" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M5 4V3.6C5 2.2 6 1.4 7.4 1.4H15c1.4 0 2.4.8 2.4 2.2v7.6c0 1.4-1 2.2-2.4 2.2h-.4"
+                      stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="home"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="thumb" id="thumb"></div>
+  </div>
+
+  <div class="brand"><b>v<i>.</i>studio</b><span id="brandHost">vstudio.dev</span></div>
+
+  <div class="caps" id="caps"></div>
+
+  <div class="outro" id="outro">
+    <div class="t">vstudio<i>.</i>dev</div>
+    <div class="line" id="outroLine"></div>
+    <div class="s" id="outroSub">сайти · сервіси · боти</div>
+  </div>
+
+<script src="./scenes.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- геометрия сцены ---------- */
+  const K = 1.8;
+  const SCREEN_X = 165 + 24, SCREEN_Y = 176 + 24;  // левый верх экрана телефона
+  const CAM_X = 540, CAM_Y = 960;                  // середина кадра = середина телефона
+  const SB_H = 54;                                  // строка статуса, CSS-пиксели сайта
+
+  /** точка сайта (страничные координаты) → координаты сцены */
+  function toStage(cx, cyInScr) {
+    return { x: SCREEN_X + cx * K, y: SCREEN_Y + cyInScr * K };
+  }
+
+  /* ---------- сглаживание ---------- */
+  function bezier(x1, y1, x2, y2) {
+    // достаточно нескольких шагов Ньютона: кривые здесь пологие
+    return function (x) {
+      let t = x;
+      for (let i = 0; i < 6; i++) {
+        const u = 1 - t;
+        const cx = 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t - x;
+        const d = 3 * u * u * x1 + 6 * u * t * (x2 - x1) + 3 * t * t * (1 - x2);
+        if (Math.abs(d) < 1e-6) break;
+        t -= cx / d;
+        t = Math.min(1, Math.max(0, t));
+      }
+      const u = 1 - t;
+      return 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t;
+    };
+  }
+  const EASE = {
+    spring: bezier(0.32, 0.72, 0, 1),               // пружина iOS
+    smooth: bezier(0.4, 0, 0.2, 1),
+    flick:  x => 1 - Math.pow(1 - x, 4.2),          // бросок пальцем: длинное затухание
+    linear: x => x
+  };
+
+  /** значение поля key по ключевым кадрам */
+  function track(keys, key, t) {
+    if (!keys.length) return 0;
+    if (t <= keys[0].t) return keys[0][key];
+    for (let i = 1; i < keys.length; i++) {
+      if (t <= keys[i].t) {
+        const a = keys[i - 1], b = keys[i];
+        const span = b.t - a.t || 1;
+        const e = EASE[b.e || 'smooth'];
+        const p = e(Math.min(1, Math.max(0, (t - a.t) / span)));
+        const av = a[key] !== undefined ? a[key] : b[key];
+        const bv = b[key] !== undefined ? b[key] : av;
+        return av + (bv - av) * p;
+      }
+    }
+    const last = keys[keys.length - 1];
+    return last[key];
+  }
+
+  /* ---------- сцена ---------- */
+  const q = new URLSearchParams(location.search);
+  const wanted = q.get('scene');
+  const SCENE = window.STORY.SCENES.find(s => s.id === wanted) || window.STORY.SCENES[0];
+
+  const cam = document.getElementById('cam');
+  const site = document.getElementById('site');
+  const thumb = document.getElementById('thumb');
+  const capsBox = document.getElementById('caps');
+  const outro = document.getElementById('outro');
+  const outroLine = document.getElementById('outroLine');
+  const sb = document.getElementById('sb');
+  const safari = document.getElementById('safari');
+  const pill = document.getElementById('pill');
+  const screenBox = document.querySelector('.screen');
+  const brand = document.querySelector('.brand');
+
+  /* подписи создаём один раз: дальше только меняем прозрачность */
+  const capNodes = (SCENE.caps || []).map(c => {
+    const n = document.createElement('div');
+    n.className = 'cap';
+    n.innerHTML = '<div class="t"></div>' + (c.sub ? '<div class="s"></div>' : '');
+    n.querySelector('.t').textContent = c.text;
+    if (c.sub) n.querySelector('.s').textContent = c.sub;
+    capsBox.append(n);
+    return n;
+  });
+
+  /* ---------- связь с сайтом внутри рамки ---------- */
+  let win = null, doc = null;
+
+  window.__attach = function (url) {
+    return new Promise(resolve => {
+      site.addEventListener('load', function once() {
+        site.removeEventListener('load', once);
+        win = site.contentWindow;
+        doc = win.document;
+        // Плавная прокрутка мешает ставить кадр точно. Инлайновый
+        // <style> сюда не вставить: у сайта строгий CSP. Свойство
+        // через CSSOM он не запрещает.
+        doc.documentElement.style.scrollBehavior = 'auto';
+        resolve();
+      });
+      site.src = url;
+    });
+  };
+
+  /** ссылки внутри рамки не должны уводить со страницы */
+  window.__lockLinks = function () {
+    doc.addEventListener('click', e => {
+      const a = e.target.closest && e.target.closest('a');
+      if (a) e.preventDefault();
+    }, true);
+  };
+
+  /** прогрев: докрутить до низа и обратно, чтобы reveal отработали */
+  window.__warm = async function () {
+    const h = doc.documentElement.scrollHeight;
+    for (let y = 0; y < h; y += 420) {
+      win.scrollTo({ top: y, behavior: 'instant' });
+      await new Promise(r => setTimeout(r, 30));
+    }
+    win.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  window.__scene = () => ({ id: SCENE.id, start: SCENE.start, acts: SCENE.acts || [] });
+
+  /* ---------- цвет системных панелей под тему сайта ---------- */
+  let chrome = { bg: '#F5F2EC', fg: '#000' };
+  function syncChrome() {
+    if (!doc) return;
+    const dark = doc.documentElement.dataset.theme === 'dark';
+    const bg = getComputedStyle(doc.body).backgroundColor || (dark ? '#0d0d0d' : '#F5F2EC');
+    chrome = { bg, fg: dark ? '#fff' : '#000' };
+    sb.style.background = bg; sb.style.color = chrome.fg;
+    safari.style.background = bg; safari.style.color = chrome.fg;
+    screenBox.style.background = bg;
+    pill.style.background = dark ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.06)';
+  }
+
+  /* ---------- разовые действия ---------- */
+  let last = -1;
+  const fired = new Set();
+
+  function runAct(a, i) {
+    if (fired.has(i)) return;
+    fired.add(i);
+    if (a.kind !== 'tap' || !doc) return;
+    const el = doc.querySelector(a.sel);
+    if (el) el.click();
+    // тема и валюта перекрашивают панели Safari
+    setTimeout(syncChrome, 0);
+  }
+
+  /* ---------- палец ---------- */
+  function drawThumb(t, scrollY) {
+    const acts = SCENE.acts || [];
+    let show = null;
+    for (const a of acts) {
+      const inA = a.t - 0.040, outA = a.t + (a.kind === 'swipe' ? 0.085 : 0.070);
+      if (t >= inA && t <= outA) { show = { a, inA, outA }; break; }
+    }
+    if (!show) { thumb.style.opacity = 0; return; }
+
+    const { a, inA, outA } = show;
+    const p = (t - inA) / (outA - inA);
+    // появление и уход
+    const fade = p < 0.22 ? p / 0.22 : (p > 0.78 ? (1 - p) / 0.22 : 1);
+
+    let cx, cy;
+    if (a.kind === 'swipe') {
+      const move = EASE.flick(Math.min(1, Math.max(0, (p - 0.22) / 0.58)));
+      cx = a.x; cy = SB_H + a.y + a.dy * move;
+    } else {
+      cx = a.px;
+      cy = a.fixed ? a.py + SB_H : SB_H + (a.py - scrollY);
+    }
+    const s = toStage(cx, cy);
+    // нажатие: круг слегка сжимается в середине жеста
+    const press = 1 - 0.18 * Math.sin(Math.PI * Math.min(1, Math.max(0, (p - 0.15) / 0.55)));
+    thumb.style.opacity = (0.95 * Math.min(1, Math.max(0, fade))).toFixed(3);
+    thumb.style.transform = `translate(${s.x.toFixed(1)}px, ${s.y.toFixed(1)}px) scale(${press.toFixed(3)})`;
+  }
+
+  /* ---------- главный кадр ---------- */
+  window.setT = function (t) {
+    t = Math.min(1, Math.max(0, t));
+
+    // 1. прокрутка сайта
+    const y = Math.round(track(SCENE.scroll, 'y', t));
+    if (win) win.scrollTo({ top: y, behavior: 'instant' });
+
+    // 2. действия, которые уже наступили
+    (SCENE.acts || []).forEach((a, i) => { if (t >= a.t && last < a.t) runAct(a, i); });
+
+    // 3. камера: наезд строго на середину телефона, нужный блок
+    //    под неё подводит прокрутка — иначе в кадр лезет фон
+    const s = track(SCENE.cam, 's', t);
+    cam.style.transformOrigin = `${CAM_X}px ${CAM_Y}px`;
+    cam.style.transform = `scale(${s.toFixed(4)})`;
+    // на наезде фирменная строка мешает: телефон уже под ней
+    brand.style.opacity = Math.min(1, Math.max(0, (1.16 - s) / 0.14)).toFixed(3);
+
+    // 4. палец
+    drawThumb(t, y);
+
+    // 5. подписи
+    (SCENE.caps || []).forEach((c, i) => {
+      const n = capNodes[i];
+      const inT = 0.055, outT = 0.05;
+      let o = 0, dy = 20, sc = 0.97;
+      if (t >= c.a && t <= c.b) {
+        const up = Math.min(1, (t - c.a) / inT);
+        const down = Math.min(1, (c.b - t) / outT);
+        const e = EASE.spring(up);
+        o = Math.min(1, up * 3) * Math.min(1, down * 3);
+        dy = 20 * (1 - e); sc = 0.97 + 0.03 * e;
+      }
+      n.style.opacity = o.toFixed(3);
+      n.style.transform = `translateY(${dy.toFixed(1)}px) scale(${sc.toFixed(3)})`;
+    });
+
+    // 6. финальная плашка
+    if (SCENE.outro) {
+      const p = Math.min(1, Math.max(0, (t - SCENE.outro.a) / (1 - SCENE.outro.a)));
+      const e = EASE.spring(p);
+      outro.style.opacity = Math.min(1, p * 2.4).toFixed(3);
+      outroLine.style.width = (240 * e).toFixed(1) + 'px';
+      outro.querySelector('.s').style.transform = `translateY(${(14 * (1 - e)).toFixed(1)}px)`;
+    }
+
+    // 7. часы идут: 15 секунд ролика — это 15 секунд записи экрана
+    last = t;
+  };
+
+  window.__syncChrome = syncChrome;
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
