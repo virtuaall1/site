@@ -1,0 +1,34 @@
+{
+ "id": "st-4-theme",
+ "seconds": 15,
+ "events": [
+  {
+   "kind": "cap",
+   "at": 0.45
+  },
+  {
+   "kind": "tap",
+   "at": 2.7
+  },
+  {
+   "kind": "cap",
+   "at": 6
+  },
+  {
+   "kind": "swipe",
+   "at": 6.6
+  },
+  {
+   "kind": "tap",
+   "at": 9.3
+  },
+  {
+   "kind": "cap",
+   "at": 12
+  },
+  {
+   "kind": "tap",
+   "at": 13.2
+  }
+ ]
+}

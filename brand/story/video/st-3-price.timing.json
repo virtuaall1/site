@@ -1,0 +1,30 @@
+{
+ "id": "st-3-price",
+ "seconds": 15,
+ "events": [
+  {
+   "kind": "cap",
+   "at": 0.3
+  },
+  {
+   "kind": "tap",
+   "at": 3.6
+  },
+  {
+   "kind": "cap",
+   "at": 3.6
+  },
+  {
+   "kind": "swipe",
+   "at": 7.5
+  },
+  {
+   "kind": "cap",
+   "at": 9
+  },
+  {
+   "kind": "swipe",
+   "at": 12.6
+  }
+ ]
+}

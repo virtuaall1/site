@@ -1,0 +1,26 @@
+{
+ "id": "st-5-contact",
+ "seconds": 15,
+ "events": [
+  {
+   "kind": "cap",
+   "at": 0.6
+  },
+  {
+   "kind": "swipe",
+   "at": 3
+  },
+  {
+   "kind": "cap",
+   "at": 5.7
+  },
+  {
+   "kind": "press",
+   "at": 6.6
+  },
+  {
+   "kind": "outro",
+   "at": 12
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "id": "st-1-open",
+ "seconds": 15,
+ "events": [
+  {
+   "kind": "cap",
+   "at": 0.75
+  },
+  {
+   "kind": "swipe",
+   "at": 4.65
+  },
+  {
+   "kind": "cap",
+   "at": 5.7
+  },
+  {
+   "kind": "swipe",
+   "at": 8.85
+  },
+  {
+   "kind": "cap",
+   "at": 10.2
+  },
+  {
+   "kind": "swipe",
+   "at": 12.75
+  }
+ ]
+}

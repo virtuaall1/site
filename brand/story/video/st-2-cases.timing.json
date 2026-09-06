@@ -1,0 +1,30 @@
+{
+ "id": "st-2-cases",
+ "seconds": 15,
+ "events": [
+  {
+   "kind": "cap",
+   "at": 0.45
+  },
+  {
+   "kind": "swipe",
+   "at": 2.7
+  },
+  {
+   "kind": "cap",
+   "at": 4.95
+  },
+  {
+   "kind": "swipe",
+   "at": 7.5
+  },
+  {
+   "kind": "cap",
+   "at": 9.9
+  },
+  {
+   "kind": "swipe",
+   "at": 12
+  }
+ ]
+}
