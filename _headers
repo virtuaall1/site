@@ -1,4 +1,4 @@
-# Заголовки безопасности.
+# Заголовки безопасности и кеширования.
 #
 # GitHub Pages их не умеет — он отдаёт только то, что зашито в саму
 # страницу, и этот файл там просто лежит без дела. Читает его
@@ -14,8 +14,37 @@
   Cross-Origin-Opener-Policy: same-origin
   Strict-Transport-Security: max-age=31536000; includeSubDomains
 
+# Страницы кешировать надолго нельзя: правку текста надо увидеть
+# сразу. Но и перезагружать их каждый раз незачем — пусть браузер
+# спрашивает, не изменилось ли.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# К css и js сборка дописывает ?v=<версия>, и при каждой правке
+# адрес меняется. Значит, старый можно держать вечно: браузер сам
+# придёт за новым, когда поменяется номер.
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /vendor/*
   Cache-Control: public, max-age=31536000, immutable
 
+# Снимки кейсов меняются редко, но всё же меняются — месяц.
 /img/*
   Cache-Control: public, max-age=2592000
+
+# Служебный воркер обязан обновляться сразу, иначе сайт застрянет на
+# старой версии кеша.
+/sw.js
+  Cache-Control: no-cache
+
+# Черновики оформления не должны попадать в поиск, даже если на них
+# кто-то сошлётся: robots.txt от чужой ссылки не спасает.
+/preview/*
+  X-Robots-Tag: noindex, nofollow

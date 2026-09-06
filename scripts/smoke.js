@@ -125,6 +125,52 @@ srv.listen(0, '127.0.0.1', async () => {
       [...document.querySelectorAll('.reveal')].filter(n => getComputedStyle(n).opacity === '0').length);
     check('невидимых блоков не осталось', hidden === 0, `${hidden} шт.`);
 
+    // Снимки кейсов должны уезжать в avif, а не в jpg
+    const pic = await page.evaluate(() => {
+      const p = document.querySelector('.case-frame picture');
+      if (!p) return null;
+      const img = p.querySelector('img');
+      return {
+        types: [...p.querySelectorAll('source')].map(s => s.type),
+        taken: img.currentSrc.split('/').pop(),
+        eager: document.querySelector('.case-shot').loading
+      };
+    });
+    check('снимки в <picture> с avif и webp',
+      !!pic && pic.types.includes('image/avif') && pic.types.includes('image/webp'),
+      pic ? pic.types.join(', ') : 'picture не найден');
+    check('браузер взял современный формат',
+      !!pic && /\.(avif|webp)$/.test(pic.taken), pic && pic.taken);
+
+    // Раздел, в котором человек находится, должен отмечаться в меню
+    await page.evaluate(() => document.getElementById('services').scrollIntoView());
+    await page.waitForTimeout(700);
+    const current = await page.evaluate(() => {
+      const a = document.querySelector('.nav a[aria-current]');
+      return a && a.getAttribute('href');
+    });
+    check('меню отмечает текущий раздел', !!current, current || 'ничего не отмечено');
+
+    await ctx.close();
+  }
+
+  /* ── за GitHub идём только когда дошли до раздела ───────────── */
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'uk-UA' });
+    const page = await ctx.newPage();
+    const hits = [];
+    page.on('request', r => { if (r.url().includes('api.github.com')) hits.push(r.url()); });
+
+    await page.goto(`${base}/index.html`, { waitUntil: 'load' });
+    await page.waitForTimeout(2000);
+    check('на первом экране в GitHub не ходим', hits.length === 0, `${hits.length} запрос(ов)`);
+
+    const projects = await page.evaluate(() => document.querySelectorAll('#repos .repo').length);
+    check('свои работы показаны сразу', projects > 0, `${projects} шт.`);
+
+    await page.evaluate(() => document.getElementById('work').scrollIntoView());
+    await page.waitForTimeout(1500);
+    check('дошли до раздела — запрос ушёл', hits.length > 0, `${hits.length} запрос(ов)`);
     await ctx.close();
   }
 
@@ -146,6 +192,17 @@ srv.listen(0, '127.0.0.1', async () => {
     await page.click('#mobileMenu a');
     await page.waitForTimeout(300);
     check('переход по пункту закрывает меню', !(await menuShown()));
+
+    // Escape закрывает и возвращает фокус на кнопку — иначе он
+    // остаётся на невидимом пункте и следующий Tab уводит в никуда
+    await page.click('#burger');
+    await page.waitForTimeout(300);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    const back = await page.evaluate(() => document.activeElement.id);
+    check('Escape закрывает меню', !(await menuShown()));
+    check('фокус вернулся на кнопку', back === 'burger', back || 'нет фокуса');
+
     await ctx.close();
   }
 

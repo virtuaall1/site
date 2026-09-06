@@ -6,7 +6,14 @@
     "vendor": "node scripts/vendor.js",
     "build": "npm run check && npm run vendor && node scripts/build.js",
     "build:offline": "node scripts/build.js",
-    "deploy": "npm run build"
+    "deploy": "npm run build",
+    "images": "python3 scripts/images.py",
+    "og": "node brand/og/render.js",
+    "look": "node scripts/look.js",
+    "smoke": "node scripts/smoke.js",
+    "perf": "node scripts/perfcheck.js",
+    "html": "node scripts/htmlcheck.js index.html",
+    "verify": "npm run check && npm run html && npm run smoke"
   },
   "devDependencies": {
     "clean-css": "^5.3.3",

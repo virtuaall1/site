@@ -23,6 +23,7 @@ const path = require('path');
 const { minify: minifyJs } = require('terser');
 const CleanCss = require('clean-css');
 const { minify: minifyHtml } = require('html-minifier-terser');
+const { loadSite, jsonLd, sitemap } = require('./seo.js');
 
 const root = path.join(__dirname, '..');
 const out = path.join(root, 'dist');
@@ -31,19 +32,18 @@ const out = path.join(root, 'dist');
 /* preview/ — черновики оформления. Они выкладываются вместе с сайтом
    (иначе их не посмотреть с телефона), но закрыты от поиска в
    robots.txt и не значатся в sitemap. */
-const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers',
+const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers', 'sw.js',
   'css', 'js', 'img', 'cases', 'preview'];
 
 /* Временно снятые кейсы. Исходники остаются в репозитории — они ещё
    пригодятся, — но в dist не попадают, иначе страница осталась бы
    доступной по прямому адресу. Чтобы вернуть, достаточно убрать
    строку отсюда и вернуть запись в PROJECTS. */
-const SKIP = new Set([
-  'cases/orbita',
-  'cases/plitkarka',
-  'img/cases/orbita.jpg',
-  'img/cases/plitkarka.jpg'
-]);
+const SKIP_CASES = ['orbita', 'plitkarka'];
+const skipped = rel =>
+  SKIP_CASES.some(name =>
+    rel === `cases/${name}` ||                       // папка кейса целиком
+    new RegExp(`^img/cases/${name}\\.[a-z0-9]+$`).test(rel));  // снимок в любом формате
 /* Что выкидываем даже изнутри включённых папок. */
 const DROP = /(^|\/)(README\.md|\.DS_Store)$/;
 
@@ -137,6 +137,14 @@ async function shrink(file, src) {
       stamped = stamped.replace("script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
                                 "script-src 'self'");
     }
+    /* Структурированные данные. Блок с type="application/ld+json" —
+       не скрипт, а данные: браузер его не исполняет, и строгий CSP
+       ему не мешает. */
+    if (stamped.includes('<!--JSON-LD-->')) {
+      const ld = JSON.stringify(jsonLd(loadSite(root), site));
+      stamped = stamped.replace('<!--JSON-LD-->',
+        `<script type="application/ld+json">${ld}</script>`);
+    }
     return minifyHtml(stamped, HTML_OPTS);
   }
   return null;                        // картинки и прочее копируем как есть
@@ -147,7 +155,7 @@ async function walk(rel) {
   const to = path.join(out, rel);
 
   // проверяем до statSync: снятый кейс может быть и папкой, и файлом
-  if (SKIP.has(rel.split(path.sep).join('/'))) return;
+  if (skipped(rel.split(path.sep).join('/'))) return;
 
   const stat = fs.statSync(from);
 
@@ -184,6 +192,10 @@ async function walk(rel) {
   fs.mkdirSync(out, { recursive: true });
   for (const item of INCLUDE) await walk(item);
   if (hasVendor) await walk('vendor');
+
+  /* Карту сайта пишем последней и по готовому dist: в неё попадает
+     ровно то, что уехало, — снятый кейс сам собой выпадает. */
+  fs.writeFileSync(path.join(out, 'sitemap.xml'), sitemap(out, site));
   const codeLine = Object.entries(OWN_CODE).sort((a, b) => b[1] - a[1])
     .map(([k, v]) => `${k} ${(v / 1024).toFixed(0)} КБ`).join(', ');
   console.log(`Свой код: ${codeLine} — подставлен в полосу языков.`);

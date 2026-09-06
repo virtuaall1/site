@@ -203,6 +203,13 @@ html { scroll-padding-top: 92px; }
 .nav a:hover { color: var(--text); }
 .nav a:hover::after { transform: scaleX(1); }
 
+/* Раздел, в котором человек сейчас находится. Отметка та же, что при
+   наведении, только приглушённая: заводить ради этого ещё один приём
+   незачем, а без неё в длинной странице теряешься. */
+.nav a[aria-current] { color: var(--text); }
+.nav a[aria-current]::after { transform: scaleX(1); opacity: 0.45; }
+.nav a[aria-current]:hover::after { opacity: 1; }
+
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 
 .lang {
@@ -471,6 +478,10 @@ html { scroll-padding-top: 92px; }
   border: 1px solid var(--rule);
   background: var(--surface);
 }
+/* <picture> по умолчанию строчный — без этого под снимком остаётся
+   лишняя полоска в несколько пикселей. Вид не меняется, чинится
+   только шов. */
+.case-frame picture { display: block; }
 .case-shot {
   display: block;
   width: 100%;
@@ -1101,4 +1112,18 @@ html { scroll-padding-top: 92px; }
   .progress i, .hero-title { animation: none !important; }
   .reveal .case-frame, .case-frame { clip-path: none !important; }
   #grid-canvas { display: none; }
+}
+
+/* =========================================================
+   Переход между страницами
+
+   Сайт и кейсы лежат на одном домене, поэтому браузер умеет
+   перетекать между ними вместо белой вспышки. Где API нет —
+   переход обычный, ничего не ломается. Оформление то же:
+   меняется не вид страницы, а то, как она появляется.
+   ========================================================= */
+@view-transition { navigation: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
 }

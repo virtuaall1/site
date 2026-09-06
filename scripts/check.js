@@ -151,13 +151,106 @@ if (/\.innerHTML\s*=/.test(appJs)) {
    сборка — она вдвое легче исходников. Поднимался дважды: 120 → 130
    под конвертер валют, 130 → 145 под движение (лесенка появления,
    полоса прочитанного, вытирание снимков, перетекание при смене
-   языка и валюты). */
-const BUDGET_KB = 145;
+   языка и валюты).
+
+   145 → 160 под ускорение и доступность: <picture> с avif и webp,
+   отложенный поход в GitHub, подсказка браузеру о следующей
+   странице, регистрация служебного воркера, ловушка фокуса в меню и
+   подсветка текущего раздела.
+
+   Тут стоит держать в голове, что вес исходников и вес, который
+   реально уезжает человеку, — разные числа. Исходники подросли на
+   три килобайта, а первая загрузка полегчала на полторы сотни:
+   снимки кейсов ушли в avif. Точное число показывает
+   scripts/perfcheck.js. */
+const BUDGET_KB = 160;
 const totalKb = [['index.html', html], ['css/style.css', css], ['js/app.js', appJs], ['js/content.js', contentJs]]
   .reduce((sum, [, src]) => sum + Buffer.byteLength(src, 'utf8'), 0) / 1024;
 
 if (totalKb > BUDGET_KB) fail(`страница весит ${totalKb.toFixed(1)} КБ — больше бюджета ${BUDGET_KB} КБ`);
 else ok(`вес собственных файлов: ${totalKb.toFixed(1)} КБ из ${BUDGET_KB} КБ бюджета`);
+
+/* ---------- 6б. Снимки кейсов есть во всех трёх форматах ----------
+   Пропущенный avif или webp виден не сразу: <picture> молча съедет на
+   jpg, и человек просто получит втрое больше байт. */
+{
+  const dir = path.join(ROOT, 'img', 'cases');
+  const shots = fs.existsSync(dir) ? fs.readdirSync(dir).filter(f => f.endsWith('.jpg')) : [];
+  const missing = [];
+  let jpgBytes = 0, avifBytes = 0;
+
+  for (const jpg of shots) {
+    const base = jpg.slice(0, -4);
+    jpgBytes += fs.statSync(path.join(dir, jpg)).size;
+    for (const ext of ['webp', 'avif']) {
+      const file = path.join(dir, `${base}.${ext}`);
+      if (!fs.existsSync(file)) missing.push(`${base}.${ext}`);
+      else if (ext === 'avif') avifBytes += fs.statSync(file).size;
+    }
+  }
+
+  if (!shots.length) ok('снимков кейсов нет — проверять нечего');
+  else if (missing.length) {
+    fail(`нет пережатых снимков: ${missing.join(', ')} — запусти python3 scripts/images.py`);
+  } else {
+    const win = 1 - avifBytes / jpgBytes;
+    ok(`снимки кейсов: ${shots.length} шт. в jpg, webp и avif (avif легче на ${(win * 100).toFixed(0)}%)`);
+  }
+}
+
+/* ---------- 6в. Одинаковых id на странице быть не должно ----------
+   Дубль id — это тихая поломка: getElementById возьмёт первый, а
+   человек будет смотреть на второй и не понимать, почему не работает. */
+{
+  const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map(m => m[1]);
+  const seen = new Set();
+  const dupes = [...new Set(ids.filter(id => seen.has(id) || (seen.add(id), false)))];
+  if (dupes.length) fail(`id повторяются: ${dupes.join(', ')}`);
+  else ok(`id уникальны — ${ids.length} шт.`);
+}
+
+/* ---------- 6г. Внутренние ссылки ведут в существующие файлы ---------- */
+{
+  const hrefs = [...html.matchAll(/href="(?!https?:|mailto:|#|data:)([^"]+)"/g)].map(m => m[1]);
+  const broken = hrefs.filter(href => {
+    const clean = href.split(/[?#]/)[0];
+    if (!clean || clean === './') return false;
+    const target = path.join(ROOT, clean);
+    return !fs.existsSync(target) && !fs.existsSync(path.join(target, 'index.html'));
+  });
+  if (broken.length) fail(`ссылки в никуда: ${broken.join(', ')}`);
+  else ok(`внутренние ссылки: ${hrefs.length} шт., все на месте`);
+}
+
+/* ---------- 6д. Структурированные данные собираются ----------
+   JSON-LD строится на сборке из content.js. Если там что-то сломали,
+   узнать об этом лучше сейчас, а не из панели вебмастера через месяц. */
+try {
+  const { loadSite, jsonLd } = require('./seo.js');
+  const ld = jsonLd(loadSite(ROOT), 'https://example.com/');
+  const parsed = JSON.parse(JSON.stringify(ld));
+  const types = parsed['@graph'].map(n => n['@type']);
+  const offers = parsed['@graph'].find(n => n['@type'] === 'OfferCatalog');
+  if (!offers || !offers.itemListElement.length) throw new Error('в каталоге нет ни одной цены');
+  ok(`структурированные данные: ${types.join(', ')}, цен — ${offers.itemListElement.length}`);
+} catch (e) {
+  fail(`JSON-LD не собирается: ${e.message}`);
+}
+
+/* ---------- 6е. Служебный воркер и заголовки кеша ---------- */
+{
+  const sw = path.join(ROOT, 'sw.js');
+  if (!fs.existsSync(sw)) fail('нет sw.js — сайт не будет открываться без сети');
+  else if (!/'sw\.js'/.test(appJs)) fail('sw.js есть, но app.js его не регистрирует');
+  else ok('служебный воркер на месте и регистрируется');
+
+  const headers = fs.readFileSync(path.join(ROOT, '_headers'), 'utf8');
+  const need = ['/css/*', '/js/*', '/sw.js'];
+  const absent = need.filter(rule => !headers.includes(rule));
+  if (absent.length) fail(`в _headers нет правил кеша для: ${absent.join(', ')}`);
+  else if (!/\/sw\.js[\s\S]*?no-cache/.test(headers)) fail('sw.js должен отдаваться с no-cache');
+  else ok('заголовки кеша: css и js навсегда, воркер — без кеша');
+}
 
 /* ---------- 7. Доступность по мелочи ---------- */
 if (!/lang="(ru|uk)"/.test(html)) fail('у <html> нет атрибута lang');

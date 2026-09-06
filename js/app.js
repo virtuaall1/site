@@ -235,6 +235,23 @@
   /* =======================================================
      Рендер статических блоков
      ======================================================= */
+  /**
+   * Оборачивает <img> в <picture> с avif и webp.
+   *
+   * Браузер берёт первый формат, который понимает, и до jpg доходит
+   * только там, где остальные не поддерживаются. Экономия на снимках
+   * кейсов — около двух третей веса, а картинка та же: пережимает их
+   * scripts/images.py из того же исходника.
+   */
+  function picture(jpg, img) {
+    const base = jpg.replace(/\.jpg$/, '');
+    return el('picture', {},
+      el('source', { srcset: `${base}.avif`, type: 'image/avif' }),
+      el('source', { srcset: `${base}.webp`, type: 'image/webp' }),
+      img
+    );
+  }
+
   /** Кейси, які можна відкрити: беремо ті проєкти, у яких є знімок */
   function renderCases() {
     const grid = $('#caseGrid');
@@ -244,17 +261,23 @@
     const shown = (PROJECTS || []).filter(p => p.shot && p.link);
     if (!shown.length) { grid.hidden = true; return; }
 
-    shown.forEach(project => {
+    shown.forEach((project, i) => {
       const copy = project[lang] || project.uk;
       if (!copy) return;
 
+      // Первый снимок виден сразу — грузим его в приоритете и без
+      // lazy: иначе браузер откладывает и первый экран доезжает
+      // позже, чем мог бы. Остальные — как раньше.
+      const first = i === 0;
       const shot = el('img', {
         class: 'case-shot',
         src: project.shot,
         alt: copy.name,
         width: '960',
         height: '600',
-        loading: 'lazy'
+        decoding: 'async',
+        loading: first ? 'eager' : 'lazy',
+        fetchpriority: first ? 'high' : null
       });
 
       const tags = el('div', { class: 'case-tags' });
@@ -262,7 +285,7 @@
 
       grid.append(el('li', { class: revealCls('case') },
         el('a', { class: 'case-link', href: project.link, target: '_blank', rel: 'noopener noreferrer' },
-          el('span', { class: 'case-frame' }, shot),
+          el('span', { class: 'case-frame' }, picture(project.shot, shot)),
           el('h3', { class: 'case-name', text: copy.name }),
           tags,
           el('span', { class: 'case-open' }, el('span', { text: t('cases.open') }), el('span', { 'aria-hidden': 'true', text: '↗' }))
@@ -1187,8 +1210,35 @@
         const open = burger.getAttribute('aria-expanded') === 'true';
         burger.setAttribute('aria-expanded', String(!open));
         mobileMenu.hidden = open;
+        // открыли — уводим фокус внутрь, чтобы с клавиатуры сразу
+        // попадать в пункты, а не проходить мимо меню
+        if (!open) { const first = $('a', mobileMenu); if (first) first.focus(); }
       });
       $$('a', mobileMenu).forEach(a => a.addEventListener('click', closeMenu));
+
+      /* Открытое меню должно вести себя как открытое меню: Escape
+         закрывает, Tab не уходит за его пределы, а фокус после
+         закрытия возвращается на кнопку — иначе он остаётся на
+         невидимом элементе и следующий Tab уводит в никуда. */
+      document.addEventListener('keydown', e => {
+        if (mobileMenu.hidden) return;
+
+        if (e.key === 'Escape') { closeMenu(); burger.focus(); return; }
+        if (e.key !== 'Tab') return;
+
+        const items = [burger, ...$$('a', mobileMenu)];
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      });
+
+      // щелчок мимо меню тоже закрывает: так ведут себя все меню
+      document.addEventListener('pointerdown', e => {
+        if (mobileMenu.hidden) return;
+        if (mobileMenu.contains(e.target) || burger.contains(e.target)) return;
+        closeMenu();
+      });
     }
 
     $$('.lang-btn').forEach(btn => {
@@ -1222,6 +1272,110 @@
   }
 
   /* =======================================================
+     Ускорение
+
+     Три приёма, ни один из которых не виден глазами: сайт просто
+     открывается быстрее и работает без сети.
+     ======================================================= */
+
+  /**
+   * Отложить работу до тех пор, пока блок не окажется близко к экрану.
+   *
+   * Таймера-страховки тут намеренно нет: если человек не долистал до
+   * блока, значит, эти данные ему и не понадобились. Запас в 800px
+   * даёт браузеру время сходить за ними заранее — к моменту, когда
+   * блок реально появится, всё уже на месте.
+   */
+  function whenNear(selector, fn) {
+    const node = $(selector);
+    if (!node || !('IntersectionObserver' in window)) { fn(); return; }
+
+    const io = new IntersectionObserver(entries => {
+      if (!entries.some(e => e.isIntersecting)) return;
+      io.disconnect();
+      fn();
+    }, { rootMargin: '800px 0px' });
+    io.observe(node);
+  }
+
+  /**
+   * Подтягивать страницу кейса, когда на ссылку навели курсор.
+   *
+   * Между наведением и щелчком проходит две-три десятых секунды —
+   * этого хватает, чтобы страница успела приехать и открылась
+   * мгновенно. Ошибку глушим молча: не вышло — просто откроется как
+   * обычно.
+   */
+  function initPrefetch() {
+    if (coarsePointer) return;            // на телефоне наведения нет
+    const asked = new Set();
+
+    document.addEventListener('pointerenter', e => {
+      const a = e.target.closest && e.target.closest('a[href]');
+      if (!a) return;
+
+      let url;
+      try { url = new URL(a.href, location.href); } catch (err) { return; }
+      if (url.origin !== location.origin || asked.has(url.href)) return;
+      if (url.pathname === location.pathname) return;   // якорь на этой же странице
+
+      asked.add(url.href);
+      const link = el('link', { rel: 'prefetch', href: url.href, as: 'document' });
+      document.head.append(link);
+    }, { capture: true, passive: true });
+  }
+
+  /**
+   * Служебный воркер: повторный визит открывается из кеша, а без
+   * сети сайт всё равно показывает последнюю версию.
+   *
+   * Регистрируем после загрузки, чтобы не отнимать канал у первого
+   * экрана. По file:// воркеры запрещены — там молча пропускаем.
+   */
+  /**
+   * Подсветка раздела, в котором человек сейчас находится.
+   *
+   * Тем же способом, что и наведение: другой отметки в оформлении
+   * нет, а заводить новую ради этого незачем. Наблюдатель смотрит на
+   * верхнюю треть экрана — раздел считается текущим, когда его
+   * заголовок доехал туда, а не когда он едва показался снизу.
+   */
+  function initScrollSpy() {
+    const links = $$('.nav a[href^="#"]');
+    if (!links.length || !('IntersectionObserver' in window)) return;
+
+    const byId = new Map();
+    links.forEach(a => {
+      const node = document.getElementById(a.getAttribute('href').slice(1));
+      if (node) byId.set(node, a);
+    });
+    if (!byId.size) return;
+
+    const seen = new Set();
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? seen.add(e.target) : seen.delete(e.target));
+
+      // видно может быть несколько сразу — берём самый верхний
+      const top = [...seen].sort((a, b) =>
+        a.getBoundingClientRect().top - b.getBoundingClientRect().top)[0];
+
+      links.forEach(a => a.removeAttribute('aria-current'));
+      if (top && byId.has(top)) byId.get(top).setAttribute('aria-current', 'true');
+    }, { rootMargin: '-12% 0px -62% 0px' });
+
+    byId.forEach((_, node) => io.observe(node));
+  }
+
+  function initServiceWorker() {
+    if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(err => {
+        console.warn('Service worker:', err.message);
+      });
+    }, { once: true });
+  }
+
+  /* =======================================================
      Старт
      ======================================================= */
   function boot() {
@@ -1232,7 +1386,17 @@
     initGrid();
     initMagnetic();
     initScramble();
-    loadGithub().catch(err => console.warn('GitHub:', err.message));
+    initPrefetch();
+    initScrollSpy();
+    initServiceWorker();
+
+    // Свои работы показываем сразу, а за GitHub идём только когда
+    // человек подобрался к разделу: два запроса и разбор ответа не
+    // нужны тому, кто до портфолио не долистал.
+    renderRepos([]);
+    whenNear('#work', () => {
+      loadGithub().catch(err => console.warn('GitHub:', err.message));
+    });
 
     // разметка уже на месте; анимации включаются, как только (и если)
     // доедут библиотеки — либо сразу по фоллбэку, когда их не ждём
