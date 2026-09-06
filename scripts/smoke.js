@@ -55,18 +55,19 @@ srv.listen(0, '127.0.0.1', async () => {
 
     check('без ошибок js', errors.length === 0, errors.join('; '));
 
-    const cls = () => page.evaluate(() => document.documentElement.className);
-    check('стартовая тема светлая', (await cls()).includes('ds-light'), await cls());
+    // Тему сайт держит атрибутом data-theme на <html> — по нему и
+    // проверяем. Классов ds-* тут нет: они были у варианта на
+    // apple-ds, который откатили.
+    const theme = () => page.evaluate(() => document.documentElement.dataset.theme);
+    check('стартовая тема светлая', (await theme()) === 'light', await theme());
 
     await page.click('#themeBtn');
     await page.waitForTimeout(300);
     const dark = await page.evaluate(() => ({
-      cls: document.documentElement.className,
       attr: document.documentElement.dataset.theme,
       bg: getComputedStyle(document.body).backgroundColor
     }));
-    check('тема переключилась в тёмную', dark.cls.includes('ds-dark') && dark.attr === 'dark',
-      `${dark.cls} / ${dark.bg}`);
+    check('тема переключилась в тёмную', dark.attr === 'dark', `${dark.attr} / ${dark.bg}`);
     // Точный цвет фона зависит от палитры — проверяем не значение,
     // а что он действительно тёмный.
     const rgb = (dark.bg.match(/\d+/g) || []).slice(0, 3).map(Number);

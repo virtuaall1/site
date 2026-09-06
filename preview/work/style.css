@@ -273,7 +273,7 @@ section + section { margin-top: clamp(30px, 4vw, 54px); }
   grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
 }
 @media (min-width: 900px) {
-  .mosaic { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mosaic { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .wide { grid-column: span 2; grid-row: span 2; }
 }
 

@@ -33,6 +33,17 @@ const out = path.join(root, 'dist');
    robots.txt и не значатся в sitemap. */
 const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers',
   'css', 'js', 'img', 'cases', 'preview'];
+
+/* Временно снятые кейсы. Исходники остаются в репозитории — они ещё
+   пригодятся, — но в dist не попадают, иначе страница осталась бы
+   доступной по прямому адресу. Чтобы вернуть, достаточно убрать
+   строку отсюда и вернуть запись в PROJECTS. */
+const SKIP = new Set([
+  'cases/orbita',
+  'cases/plitkarka',
+  'img/cases/orbita.jpg',
+  'img/cases/plitkarka.jpg'
+]);
 /* Что выкидываем даже изнутри включённых папок. */
 const DROP = /(^|\/)(README\.md|\.DS_Store)$/;
 
@@ -134,6 +145,10 @@ async function shrink(file, src) {
 async function walk(rel) {
   const from = path.join(root, rel);
   const to = path.join(out, rel);
+
+  // проверяем до statSync: снятый кейс может быть и папкой, и файлом
+  if (SKIP.has(rel.split(path.sep).join('/'))) return;
+
   const stat = fs.statSync(from);
 
   if (stat.isDirectory()) {

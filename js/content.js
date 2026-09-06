@@ -107,36 +107,10 @@ window.SITE = (() => {
         tags: ['Python', 'aiogram', 'SQLite']
       }
     },
-    {
-      year: '2026',
-      link: 'https://virtuaall1.github.io/site/cases/orbita/',
-      shot: 'img/cases/orbita.jpg',
-      uk: {
-        name: 'Орбіта — облік замовлень майстерні',
-        desc: 'Демо вебзастосунку з адмінкою. Одні й ті самі заявки показані трьома ролями: менеджер веде всі й переводить статуси, майстер бачить лише свої наряди з чек-листом і без сум, власник — виторг за тижнями та частку кожного майстра. Підсумки рахуються з тих самих записів, а не намальовані наперед.',
-        tags: ['HTML', 'CSS', 'JavaScript']
-      },
-      en: {
-        name: 'Orbita — repair shop order tracker',
-        desc: 'A demo of a web app with an admin panel. The same orders seen through three roles: the manager runs all of them and moves statuses, the technician sees only their own jobs with a checklist and no prices, the owner sees weekly revenue and each technician\u2019s share. Every total is computed from those records, not drawn in advance.',
-        tags: ['HTML', 'CSS', 'JavaScript']
-      }
-    },
-    {
-      year: '2026',
-      link: 'https://virtuaall1.github.io/site/cases/plitkarka/',
-      shot: 'img/cases/plitkarka.jpg',
-      uk: {
-        name: 'Сайт кав’ярні «Пліткарка»',
-        desc: 'Односторінковий сайт кав’ярні в Косові. Оформлення взяте з косівської кераміки: зелена полива, тепла глина, вохра, наскрізна форма — арка з гравірованим контуром. Перемикач «що в чашці» міняє знімок і тон світла за ним. Тексти й меню зібрані з реального профілю закладу.',
-        tags: ['HTML', 'CSS', 'JavaScript']
-      },
-      en: {
-        name: 'Plitkarka coffee house site',
-        desc: 'A one-page site for a coffee house in Kosiv. The visual language comes from Kosiv ceramics: green glaze, warm clay, ochre, and one recurring shape — an arch with an engraved outline. A switcher changes the photo and the tone of light behind it. Copy and menu come from the venue\u2019s own profile.',
-        tags: ['HTML', 'CSS', 'JavaScript']
-      }
-    },
+    /* «Орбіта» і «Пліткарка» тимчасово прибрані з сайта: записи
+       лежать в історії git, повернути можна одним revert. Самі
+       сторінки кейсів у cases/ на місці, але в збірку не потрапляють
+       (список SKIP у scripts/build.js) і нізвідки не лінкуються. */
     {
       year: '2026',
       link: 'https://virtuaall1.github.io/site/cases/shop-bot/',
@@ -157,7 +131,8 @@ window.SITE = (() => {
   const SERVICES = [
     {
       id: 'landing',
-      caseLink: 'https://virtuaall1.github.io/site/cases/plitkarka/',
+      // caseLink прибрано разом із «Пліткаркою»: посилання на кейс,
+      // якого на сайті немає, вело б у нікуди
       example: {
         uk: 'Приклад: сторінка стоматології. Один екран із цінами, форма запису — заявка одразу падає в Telegram власнику.',
         en: "Example: a page for a dental clinic. One screen with prices and a booking form — each request lands straight in the owner's Telegram."
@@ -214,7 +189,7 @@ window.SITE = (() => {
     },
     {
       id: 'webapp',
-      caseLink: 'https://virtuaall1.github.io/site/cases/orbita/',
+      // caseLink прибрано разом з «Орбітою» — див. вище
       example: {
         uk: 'Приклад: облік замовлень для майстерні. Менеджер веде заявки, майстер бачить лише свої, власник — виторг за місяць.',
         en: "Example: an order tracker for a workshop. Managers handle requests, each technician sees only their own, the owner sees monthly revenue."
