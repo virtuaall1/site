@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="dark">
+<title>Напрямок 04 «Робота» — v.studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230F1012'/%3E%3Cpath d='M6 9.5h4.2l3.6 9.2 3.6-9.2H21l-5.6 13h-3.8z' fill='%23FF7A45'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="back" href="../">← до вибору</a>
+
+<header class="bar">
+  <a class="brand" href="#">v<span>.</span>studio</a>
+  <nav>
+    <a class="on" href="#work">Роботи</a>
+    <a href="#prices">Ціни</a>
+    <a href="#how">Як працюємо</a>
+  </nav>
+  <div class="bar-right">
+    <span class="live"><i></i>беремо проєкти</span>
+    <span class="seg"><b>UA</b><i>EN</i></span>
+    <a class="btn btn-main btn-sm" href="#contact">Написати</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- Головний блок: не текст на порожньому фоні, а сама робота.
+       Скріншот справжній, з кейсу «Пліткарка». -->
+  <section class="feature">
+    <img src="../../img/cases/plitkarka.jpg" alt="Сайт кав’ярні «Пліткарка» — головний екран" width="960" height="600">
+    <div class="feature-body">
+      <span class="pill">Свіже · сайт</span>
+      <h1>Сайт кав’ярні «Пліткарка»</h1>
+      <p>
+        Одна сторінка: меню, години роботи, як дійти. Відкривається за
+        секунду навіть з поганим інтернетом у центрі міста.
+      </p>
+      <ul class="chips"><li>HTML</li><li>CSS</li><li>JS</li></ul>
+      <div class="row">
+        <a class="btn btn-main" href="#">Відкрити сайт</a>
+        <a class="btn btn-ghost" href="#work">Ще роботи</a>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="card kv">
+        <p class="cap">Що входить у кожен проєкт</p>
+        <ul class="kv-list">
+          <li><b>Вихідники</b><span>репозиторій і всі акаунти — твої</span></li>
+          <li><b>Фіксована ціна</b><span>кажемо до старту й тримаємо</span></li>
+          <li><b>Місяць підтримки</b><span>після запуску, без окремого рахунку</span></li>
+        </ul>
+      </div>
+      <div class="card num">
+        <p class="cap">Лендинг за</p>
+        <p class="big">3–5 <small>днів</small></p>
+        <p class="hint">від «домовились» до «працює»</p>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Сітка робіт. Перша картка ширша: інакше шість однакових
+       прямокутників читаються як каталог без головного. -->
+  <section id="work">
+    <div class="head">
+      <h2>Живі кейси</h2>
+      <p>Не картинки, а робочі сторінки: бота можна пройти до кінця, а в застосунку перемкнути роль.</p>
+      <a class="more" href="#">Усі роботи →</a>
+    </div>
+
+    <div class="mosaic">
+      <a class="tileo wide" href="#">
+        <img src="../../img/cases/booking.jpg" alt="Демо бота запису до майстра" width="960" height="600" loading="lazy">
+        <span class="veil">
+          <span class="t">Запис до майстра</span>
+          <span class="d">Бот записує на вільний час і не дає двом людям зайняти один слот</span>
+          <span class="m">Python · aiogram · SQLite</span>
+        </span>
+      </a>
+
+      <a class="tileo" href="#">
+        <img src="../../img/cases/guard.jpg" alt="Демо бота-модератора чату" width="960" height="600" loading="lazy">
+        <span class="veil">
+          <span class="t">Модератор чату</span>
+          <span class="m">Python · aiogram</span>
+        </span>
+      </a>
+
+      <a class="tileo" href="#">
+        <img src="../../img/cases/spend.jpg" alt="Демо бота обліку витрат" width="960" height="600" loading="lazy">
+        <span class="veil">
+          <span class="t">Облік витрат</span>
+          <span class="m">Python · aiogram</span>
+        </span>
+      </a>
+
+      <a class="tileo" href="#">
+        <img src="../../img/cases/orbita.jpg" alt="Демо застосунку обліку замовлень" width="960" height="600" loading="lazy">
+        <span class="veil">
+          <span class="t">Орбіта — облік замовлень</span>
+          <span class="m">Вебзастосунок · ролі</span>
+        </span>
+      </a>
+
+      <a class="tileo" href="#">
+        <img src="../../img/cases/shop-bot.jpg" alt="Демо бота-магазину" width="960" height="600" loading="lazy">
+        <span class="veil">
+          <span class="t">Магазин у переписці</span>
+          <span class="m">Бот · оплата</span>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section id="prices">
+    <div class="head">
+      <h2>Послуги та ціни</h2>
+      <p>Ціни стартові, фінальна залежить від обсягу. Курс ₴/$ тягнемо з НБУ.</p>
+      <span class="seg seg-cur"><b>₴</b><i>$</i></span>
+    </div>
+
+    <div class="price-grid">
+      <article class="card offer">
+        <p class="cap">Сайт</p>
+        <h3>Візитка та лендинг</h3>
+        <p class="d">Швидка сторінка під послугу або товар: адаптив, форми заявок, аналітика.</p>
+        <p class="money">від ₴3 500 <span>≈ $80</span></p>
+        <a class="btn btn-ghost btn-full" href="#">Замовити</a>
+      </article>
+
+      <article class="card offer hot">
+        <span class="flag">беруть найчастіше</span>
+        <p class="cap">Бот</p>
+        <h3>Telegram-бот з оплатою</h3>
+        <p class="d">Каталог, кошик, приймання платежів, сповіщення та адмінка для товарів.</p>
+        <p class="money">від ₴7 000 <span>≈ $155</span></p>
+        <a class="btn btn-main btn-full" href="#">Замовити</a>
+      </article>
+
+      <article class="card offer">
+        <p class="cap">Застосунок</p>
+        <h3>Вебзастосунок з адмінкою</h3>
+        <p class="d">Свій сервіс із ролями, базою даних і панеллю керування — під процес.</p>
+        <p class="money">від ₴11 000 <span>≈ $245</span></p>
+        <a class="btn btn-ghost btn-full" href="#">Замовити</a>
+      </article>
+
+      <article class="card offer quiet">
+        <p class="cap">Інше</p>
+        <h3>Нестандартне завдання</h3>
+        <p class="d">Опиши, що треба, — скажемо, чи реально це і скільки коштуватиме.</p>
+        <p class="money">за домовленістю</p>
+        <a class="btn btn-ghost btn-full" href="#">Написати</a>
+      </article>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="head"><h2>Як це влаштовано</h2><p>Чотири кроки — без сюрпризів посеред роботи.</p></div>
+    <ol class="flow">
+      <li><span>01</span><b>Розмова</b><p>Питаємо, що має робити, і кажемо, чи реально це.</p></li>
+      <li><span>02</span><b>Кошторис</b><p>Фіксуємо ціну й термін до старту роботи.</p></li>
+      <li><span>03</span><b>Робота</b><p>Показуємо проміжні версії, а не зникаємо на місяць.</p></li>
+      <li><span>04</span><b>Запуск</b><p>Віддаємо код і доступи, місяць тримаємо на підтримці.</p></li>
+    </ol>
+  </section>
+
+  <section id="contact">
+    <div class="cta">
+      <div>
+        <h2>Розкажи, що треба автоматизувати</h2>
+        <p>Опиши задачу в двох словах — відповімо, чи реально це, скільки коштуватиме і скільки триватиме.</p>
+      </div>
+      <div class="row">
+        <a class="btn btn-main btn-lg" href="#">Написати в Telegram</a>
+        <a class="btn btn-ghost btn-lg" href="#">Пошта</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>© 2026 v.studio</span>
+    <span>vstudio.dev</span>
+  </footer>
+
+</main>
+
+</body>
+</html>
