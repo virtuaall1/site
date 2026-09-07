@@ -42,7 +42,26 @@ function clean(value, max) {
    всё равно экранируем — иначе сообщение с <div> просто не дойдёт. */
 const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/**
+ * Проверка «жива ли ручка», которую видно с телефона: открываешь
+ * адрес в браузере — и сразу понятно, дошли ли до воркера настройки.
+ *
+ * Значений не отдаём, только «заданы или нет»: это не секрет, но и
+ * не повод показывать наружу токен.
+ */
+function health(env) {
+  return json({
+    ok: true,
+    configured: Boolean(env.TG_BOT_TOKEN && env.TG_CHAT_ID),
+    hint: env.TG_BOT_TOKEN && env.TG_CHAT_ID
+      ? 'Змінні на місці. Якщо форма все одно не працює — натисни /start своєму боту.'
+      : 'Воркер не бачить TG_BOT_TOKEN і TG_CHAT_ID. Схоже, вони задані в розділі Build, а не у самого воркера.'
+  });
+}
+
 async function lead(request, env) {
+  // GET — это человек, открывший адрес в браузере, а не форма
+  if (request.method === 'GET') return health(env);
   if (request.method !== 'POST') return json({ error: 'method' }, 405);
 
   // Форма своя и лежит на том же домене: чужие страницы слать сюда
