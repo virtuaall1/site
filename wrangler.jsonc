@@ -12,8 +12,13 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "site",
   "compatibility_date": "2026-09-03",
+  // Одна живая ручка на весь сайт: POST /api/lead принимает заявку
+  // из формы и отправляет её в Telegram. Воркер просыпается только
+  // там, где файла нет, — статику по-прежнему отдаёт платформа.
+  "main": "worker/index.js",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS"
   },
   "observability": {
     "enabled": true

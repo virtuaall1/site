@@ -181,6 +181,76 @@ srv.listen(0, '127.0.0.1', async () => {
     await ctx.close();
   }
 
+  /* ── форма заявки ───────────────────────────────────────────
+     Ручку /api/lead держит воркер, а его на статике нет — поэтому
+     ответы подменяем сами: так проверяются оба пути, и удачный, и
+     когда сервер молчит. */
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'uk-UA' });
+    const page = await ctx.newPage();
+
+    let sent = null;
+    let reply = { status: 200, body: '{"ok":true}' };
+    await page.route('**/api/lead', route => {
+      sent = JSON.parse(route.request().postData() || '{}');
+      route.fulfill({ status: reply.status, contentType: 'application/json', body: reply.body });
+    });
+
+    await page.goto(`${base}/index.html`, { waitUntil: 'load' });
+    await page.waitForTimeout(1200);
+
+    const statusText = () => page.textContent('#leadStatus');
+
+    // пустую форму отправлять нельзя, и человеку должно быть видно почему
+    await page.click('#leadSend');
+    await page.waitForTimeout(300);
+    const emptyBad = await page.evaluate(() =>
+      document.querySelectorAll('.field-input.is-bad').length);
+    check('пустая форма не уходит', sent === null && emptyBad === 3, `${emptyBad} поля отмечено`);
+    check('сказано, чего не хватает', (await statusText()).length > 10, await statusText());
+
+    // «зробіть красиво» — тоже не задача
+    await page.fill('#leadName', 'Олег');
+    await page.fill('#leadContact', '@oleg');
+    await page.fill('#leadTask', 'привіт');
+    await page.click('#leadSend');
+    await page.waitForTimeout(300);
+    check('слишком короткая задача не уходит', sent === null,
+      sent ? JSON.stringify(sent) : 'запроса не было');
+
+    // нормальная заявка
+    await page.fill('#leadTask', 'Треба бот для запису клієнтів у барбершоп.');
+    await page.click('#leadSend');
+    await page.waitForTimeout(600);
+    check('заявка ушла с тем, что ввели',
+      !!sent && sent.name === 'Олег' && sent.contact === '@oleg' && sent.task.includes('барбершоп'),
+      sent ? Object.keys(sent).join(', ') : 'запроса не было');
+    check('форма очистилась после отправки',
+      (await page.inputValue('#leadTask')) === '', await page.inputValue('#leadTask'));
+    const okClass = await page.evaluate(() =>
+      document.getElementById('leadStatus').className);
+    check('успех показан', okClass.includes('is-ok'), okClass);
+
+    // ручки нет или токен не задан — человеку нужен запасной путь
+    sent = null;
+    reply = { status: 503, body: '{"error":"offline"}' };
+    await page.fill('#leadName', 'Олег');
+    await page.fill('#leadContact', '@oleg');
+    await page.fill('#leadTask', 'Треба бот для запису клієнтів у барбершоп.');
+    await page.click('#leadSend');
+    await page.waitForTimeout(600);
+    const failText = await statusText();
+    check('когда форма недоступна — отправляем в Telegram',
+      /Telegram/i.test(failText), failText.slice(0, 60));
+    const tgVisible = await page.evaluate(() => {
+      const a = document.getElementById('tgLink');
+      return !!a && a.getBoundingClientRect().height > 0;
+    });
+    check('запасная кнопка на месте', tgVisible);
+
+    await ctx.close();
+  }
+
   /* ── за GitHub идём только когда дошли до раздела ───────────── */
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'uk-UA' });

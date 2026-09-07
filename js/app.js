@@ -556,6 +556,90 @@
     });
   }
 
+  /**
+   * Форма заявки.
+   *
+   * Отправляем на свою же ручку /api/lead — её держит worker/index.js
+   * и пересылает заявку в Telegram. Страницы «спасибо» нет: ответ
+   * появляется строкой под кнопкой, человек остаётся где был.
+   *
+   * Ручка может быть недоступна — на локальной статике её нет вовсе,
+   * а на сервере может не хватать токена бота. Тогда честно говорим
+   * об этом и показываем запасной путь: кнопки в Telegram и на почту
+   * никуда не делись, они прямо под формой.
+   */
+  function initLeadForm() {
+    const form = $('#leadForm');
+    if (!form) return;
+
+    const status = $('#leadStatus');
+    const fields = ['leadName', 'leadContact', 'leadTask'].map(id => $('#' + id));
+
+    function say(key, kind) {
+      if (!status) return;
+      status.textContent = t(key);
+      status.classList.toggle('is-ok', kind === 'ok');
+      status.classList.toggle('is-bad', kind === 'bad');
+    }
+
+    // подсветку ошибки снимаем, как только человек начал править
+    fields.forEach(node => {
+      if (node) node.addEventListener('input', () => node.classList.remove('is-bad'));
+    });
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (form.classList.contains('is-sending')) return;
+
+      const data = {
+        name: $('#leadName').value.trim(),
+        contact: $('#leadContact').value.trim(),
+        task: $('#leadTask').value.trim(),
+        site: form.elements.site ? form.elements.site.value : ''
+      };
+
+      // Проверяем то же, что и сервер: короткая задача — это не
+      // задача, а «зробіть красиво».
+      const bad = [];
+      if (!data.name) bad.push($('#leadName'));
+      if (!data.contact) bad.push($('#leadContact'));
+      if (data.task.length < 10) bad.push($('#leadTask'));
+      if (bad.length) {
+        bad.forEach(node => node.classList.add('is-bad'));
+        bad[0].focus();
+        say('lead.required', 'bad');
+        return;
+      }
+
+      form.classList.add('is-sending');
+      say('lead.sending');
+
+      try {
+        const res = await fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const answer = await res.json().catch(() => ({}));
+
+        if (res.ok && answer.ok) {
+          form.reset();
+          say('lead.ok', 'ok');
+        } else if (res.status === 422) {
+          say('lead.required', 'bad');
+        } else {
+          say('lead.offline', 'bad');
+        }
+      } catch (err) {
+        // сети нет или ручку не подняли — оба случая для человека
+        // выглядят одинаково: пишите напрямую
+        say('lead.offline', 'bad');
+      } finally {
+        form.classList.remove('is-sending');
+      }
+    });
+  }
+
   function renderChips(langNames = []) {
     const wrap = $('#chips');
     if (!wrap) return;
@@ -1459,6 +1543,7 @@
     applyTheme(detectTheme());
     applyLang(lang);
     initFaqToggles();
+    initLeadForm();
     setupCurrency();
     initChrome();
     initGrid();

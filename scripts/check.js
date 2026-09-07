@@ -162,8 +162,12 @@ if (/\.innerHTML\s*=/.test(appJs)) {
    реально уезжает человеку, — разные числа. Исходники подросли на
    три килобайта, а первая загрузка полегчала на полторы сотни:
    снимки кейсов ушли в avif. Точное число показывает
-   scripts/perfcheck.js. */
-const BUDGET_KB = 160;
+   scripts/perfcheck.js.
+
+   160 → 172 под форму заявки: поля в разметке, стили полей,
+   отправка в app.js и одиннадцать строк перевода на каждый язык.
+   По сети это примерно полтора килобайта под gzip. */
+const BUDGET_KB = 172;
 const totalKb = [['index.html', html], ['css/style.css', css], ['js/app.js', appJs], ['js/content.js', contentJs]]
   .reduce((sum, [, src]) => sum + Buffer.byteLength(src, 'utf8'), 0) / 1024;
 
@@ -235,6 +239,44 @@ try {
   ok(`структурированные данные: ${types.join(', ')}, цен — ${offers.itemListElement.length}`);
 } catch (e) {
   fail(`JSON-LD не собирается: ${e.message}`);
+}
+
+/* ---------- 6е-1. Форма заявки ----------
+   Форма ломается тихо: адрес ручки разошёлся с воркером — и заявки
+   просто перестают приходить, а страница при этом выглядит целой.
+   Поэтому сверяем разметку, скрипт, воркер и настройки деплоя. */
+{
+  const worker = path.join(ROOT, 'worker', 'index.js');
+  const wrangler = path.join(ROOT, 'wrangler.jsonc');
+  const problems = [];
+
+  if (!fs.existsSync(worker)) problems.push('нет worker/index.js — принимать заявки некому');
+  else {
+    const code = fs.readFileSync(worker, 'utf8');
+    const route = /pathname === '([^']+)'/.exec(code);
+    const called = /fetch\('([^']+)'/.exec(appJs);
+    if (!route) problems.push('в воркере не видно адреса ручки');
+    else if (!called || called[1] !== route[1]) {
+      problems.push(`app.js шлёт на ${called ? called[1] : '?'}, а воркер слушает ${route[1]}`);
+    }
+    if (!/TG_BOT_TOKEN/.test(code)) problems.push('воркер не берёт токен бота из настроек');
+    if (/console\.(log|error)\s*\(/.test(code)) problems.push('воркер что-то пишет в логи — там не должно быть чужих контактов');
+  }
+
+  if (fs.existsSync(wrangler)) {
+    const cfg = fs.readFileSync(wrangler, 'utf8');
+    if (!/"main"\s*:/.test(cfg)) problems.push('в wrangler.jsonc нет main — воркер не поедет');
+    if (!/"binding"\s*:\s*"ASSETS"/.test(cfg)) problems.push('в wrangler.jsonc нет биндинга ASSETS');
+  }
+
+  if (!/id="leadForm"/.test(html)) problems.push('в разметке нет формы');
+  if (!/name="site"/.test(html)) problems.push('в форме нет ловушки для ботов');
+  if (!/form-action 'self'/.test(html)) problems.push("CSP не разрешает свою же форму");
+  if (!/connect-src 'self'/.test(html)) problems.push("CSP не разрешает запрос к своей же ручке");
+  if (!/lead\.offline/.test(appJs)) problems.push('нет запасного пути, когда ручка молчит');
+
+  if (problems.length) problems.forEach(p => fail(p));
+  else ok('форма заявки: разметка, отправка и воркер сходятся');
 }
 
 /* ---------- 6е-2. Свои шрифты ----------

@@ -422,7 +422,17 @@ window.SITE = (() => {
       'contact.lead': 'Опиши задачу в двох словах — відповімо, чи реально це, скільки коштуватиме і скільки триватиме.',
       'contact.tg': 'Написати в Telegram',
       'contact.tgText': 'Вітаю! Хочу обговорити проєкт.',
-      'contact.mail': 'Пошта'
+      'contact.mail': 'Пошта',
+      'lead.name': 'Як до вас звертатись',
+      'lead.contact': 'Куди відповісти',
+      'lead.task': 'Що треба зробити',
+      'lead.send': 'Надіслати заявку',
+      'lead.note': 'Заявка прилетить мені в Telegram. Збираю тільки те, що в цих трьох полях.',
+      'lead.or': 'Або одразу:',
+      'lead.required': 'Заповніть імʼя, контакт і опишіть задачу хоча б одним реченням.',
+      'lead.sending': 'Надсилаю…',
+      'lead.ok': 'Заявка пішла. Відповім тим самим каналом, який ви вказали.',
+      'lead.offline': 'Форма зараз не відповідає. Напишіть у Telegram або на пошту — кнопки нижче.'
     },
     en: {
       'meta.title': 'v.studio — web apps, backends and Telegram bots',
@@ -488,7 +498,17 @@ window.SITE = (() => {
       'contact.lead': 'Describe the task in a couple of sentences — we will tell you if it is doable, what it costs and how long it takes.',
       'contact.tg': 'Message on Telegram',
       'contact.tgText': 'Hi! I would like to discuss a project.',
-      'contact.mail': 'Email'
+      'contact.mail': 'Email',
+      'lead.name': 'What should I call you',
+      'lead.contact': 'Where to reply',
+      'lead.task': 'What needs building',
+      'lead.send': 'Send the request',
+      'lead.note': 'The request lands in my Telegram. Nothing is collected beyond these three fields.',
+      'lead.or': 'Or straight away:',
+      'lead.required': 'Add a name, a contact, and describe the task in at least one sentence.',
+      'lead.sending': 'Sending…',
+      'lead.ok': 'Sent. I will reply through the channel you gave.',
+      'lead.offline': 'The form is not answering right now. Write on Telegram or by email — buttons below.'
     }
   };
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src https://api.github.com https://bank.gov.ua https://cdn.jsdelivr.net; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://bank.gov.ua https://cdn.jsdelivr.net; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="dark">
 
@@ -228,6 +228,40 @@
     <p class="kicker" data-i18n="contact.kicker">Далі</p>
     <h2 class="contact-title" data-i18n="contact.title">Розкажи, що треба автоматизувати</h2>
     <p class="section-lead" data-i18n="contact.lead">Опиши задачу в двох словах — відповім, чи реально це, скільки коштуватиме і скільки триватиме.</p>
+    <!-- Заявку принимает worker/index.js и пересылает в Telegram.
+         Форма работает без страницы «спасибо»: ответ приходит сюда
+         же, в строку под кнопкой. Если ручка недоступна, показываем
+         запасной путь — те же кнопки ниже никуда не делись. -->
+    <form class="lead" id="leadForm" novalidate>
+      <div class="lead-grid">
+        <label class="field">
+          <span class="field-label" data-i18n="lead.name">Як до вас звертатись</span>
+          <input class="field-input" type="text" name="name" id="leadName" maxlength="80" autocomplete="name" required>
+        </label>
+        <label class="field">
+          <span class="field-label" data-i18n="lead.contact">Куди відповісти</span>
+          <input class="field-input" type="text" name="contact" id="leadContact" maxlength="160" autocomplete="email" required>
+        </label>
+      </div>
+      <label class="field">
+        <span class="field-label" data-i18n="lead.task">Що треба зробити</span>
+        <textarea class="field-input field-area" name="task" id="leadTask" rows="4" maxlength="2000" required></textarea>
+      </label>
+
+      <!-- Ловушка для ботов: человек этого поля не видит и не
+           табается в него, а заполненное поле выдаёт автомат. -->
+      <div class="lead-trap" aria-hidden="true">
+        <label>Сайт<input type="text" name="site" tabindex="-1" autocomplete="off"></label>
+      </div>
+
+      <div class="lead-foot">
+        <button class="btn btn-solid btn-lg magnetic" type="submit" id="leadSend" data-i18n="lead.send">Надіслати заявку</button>
+        <p class="lead-note" data-i18n="lead.note">Заявка прилетить мені в Telegram. Збираю тільки те, що в цих трьох полях.</p>
+      </div>
+      <p class="lead-status" id="leadStatus" role="status" aria-live="polite"></p>
+    </form>
+
+    <p class="lead-or" data-i18n="lead.or">Або одразу:</p>
     <div class="contact-actions">
       <a class="btn btn-solid btn-lg magnetic" id="tgLink" href="https://t.me/virtuaall01" target="_blank" rel="noopener noreferrer" data-i18n="contact.tg">Написати в Telegram</a>
       <a class="btn btn-line btn-lg magnetic" id="mailLink" href="mailto:virtuaall0@gmail.com" data-i18n="contact.mail">Пошта</a>

@@ -971,7 +971,93 @@ html { scroll-padding-top: 92px; }
   max-width: 16ch;
   margin-bottom: 8px;
 }
-.contact-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
+.contact-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+
+/* =========================================================
+   Форма заявки
+   Ни рамок-коробок, ни скруглений: поле — это линейка снизу,
+   как и всё остальное на сайте. Активное поле подсвечивается
+   кислотным, и только оно.
+   ========================================================= */
+.lead { margin-top: 44px; max-width: 760px; }
+.lead-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+
+.field { display: block; margin-bottom: 26px; }
+.field-label {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.field-input {
+  display: block;
+  width: 100%;
+  padding: 12px 0;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--text);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;                 /* ios сам скругляет поля */
+  transition: border-color 0.25s var(--ease);
+}
+.field-input::placeholder { color: var(--faint); }
+.field-input:hover { border-bottom-color: var(--rule-soft); }
+.field-input:focus {
+  outline: none;                    /* вместо рамки — своя линейка */
+  border-bottom-color: var(--acid-text);
+}
+.field-input:focus-visible { outline: none; }
+.field-area { resize: vertical; min-height: 118px; line-height: 1.5; }
+
+/* поле, которое человек оставил пустым, отмечаем после отправки */
+.field-input.is-bad { border-bottom-color: #ff6b52; }
+
+/* ловушка для ботов: не display:none — часть автоматов такие поля
+   пропускает, — а вынос за пределы экрана */
+.lead-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.lead-foot {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.lead-note { font-size: 0.82rem; color: var(--faint); max-width: 34ch; line-height: 1.5; }
+
+.lead-status {
+  margin-top: 18px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  min-height: 1.2em;
+}
+.lead-status.is-ok { color: var(--acid-text); }
+.lead-status.is-bad { color: #ff6b52; }
+
+.lead-or {
+  margin-top: 46px;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* пока заявка летит, кнопка не должна кликаться второй раз */
+.lead.is-sending .btn-solid { opacity: 0.55; pointer-events: none; }
+
+@media (max-width: 720px) {
+  .lead-grid { grid-template-columns: 1fr; gap: 0; }
+}
 
 .foot-tg { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; transition: color 0.25s var(--ease), border-color 0.25s var(--ease); }
 .foot-tg:hover { color: var(--acid-text); border-bottom-color: var(--acid-text); }
