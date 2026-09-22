@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>avatar — v.studio</title>
+
+<!-- Тот же css/fonts.css, что и на сайте: аватарка не должна
+     разъехаться со знаком в шапке, когда шрифты поменяются. -->
+<link rel="stylesheet" href="/css/fonts.css">
+
+<style>
+  /* Аватарка для телеграма, инстаграма и гитхаба.
+   
+     Снимается квадратом, а показывается по-разному: телеграм и
+     инстаграм режут в круг, гитхаб — в квадрат со скруглением.
+     Поэтому всё содержимое держится внутри вписанной окружности:
+     то, что окажется по углам, увидят не все. Рамки по краю нет по
+     той же причине — в круге от неё останутся четыре дуги.
+   
+     Оформление то же, что на сайте: чёрное стекло. Цвет один и
+     работает сигналом — квадратная точка в знаке. */
+  :root {
+    --void: #08080a;
+    --paper: #f2efe8;
+    --acid: #d8ff3e;
+  }
+
+  * { box-sizing: border-box; margin: 0; }
+
+  body {
+    width: 1080px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+    background: var(--void);
+    color: var(--paper);
+    font-family: 'Onest', system-ui, sans-serif;
+  }
+
+  /* Сетка точек — та же, что рисует канвас на сайте, только крупнее
+     под размер холста и неподвижная: это картинка, а не страница. */
+  .dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(242, 239, 232, 0.10) 1.6px, transparent 1.6px);
+    background-size: 46px 46px;
+  }
+
+  /* Свет сверху слева — он и делает глубину вместо тени. */
+  .glow {
+    position: absolute;
+    left: -260px;
+    top: -320px;
+    width: 1180px;
+    height: 1180px;
+    background: radial-gradient(circle, rgba(216, 255, 62, 0.085), transparent 62%);
+  }
+
+  /* Второй, холодный — снизу справа. Без него нижний угол проваливается
+     в плоскую черноту, и знак висит в пустоте. */
+  .glow-cold {
+    position: absolute;
+    right: -300px;
+    bottom: -340px;
+    width: 1000px;
+    height: 1000px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.045), transparent 60%);
+  }
+
+  /* Знак набирается так же, как в шапке сайта: буква и квадрат на
+     общей базовой линии. Квадрат не ставится «по глазу» — шрифт
+     сам сажает его туда, куда сел бы знак препинания.
+
+     Блок приподнят: «v» уводит вес вниз, и в круглой обрезке знак
+     без этой поправки кажется осевшим. */
+  .mark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 46px;
+  }
+
+  .mark span {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.02em;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: 520px;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  /* Точка в имени — квадрат, как в знаке на сайте. */
+  .mark i {
+    width: 0.26em;
+    height: 0.26em;
+    background: var(--acid);
+  }
+</style>
+</head>
+<body>
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="glow-cold"></div>
+
+<div class="mark"><span>v<i></i></span></div>
+</body>
+</html>

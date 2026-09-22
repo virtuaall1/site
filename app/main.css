@@ -154,34 +154,34 @@
 /* Смена языка.
 
    Браузер снимает кадр «до» и кадр «после» и накладывает их друг
-   на друга. По умолчанию он их просто растворяет — получается
-   мыльный переход, какой бывает везде. Здесь старый кадр уходит
-   влево и размывается, новый приходит справа: движение совпадает с
-   направлением чтения, и смена читается как «строки перебрались»,
-   а не как «страница мигнула».
+   на друга. По умолчанию он их растворяет — этого достаточно для
+   перехода между страницами, и там мы его не трогаем. А для смены
+   языка старый кадр уводим влево, новый приводим справа: движение
+   совпадает с направлением чтения, и смена читается как «строки
+   перебрались», а не как «страница мигнула».
 
-   Метку [data-lang-swap] ставит сам переход (app/lib/i18n.jsx) и
-   снимает, когда кадр доигран: всё остальное время правила ниже
-   не действуют, и переходы между страницами остаются обычными. */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
+   Размытия здесь намеренно нет. filter: blur на снимке во весь
+   экран — самая дорогая операция из возможных: браузер размывает
+   полтора миллиона пикселей каждый кадр, и переход дёргается на
+   любой машине без мощной видеокарты. Сдвиг и прозрачность дают
+   тот же смысл и ничего не стоят.
 
+   Метку [data-lang-swap] ставит и снимает сам переход
+   (app/lib/i18n.jsx): всё остальное время правила ниже не
+   действуют. */
 [data-lang-swap]::view-transition-old(root) {
-  animation: lang-out 0.42s var(--ease-out-quint) both;
+  animation: lang-out 0.34s var(--ease-out-quint) both;
 }
 [data-lang-swap]::view-transition-new(root) {
-  animation: lang-in 0.52s var(--ease-out-quint) 0.08s both;
+  animation: lang-in 0.42s var(--ease-out-quint) 0.06s both;
 }
 
 @keyframes lang-out {
-  to { opacity: 0; transform: translateX(-2.5%); filter: blur(7px); }
+  to { opacity: 0; transform: translate3d(-1.8%, 0, 0); }
 }
 @keyframes lang-in {
-  from { opacity: 0; transform: translateX(3%); filter: blur(9px); }
-  to { opacity: 1; transform: none; filter: blur(0); }
+  from { opacity: 0; transform: translate3d(2.2%, 0, 0); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Кому движение мешает — выключаем всё разом. Motion читает ту же

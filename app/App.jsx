@@ -11,6 +11,7 @@ import { I18nProvider } from './lib/i18n.jsx';
 import { GridCanvas } from './components/GridCanvas.jsx';
 import { ScrollRail } from './components/ScrollRail.jsx';
 import { LangSweep } from './components/LangSweep.jsx';
+import { PageMeta } from './components/PageMeta.jsx';
 import { Header } from './components/Header.jsx';
 import { Footer } from './components/Footer.jsx';
 import { Home } from './pages/Home.jsx';
@@ -20,8 +21,8 @@ import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 
 const PAGES = {
   Home: () => <Home />,
-  Boty: () => <ServicePage name="boty" services={['bot', 'shop-bot']} cases={['guard', 'shop-bot', 'booking', 'spend']} />,
-  Sajty: () => <ServicePage name="sajty" services={['landing', 'webapp']} cases={null} />,
+  Bots: () => <ServicePage name="bots" services={['bot', 'shop-bot']} cases={['guard', 'shop-bot', 'booking', 'spend']} />,
+  Websites: () => <ServicePage name="websites" services={['landing', 'webapp']} cases={null} />,
   Backend: () => <ServicePage name="backend" services={['backend', 'automation', 'custom']} cases={null} />,
   NotFound: () => <NotFound />
 };
@@ -33,6 +34,7 @@ export function App({ page = 'Home', path = '/' }) {
       <a href="#main" className="absolute left-[-9999px] top-0 z-200 bg-acid px-5 py-3 font-semibold text-acid-ink focus:left-2 focus:top-2">
         Перейти до вмісту
       </a>
+      <PageMeta path={path} />
       <GridCanvas />
       <ScrollRail />
       <LangSweep />

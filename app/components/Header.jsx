@@ -14,8 +14,8 @@ import { cn } from '../lib/cn.js';
 import { SPRING_SNAP } from './ui/Reveal.jsx';
 
 const LINKS = [
-  { href: '/boty/', key: 'nav.boty', fallback: 'Боти' },
-  { href: '/sajty/', key: 'nav.sajty', fallback: 'Сайти' },
+  { href: '/bots/', key: 'nav.bots', fallback: 'Боти' },
+  { href: '/websites/', key: 'nav.websites', fallback: 'Сайти' },
   { href: '/backend/', key: 'nav.backend', fallback: 'Бекенд' },
   { href: '/#cases', key: 'nav.cases', fallback: 'Кейси' },
   { href: '/#faq', key: 'nav.faq', fallback: 'Питання' }

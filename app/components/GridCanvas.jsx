@@ -56,6 +56,22 @@ export function GridCanvas() {
       }
     }
 
+    /* Цвета заранее: раньше на каждую точку собиралась строка
+       вида rgba(...), и это тысяча лишних строк в кадре. Теперь их
+       шестнадцать на всю жизнь страницы, по ступеням яркости. */
+    const STEPS = 16;
+    const CALM = [];
+    const HOT = [];
+    for (let i = 0; i < STEPS; i++) {
+      const a = (i + 1) / STEPS;
+      CALM.push(`rgba(242, 239, 232, ${(a * 0.85).toFixed(3)})`);
+      HOT.push(`rgba(216, 255, 62, ${(a * 0.85).toFixed(3)})`);
+    }
+    const RADIUS2 = RADIUS * RADIUS;
+    /* Заводим один раз: массив, создаваемый в каждом кадре, — это
+       шестьдесят лишних сборок мусора в секунду. */
+    const lit = [];
+
     function frame(now) {
       raf = null;
       ctx.clearRect(0, 0, w, h);
@@ -66,61 +82,103 @@ export function GridCanvas() {
         if (sec - waves[i].t > WAVE_LIFE) waves.splice(i, 1);
       }
 
+      const quiet = waves.length === 0 && pointer.x < -9000;
+      let moving = false;
+
+      /* Спокойные точки рисуем одной заливкой на всех: смена
+         fillStyle — операция дорогая, и тысяча смен в кадре
+         обходится дороже самой отрисовки. */
+      ctx.fillStyle = CALM[1];
+      ctx.beginPath();
+
       for (const d of dots) {
-        const dx = d.ox - pointer.x;
-        const dy = d.oy - pointer.y;
-        const dist = Math.hypot(dx, dy);
-        const near = dist < RADIUS ? 1 - dist / RADIUS : 0;
+        let tx = d.ox;
+        let ty = d.oy;
+        let energy = 0;
 
-        let tx = d.ox + (dx / (dist || 1)) * near * PUSH;
-        let ty = d.oy + (dy / (dist || 1)) * near * PUSH;
+        if (!quiet) {
+          const dx = d.ox - pointer.x;
+          const dy = d.oy - pointer.y;
+          const dist2 = dx * dx + dy * dy;
 
-        let wave = 0;
-        for (const wv of waves) {
-          const age = sec - wv.t;
-          const wdx = d.ox - wv.x;
-          const wdy = d.oy - wv.y;
-          const wdist = Math.hypot(wdx, wdy) || 1;
-          const delta = Math.abs(wdist - age * WAVE_SPEED);
-          if (delta > WAVE_BAND) continue;
+          if (dist2 < RADIUS2) {
+            const dist = Math.sqrt(dist2) || 1;
+            const near = 1 - dist / RADIUS;
+            energy = near;
+            tx += (dx / dist) * near * PUSH;
+            ty += (dy / dist) * near * PUSH;
+          }
 
-          const front = 1 - delta / WAVE_BAND;
-          const fade = 1 - age / WAVE_LIFE;
-          const force = front * fade * fade;
-          wave += force;
-          tx += (wdx / wdist) * force * 22;
-          ty += (wdy / wdist) * force * 22;
+          for (const wv of waves) {
+            const age = sec - wv.t;
+            const wdx = d.ox - wv.x;
+            const wdy = d.oy - wv.y;
+            const wdist = Math.sqrt(wdx * wdx + wdy * wdy) || 1;
+            const delta = Math.abs(wdist - age * WAVE_SPEED);
+            if (delta > WAVE_BAND) continue;
+
+            const front = 1 - delta / WAVE_BAND;
+            const fade = 1 - age / WAVE_LIFE;
+            const force = front * fade * fade;
+            energy += force;
+            tx += (wdx / wdist) * force * 22;
+            ty += (wdy / wdist) * force * 22;
+          }
         }
 
-        // к новому месту подтягиваемся, а не прыгаем: иначе сетка
-        // дёргается при каждом движении мыши
-        d.x += (tx - d.x) * 0.14;
-        d.y += (ty - d.y) * 0.14;
+        // к новому месту подтягиваемся, а не прыгаем
+        const ndx = tx - d.x;
+        const ndy = ty - d.y;
+        if (ndx * ndx + ndy * ndy > 0.01) moving = true;
+        d.x += ndx * 0.14;
+        d.y += ndy * 0.14;
 
-        const energy = Math.min(1, near + wave);
-        const size = 1 + energy * 2.4;
-        const alpha = 0.13 + energy * 0.72;
-        ctx.fillStyle = energy > 0.4
-          ? `rgba(216, 255, 62, ${alpha})`
-          : `rgba(242, 239, 232, ${alpha})`;
-        ctx.fillRect(d.x - size / 2, d.y - size / 2, size, size);
+        if (energy < 0.02) {
+          // в общую заливку, без своего цвета
+          ctx.rect(d.x - 0.5, d.y - 0.5, 1, 1);
+          continue;
+        }
+
+        /* Яркие откладываем: рисовать их прямо здесь нельзя —
+           beginPath стёр бы всё, что уже накопилось в общем пути. */
+        lit.push(d.x, d.y, energy > 1 ? 1 : energy);
+        moving = true;
       }
+
+      ctx.fill();                 // все спокойные точки одной заливкой
+
+      for (let i = 0; i < lit.length; i += 3) {
+        const e = lit[i + 2];
+        const size = 1 + e * 2.4;
+        const bucket = (e * (STEPS - 1)) | 0;
+        ctx.fillStyle = e > 0.4 ? HOT[bucket] : CALM[bucket];
+        ctx.fillRect(lit[i] - size / 2, lit[i + 1] - size / 2, size, size);
+      }
+      lit.length = 0;
 
       // символы всплывают и гаснут
-      ctx.font = '11px ui-monospace, monospace';
-      ctx.textAlign = 'center';
-      for (let i = sparks.length - 1; i >= 0; i--) {
-        const s = sparks[i];
-        const age = sec - s.t;
-        if (age > 1.1) { sparks.splice(i, 1); continue; }
-        s.x += s.vx;
-        s.y += s.vy;
-        s.vy -= 0.03;
-        ctx.fillStyle = `rgba(216, 255, 62, ${(1 - age / 1.1) * 0.75})`;
-        ctx.fillText(s.char, s.x, s.y);
+      if (sparks.length) {
+        ctx.font = '11px ui-monospace, monospace';
+        ctx.textAlign = 'center';
+        for (let i = sparks.length - 1; i >= 0; i--) {
+          const s = sparks[i];
+          const age = sec - s.t;
+          if (age > 1.1) { sparks.splice(i, 1); continue; }
+          s.x += s.vx;
+          s.y += s.vy;
+          s.vy -= 0.03;
+          ctx.fillStyle = `rgba(216, 255, 62, ${((1 - age / 1.1) * 0.75).toFixed(2)})`;
+          ctx.fillText(s.char, s.x, s.y);
+        }
+        moving = true;
       }
 
-      start();
+      /* Ничего не движется — останавливаем цикл совсем. Сетка не
+         должна жечь кадры, пока человек просто читает текст: это
+         и батарея, и те самые кадры, которых не хватает анимации
+         в другом месте страницы. */
+      if (moving || !quiet) start();
+      else raf = null;
     }
 
     /* Держим ровно один цикл отрисовки: браузер может придержать
@@ -132,6 +190,7 @@ export function GridCanvas() {
     function onMove(e) {
       pointer.x = e.clientX;
       pointer.y = e.clientY;
+      start();                      // цикл мог остановиться — будим
       const now = performance.now();
       const moved = Math.hypot(e.clientX - lastAt.x, e.clientY - lastAt.y);
       if (now - lastSpark > 45 && moved > 16 && sparks.length < 26) {
@@ -148,8 +207,11 @@ export function GridCanvas() {
       }
     }
 
-    const onDown = e => waves.push({ x: e.clientX, y: e.clientY, t: performance.now() / 1000 });
-    const onLeave = () => { pointer.x = -9999; pointer.y = -9999; };
+    const onDown = e => {
+      waves.push({ x: e.clientX, y: e.clientY, t: performance.now() / 1000 });
+      start();
+    };
+    const onLeave = () => { pointer.x = -9999; pointer.y = -9999; start(); };
     const onVisible = () => (document.hidden ? stop() : start());
 
     build();

@@ -9,6 +9,7 @@
     "images": "python3 scripts/images.py",
     "fonts": "python3 scripts/fonts.py",
     "og": "node brand/og/render.js",
+    "avatars": "node brand/avatar/render.js",
     "look": "node scripts/look.js",
     "smoke": "node scripts/smoke.js",
     "perf": "node scripts/perfcheck.js",
