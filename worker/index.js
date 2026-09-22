@@ -169,10 +169,26 @@ async function lead(request, env) {
   return json({ ok: true });
 }
 
+/* Старые адреса страниц услуг. Были написаны транслитом — /boty/,
+   /sajty/, — и это плохие адреса: латиницей, но не словами. Ссылки
+   на них уже разошлись, поэтому просто переименовать страницы
+   нельзя: и человек, и поисковик должны доехать. Отвечаем 301 —
+   «переехало навсегда», чтобы поисковик перенёс на новый адрес всё,
+   что успел накопить у старого. */
+const MOVED = {
+  '/boty': '/bots/',
+  '/boty/': '/bots/',
+  '/sajty': '/websites/',
+  '/sajty/': '/websites/'
+};
+
 export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/lead') return lead(request, env);
+
+    const moved = MOVED[pathname];
+    if (moved) return Response.redirect(new URL(moved, request.url).toString(), 301);
     if (!env.ASSETS) return new Response('Not found', { status: 404 });
 
     const res = await env.ASSETS.fetch(request);

@@ -222,7 +222,7 @@ srv.listen(0, '127.0.0.1', async () => {
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
 
-    for (const url of ['/boty/', '/sajty/', '/backend/']) {
+    for (const url of ['/bots/', '/websites/', '/backend/']) {
       await page.goto(`${base}${url}`, { waitUntil: 'load' });
       await page.waitForTimeout(1200);
       const info = await page.evaluate(() => {

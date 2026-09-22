@@ -2,58 +2,97 @@
  * «Расшифровка» заголовка.
  *
  * Буквы перебирают символы кода и встают на места слева направо.
- * Приём фирменный, поэтому вернулся вместе с сеткой точек.
+ * Запускается дважды: когда строка доехала до экрана и когда
+ * поменялся текст — то есть при смене языка. Второй случай и
+ * делает переключение языка расшифровкой, а не подменой.
  *
- * Две вещи, из-за которых это обычно выглядит плохо и которых
- * здесь нет:
+ * Четыре вещи, из-за которых это обычно дёргается и которых здесь
+ * нет:
  *
- *   — пробелы не перебираются, иначе слова слипаются в кашу;
- *   — ширина не скачет: символы взяты из того же начертания, а
- *     заголовок уже отрисован сборкой, поэтому место под него
- *     занято до первого кадра.
+ * 1. **Строка не меняет ширину.** Символы кода узкие, буквы
+ *    широкие, и если просто подменять текст, заголовок дёргается
+ *    каждый кадр, а вместе с ним переезжает половина страницы.
+ *    Поэтому настоящий текст остаётся в потоке и держит размер —
+ *    он просто прозрачный, — а перебор рисуется поверх.
+ * 2. **React в переборе не участвует.** Шестьдесят перерисовок
+ *    компонента в секунду ради одной строки — это шестьдесят
+ *    сверок дерева на пустом месте. Пишем прямо в узел.
+ * 3. **Идём по кадрам браузера, а не по таймеру.** setInterval не
+ *    совпадает с кадрами и раз в несколько шагов даёт лишнюю
+ *    перерисовку.
+ * 4. **Читалке достаётся настоящий текст.** Перебор помечен
+ *    aria-hidden: озвучивать «Ж;** $==$$» незачем.
  *
- * Срабатывает один раз, когда строка доехала до экрана. При
- * системной настройке «меньше движения» текст просто стоит.
+ * При системной настройке «меньше движения» текст просто стоит.
  */
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useInView, useReducedMotion } from 'motion/react';
+import { cn } from '../../lib/cn.js';
 
 const GLYPHS = '01{}<>/;=$[]#*';
-const STEP = 28;          // мс на кадр перебора
-const PER_CHAR = 2.2;     // сколько кадров живёт одна буква
+const STEP = 32;          // мс на один шаг перебора
+const PER_CHAR = 2.2;     // сколько шагов живёт одна буква
 
 export function Scramble({ text, as: Tag = 'span', className, ...rest }) {
   const ref = useRef(null);
+  const real = useRef(null);
+  const noise = useRef(null);
   const seen = useInView(ref, { once: true, margin: '0px 0px -12% 0px' });
   const still = useReducedMotion();
-  const [shown, setShown] = useState(text);
 
-  /* Перебор запускается дважды: когда строка доехала до экрана и
-     когда текст поменялся — то есть при смене языка. Второй случай
-     и делает переключение языка не подменой, а расшифровкой.
-
-     Первый кадр обязан совпасть с тем, что нарисовала сборка,
-     поэтому до появления на экране показываем текст как есть. */
   useEffect(() => {
-    if (!seen || still) { setShown(text); return; }
+    const overlay = noise.current;
+    const under = real.current;
+    if (!overlay || !under) return;
 
-    let frame = 0;
-    const total = Math.ceil(text.length * PER_CHAR) + 6;
+    const finish = () => {
+      overlay.textContent = '';
+      overlay.hidden = true;
+      under.style.opacity = '';
+    };
 
-    const id = setInterval(() => {
-      frame += 1;
-      const done = frame / PER_CHAR;
-      setShown([...text].map((ch, i) => {
-        if (ch === ' ' || i < done) return ch;
-        return GLYPHS[(Math.random() * GLYPHS.length) | 0];
-      }).join(''));
-      if (frame > total) { clearInterval(id); setShown(text); }
-    }, STEP);
+    if (!seen || still) { finish(); return; }
 
-    return () => { clearInterval(id); setShown(text); };
+    const chars = [...text];
+    const total = chars.length * PER_CHAR * STEP + 180;
+    let started = 0;
+    let raf = null;
+
+    const tick = now => {
+      if (!started) started = now;
+      const passed = now - started;
+
+      if (passed >= total) { finish(); return; }
+
+      const done = passed / STEP / PER_CHAR;
+      let out = '';
+      for (let i = 0; i < chars.length; i++) {
+        out += (chars[i] === ' ' || i < done)
+          ? chars[i]
+          : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+      }
+      overlay.textContent = out;
+      raf = requestAnimationFrame(tick);
+    };
+
+    overlay.hidden = false;
+    under.style.opacity = '0';
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      finish();
+    };
   }, [seen, still, text]);
 
-  return <Tag ref={ref} className={className} {...rest}>{shown}</Tag>;
+  return (
+    <Tag ref={ref} className={cn('relative block', className)} {...rest}>
+      {/* Настоящий текст: держит размер и достаётся читалке */}
+      <span ref={real}>{text}</span>
+      {/* Перебор поверх него, в том же месте */}
+      <span ref={noise} aria-hidden="true" hidden className="absolute inset-0" />
+    </Tag>
+  );
 }
 
 export default Scramble;
