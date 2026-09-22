@@ -11,6 +11,7 @@
  * прямо под формой.
  */
 import { useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useI18n } from '../lib/i18n.jsx';
 import { Section } from './ui/Section.jsx';
 import { Kicker } from './ui/Kicker.jsx';
@@ -144,8 +145,27 @@ export function LeadForm({ id = 'contact' }) {
           </div>
 
           <p role="status" aria-live="polite"
-             className={cn('mt-4 min-h-[1.3em] text-[0.9rem]',
+             className={cn('mt-4 flex min-h-[1.3em] items-center gap-2 text-[0.9rem]',
                status.kind === 'ok' ? 'text-acid' : status.kind === 'bad' ? 'text-bad' : 'text-muted')}>
+            <AnimatePresence>
+              {status.kind === 'ok' && (
+                /* Галочка рисуется линией, а не появляется целиком:
+                   так видно, что это ответ на действие, а не текст,
+                   который был тут всё время. */
+                <motion.svg
+                  key="check" viewBox="0 0 20 20" className="size-4 shrink-0"
+                  initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ opacity: 0 }}
+                >
+                  <motion.path
+                    d="M4 10.5 L8.5 15 L16 5.5"
+                    fill="none" stroke="currentColor" strokeWidth="2"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                </motion.svg>
+              )}
+            </AnimatePresence>
             {status.text}
           </p>
         </form>

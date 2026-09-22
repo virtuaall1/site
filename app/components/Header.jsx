@@ -24,6 +24,7 @@ const LINKS = [
 export function Header({ path = '/' }) {
   const { lang, setLang, t } = useI18n();
   const [open, setOpen] = useState(false);
+  const [hover, setHover] = useState(null);
   const burger = useRef(null);
   const menu = useRef(null);
 
@@ -56,27 +57,37 @@ export function Header({ path = '/' }) {
         v<span aria-hidden="true" className="inline-block size-[0.26em] bg-acid" />studio
       </a>
 
-      <nav aria-label="Основна навігація" className="ml-auto hidden gap-6 text-[0.88rem] text-muted lg:flex">
-        {LINKS.map(link => (
-          <a
-            key={link.href}
-            href={link.href}
-            aria-current={current(link.href) ? 'page' : undefined}
-            className={cn(
-              'group relative py-1 transition-colors hover:text-paper',
-              current(link.href) && 'text-paper'
-            )}
-          >
-            {label(link)}
-            <span
-              className={cn(
-                'absolute inset-x-0 bottom-0 h-px origin-left bg-acid transition-[transform,opacity] duration-300',
-                current(link.href) ? 'scale-x-100 opacity-40' : 'scale-x-0 opacity-0',
-                'group-hover:scale-x-100 group-hover:opacity-100'
+      <nav
+        aria-label="Основна навігація"
+        onMouseLeave={() => setHover(null)}
+        className="ml-auto hidden gap-6 text-[0.88rem] text-muted lg:flex"
+      >
+        {LINKS.map(link => {
+          const here = current(link.href);
+          const lit = hover ? hover === link.href : here;
+          return (
+            <a
+              key={link.href}
+              href={link.href}
+              onMouseEnter={() => setHover(link.href)}
+              aria-current={here ? 'page' : undefined}
+              className={cn('relative py-1 transition-colors hover:text-paper', here && 'text-paper')}
+            >
+              {label(link)}
+              {/* Одна и та же полоска переезжает между пунктами:
+                  layoutId говорит Motion, что это тот же элемент, и
+                  он сам считает путь. Двух полосок на экране не
+                  бывает, поэтому и мигания нет. */}
+              {lit && (
+                <motion.span
+                  layoutId="nav-underline"
+                  className="absolute inset-x-0 -bottom-px h-px bg-acid"
+                  transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                />
               )}
-            />
-          </a>
-        ))}
+            </a>
+          );
+        })}
       </nav>
 
       <div className={cn('flex items-center gap-3', 'ml-auto lg:ml-0')}>

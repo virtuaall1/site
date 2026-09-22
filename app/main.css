@@ -106,6 +106,51 @@
 .collapsible > * { overflow: hidden; }
 .collapsible[data-open="true"] { grid-template-rows: 1fr; }
 
+
+/* Пятно света под курсором на стеклянной плите. Рисует браузер по
+   двум переменным, которые ставит обработчик, — React в движении
+   мыши не участвует. */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: var(--glow, 0);
+  transition: opacity 0.35s var(--ease-out-quint);
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(216, 255, 62, 0.07),
+    transparent 62%
+  );
+}
+
+/* Бегущая строка. Содержимое продублировано, поэтому уезжаем ровно
+   на половину — шва не видно. */
+.marquee {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track { animation: marquee var(--marquee-speed, 38s) linear infinite; }
+@keyframes marquee {
+  to { transform: translateX(calc(-50% - 0.25rem)); }
+}
+
+/* Волосяная линия, которая растёт по левому краю вместе с
+   прокруткой: видно, сколько страницы позади. */
+.rail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  z-index: 50;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--color-acid) var(--read, 0%), transparent var(--read, 0%));
+  opacity: 0.35;
+}
+
 /* Кому движение мешает — выключаем всё разом. Motion читает ту же
    системную настройку сам, это страховка для css-переходов. */
 @media (prefers-reduced-motion: reduce) {

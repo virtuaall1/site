@@ -7,6 +7,7 @@
  * потому что различие между «перейти» и «сделать» семантическое,
  * а не визуальное.
  */
+import { motion } from 'motion/react';
 import { cn } from '../../lib/cn.js';
 
 const BASE = 'inline-flex items-center justify-center gap-2 rounded-full font-medium ' +
@@ -28,9 +29,22 @@ const SIZES = {
   lg: 'min-h-[52px] px-[30px] py-[15px] text-base'
 };
 
+/* Нажатие должно чувствоваться. Уход вниз на два процента —
+   меньше, чем замечаешь глазом, но ровно столько, чтобы палец
+   поверил, что кнопка нажалась. Motion сам выключит это там, где
+   в системе стоит «меньше движения». */
 export function Button({ as: As = 'button', variant = 'glass', size = 'md', className, ...rest }) {
   if (As === 'button' && !rest.type) rest.type = 'button';
-  return <As className={cn(BASE, VARIANTS[variant], SIZES[size], className)} {...rest} />;
+  const Tag = motion[As] || motion.button;
+  return (
+    <Tag
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'spring', stiffness: 420, damping: 30 }}
+      className={cn(BASE, VARIANTS[variant], SIZES[size], className)}
+      {...rest}
+    />
+  );
 }
 
 export default Button;

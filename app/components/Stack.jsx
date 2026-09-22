@@ -7,6 +7,7 @@
 import { useI18n } from '../lib/i18n.jsx';
 import { Section, SectionHead } from './ui/Section.jsx';
 import { Reveal } from './ui/Reveal.jsx';
+import { Marquee } from './ui/Marquee.jsx';
 import { EXTRA_STACK } from '../lib/content.js';
 
 export function Stack({ id = 'stack', items = EXTRA_STACK }) {
@@ -15,15 +16,7 @@ export function Stack({ id = 'stack', items = EXTRA_STACK }) {
     <Section id={id}>
       <SectionHead kicker={t('stack.kicker')} title={t('stack.title')} lead={t('stack.lead')} />
       <Reveal>
-        <ul className="flex flex-wrap gap-2">
-          {items.map(name => (
-            <li key={name}
-                className="glass-plate rounded-full px-3.5 py-[7px] text-[0.82rem] text-muted
-                           transition-colors hover:border-rule hover:text-acid">
-              {name}
-            </li>
-          ))}
-        </ul>
+        <Marquee items={items} />
       </Reveal>
     </Section>
   );

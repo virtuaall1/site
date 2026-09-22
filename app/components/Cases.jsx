@@ -34,14 +34,26 @@ function CaseCard({ project, index }) {
         target="_blank"
         rel="noopener noreferrer"
         onPointerMove={e => {
-          const r = e.currentTarget.getBoundingClientRect();
-          setTilt({ x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 });
+          const box = e.currentTarget;
+          const r = box.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          setTilt({ x, y });
+          // Пятно света держим на css-переменных, а не на состоянии:
+          // перерисовывать React на каждое движение мыши дорого, а
+          // градиент браузер пересчитает сам.
+          box.style.setProperty('--mx', `${e.clientX - r.left}px`);
+          box.style.setProperty('--my', `${e.clientY - r.top}px`);
+          box.style.setProperty('--glow', '1');
         }}
-        onPointerLeave={() => setTilt({ x: 0, y: 0 })}
+        onPointerLeave={e => {
+          setTilt({ x: 0, y: 0 });
+          e.currentTarget.style.setProperty('--glow', '0');
+        }}
         animate={{ rotateX: -tilt.y * 4, rotateY: tilt.x * 4, y: tilt.x || tilt.y ? -4 : 0 }}
         transition={SPRING_SOFT}
         style={{ transformPerspective: 900 }}
-        className="glass-plate group block h-full rounded-2xl p-4 pb-6 transition-colors duration-300 hover:bg-glass-2 hover:border-rule"
+        className="spotlight glass-plate group block h-full rounded-2xl p-4 pb-6 transition-colors duration-300 hover:bg-glass-2 hover:border-rule"
       >
         <span className="block overflow-hidden rounded-xl border border-rule-soft bg-ink-3">
           <picture>

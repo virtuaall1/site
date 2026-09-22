@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../lib/i18n.jsx';
 import { Section, SectionHead } from './ui/Section.jsx';
 import { Reveal, step } from './ui/Reveal.jsx';
+import { CountUp } from './ui/CountUp.jsx';
 import { GITHUB_USER, HIDDEN_REPOS, LINKS } from '../lib/content.js';
 
 const API = `https://api.github.com/users/${GITHUB_USER}`;
@@ -86,7 +87,7 @@ export function Work({ id = 'work' }) {
             ].map(([num, label], i) => (
               <Reveal key={label} delay={step(i)}>
                 <div className="glass-plate grid gap-1 rounded-xl p-6 text-[0.82rem] text-faint">
-                  <b className="tabular font-display text-[1.9rem] font-extrabold tracking-[-0.04em] text-paper">{num}</b>
+                  <CountUp to={num} className="tabular font-display text-[1.9rem] font-extrabold tracking-[-0.04em] text-paper" />
                   <span>{label}</span>
                 </div>
               </Reveal>
@@ -99,7 +100,14 @@ export function Work({ id = 'work' }) {
             ? data.repos.map((repo, i) => (
                 <Reveal as="div" key={repo.id} delay={step(i)}>
                   <a href={repo.html_url} target="_blank" rel="noopener noreferrer"
-                     className="glass-plate group grid h-full content-start gap-2 rounded-xl p-6 transition-colors hover:border-rule hover:bg-glass-2">
+                     onPointerMove={e => {
+                       const r = e.currentTarget.getBoundingClientRect();
+                       e.currentTarget.style.setProperty('--mx', `${e.clientX - r.left}px`);
+                       e.currentTarget.style.setProperty('--my', `${e.clientY - r.top}px`);
+                       e.currentTarget.style.setProperty('--glow', '1');
+                     }}
+                     onPointerLeave={e => e.currentTarget.style.setProperty('--glow', '0')}
+                     className="spotlight glass-plate group grid h-full content-start gap-2 rounded-xl p-6 transition-colors hover:border-rule hover:bg-glass-2">
                     <span className="font-display text-base font-semibold tracking-[-0.02em] transition-colors group-hover:text-acid">
                       {repo.name}
                     </span>

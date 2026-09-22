@@ -7,6 +7,7 @@
  */
 import { cn } from '../../lib/cn.js';
 import { Kicker } from './Kicker.jsx';
+import { Scramble } from './Scramble.jsx';
 
 export function Section({ id, sunken = false, className, children }) {
   const inner = (
@@ -34,9 +35,11 @@ export function SectionHead({ kicker, title, lead, children, className }) {
     <div className={cn('mb-16', className)}>
       {kicker && <Kicker className="mb-4">{kicker}</Kicker>}
       {title && (
-        <h2 className="max-w-[18ch] font-display text-[clamp(2rem,4.6vw,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-balance">
-          {title}
-        </h2>
+        <Scramble
+          as="h2"
+          text={title}
+          className="block max-w-[18ch] font-display text-[clamp(2rem,4.6vw,3.5rem)] font-extrabold leading-[1.02] tracking-[-0.045em] text-balance"
+        />
       )}
       {lead && <p className="mt-4 max-w-[62ch] text-[1.02rem] text-muted">{lead}</p>}
       {children}

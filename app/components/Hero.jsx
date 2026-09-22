@@ -14,6 +14,7 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { useI18n } from '../lib/i18n.jsx';
 import { Button } from './ui/Button.jsx';
+import { Magnetic } from './ui/Magnetic.jsx';
 import { SPRING, SPRING_SOFT } from './ui/Reveal.jsx';
 import { LINKS } from '../lib/content.js';
 
@@ -62,12 +63,31 @@ export function Hero({ title, lead, cta, kicker, figures = [] }) {
       >
         <p className="max-w-[54ch] text-[1.05rem] text-muted">{lead}</p>
         <div className="flex flex-wrap gap-3">
-          <Button as="a" href="/#contact" variant="solid">{cta}</Button>
-          <Button as="a" href={LINKS.github} target="_blank" rel="noopener noreferrer">
-            {t('hero.cta2')}
-          </Button>
+          <Magnetic><Button as="a" href="/#contact" variant="solid">{cta}</Button></Magnetic>
+          <Magnetic>
+            <Button as="a" href={LINKS.github} target="_blank" rel="noopener noreferrer">
+              {t('hero.cta2')}
+            </Button>
+          </Magnetic>
         </div>
       </motion.div>
+
+      {/* Подсказка, что ниже ещё есть страница. Линия ездит вниз и
+          растворяется — стрелку рисовать не нужно, движение само
+          говорит, куда смотреть. */}
+      <motion.span
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1, duration: 0.8 }}
+        className="mt-12 block h-10 w-px overflow-hidden bg-rule"
+      >
+        <motion.span
+          className="block h-3 w-px bg-acid"
+          animate={{ y: [-12, 40], opacity: [0, 1, 0] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.4 }}
+        />
+      </motion.span>
 
       {figures.length > 0 && (
         <motion.p

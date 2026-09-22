@@ -8,6 +8,8 @@
  * через View Transitions.
  */
 import { I18nProvider } from './lib/i18n.jsx';
+import { GridCanvas } from './components/GridCanvas.jsx';
+import { ScrollRail } from './components/ScrollRail.jsx';
 import { Header } from './components/Header.jsx';
 import { Footer } from './components/Footer.jsx';
 import { Home } from './pages/Home.jsx';
@@ -27,6 +29,8 @@ export function App({ page = 'Home', path = '/' }) {
       <a href="#main" className="absolute left-[-9999px] top-0 z-200 bg-acid px-5 py-3 font-semibold text-acid-ink focus:left-2 focus:top-2">
         Перейти до вмісту
       </a>
+      <GridCanvas />
+      <ScrollRail />
       <Header path={path} />
       <main id="main" className="relative z-1">
         <Page />
