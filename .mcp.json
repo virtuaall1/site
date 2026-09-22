@@ -1,0 +1,15 @@
+{
+  "//": "Серверы MCP для этого проекта. Claude Code читает файл при старте сессии.",
+  "mcpServers": {
+    "chrome-devtools": {
+      "//": "Живой браузер: открыть страницу, снять метрики, посмотреть консоль и сеть. В песочнице браузер уже лежит рядом, поэтому указываем его явно — иначе сервер полезет качать свой.",
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest", "--executablePath", "/opt/pw-browsers/chromium-1194/chrome-linux/chrome", "--headless", "true", "--isolated", "true"]
+    },
+    "sentry": {
+      "//": "Ошибки с сайта. Сервер удалённый и с входом по OAuth: работает на машине, где можно открыть окно браузера для подтверждения.",
+      "type": "http",
+      "url": "https://mcp.sentry.dev/mcp"
+    }
+  }
+}
