@@ -20,9 +20,9 @@ window.SITE = (() => {
   const LINKS = {
     github: 'https://github.com/virtuaall1',
     telegram: 'https://t.me/virtuaall01',
-    email: 'virtuaall0@gmail.com',
+    email: 'admin@vrtll.dev',
 
-    domain: 'vstudio.dev'
+    domain: 'vrtll.dev'
   };
 
   const GITHUB_USER = 'virtuaall1';
@@ -64,7 +64,7 @@ window.SITE = (() => {
   const PROJECTS = [
     {
       year: '2026',
-      link: 'https://virtuaall1.github.io/site/cases/booking/',
+      link: 'https://vrtll.dev/cases/booking/',
       shot: 'img/cases/booking.jpg',
       uk: {
         name: 'Запис до майстра — Telegram-бот',
@@ -79,7 +79,7 @@ window.SITE = (() => {
     },
     {
       year: '2026',
-      link: 'https://virtuaall1.github.io/site/cases/guard/',
+      link: 'https://vrtll.dev/cases/guard/',
       shot: 'img/cases/guard.jpg',
       uk: {
         name: 'Модератор чату — Telegram-бот',
@@ -94,7 +94,7 @@ window.SITE = (() => {
     },
     {
       year: '2026',
-      link: 'https://virtuaall1.github.io/site/cases/spend/',
+      link: 'https://vrtll.dev/cases/spend/',
       shot: 'img/cases/spend.jpg',
       uk: {
         name: 'Облік витрат — Telegram-бот',
@@ -113,7 +113,7 @@ window.SITE = (() => {
        (список SKIP у scripts/build.js) і нізвідки не лінкуються. */
     {
       year: '2026',
-      link: 'https://virtuaall1.github.io/site/cases/shop-bot/',
+      link: 'https://vrtll.dev/cases/shop-bot/',
       shot: 'img/cases/shop-bot.jpg',
       uk: {
         name: 'Telegram-бот магазину',
@@ -151,7 +151,7 @@ window.SITE = (() => {
     },
     {
       id: 'shop-bot',
-      caseLink: 'https://virtuaall1.github.io/site/cases/shop-bot/',
+      caseLink: 'https://vrtll.dev/cases/shop-bot/',
       example: {
         uk: 'Приклад: магазин кави. Клієнт обирає обсяг і помел, оплачує карткою в боті, ти бачиш замовлення з адресою в адмінці.',
         en: "Example: a coffee shop. The buyer picks grind and weight, pays by card inside the bot, and you see the order with its address in the admin panel."
@@ -170,7 +170,7 @@ window.SITE = (() => {
     },
     {
       id: 'bot',
-      caseLink: 'https://virtuaall1.github.io/site/cases/guard/',
+      caseLink: 'https://vrtll.dev/cases/guard/',
       example: {
         uk: 'Приклад: бот стоматології нагадує про візит за добу і збирає відгуки, а нових у чаті зустрічає капча.',
         en: "Example: a clinic bot reminds patients a day before the visit and collects reviews, while a captcha meets newcomers in the chat."

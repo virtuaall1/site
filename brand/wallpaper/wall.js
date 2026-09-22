@@ -556,7 +556,7 @@
 
     ctx.font = `400 ${size * 0.62}px Onest, system-ui, sans-serif`;
     ctx.fillStyle = rgba(on, 0.34);
-    ctx.fillText('vstudio.dev', x, y + size * 1.15);
+    ctx.fillText('vrtll.dev', x, y + size * 1.15);
   }
 
   /* ── збірка ─────────────────────────────────────────────────── */

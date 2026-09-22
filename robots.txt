@@ -5,4 +5,4 @@ Allow: /
 # упрощённые тексты и они меняются каждый заход.
 Disallow: /preview/
 
-Sitemap: https://virtuaall1.github.io/site/sitemap.xml
+Sitemap: https://vrtll.dev/sitemap.xml
