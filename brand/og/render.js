@@ -18,7 +18,15 @@ const W = 1200, H = 630;
 const srv = http.createServer((req, res) => {
   const file = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]));
   if (!file.startsWith(ROOT) || !fs.existsSync(file)) { res.writeHead(404).end(); return; }
-  res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+  /* Карточка тянет те же шрифты, что и сайт, поэтому сервер должен
+     уметь отдавать не только html: с чужим типом браузер молча
+     откажется применять css, и надпись уедет системным шрифтом. */
+  const MIME = {
+    '.html': 'text/html; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.woff2': 'font/woff2'
+  };
+  res.writeHead(200, { 'content-type': MIME[path.extname(file)] || 'application/octet-stream' });
   fs.createReadStream(file).pipe(res);
 });
 
@@ -32,7 +40,11 @@ srv.listen(0, '127.0.0.1', async () => {
     deviceScaleFactor: 1
   });
   await page.goto(`${base}/brand/og/index.html`, { waitUntil: 'load' });
-  await page.waitForTimeout(400);
+  // Ждём шрифты: canvas и скриншот не умеют перерисовать текст
+  // задним числом, и кадр, снятый на полсекунды раньше, выйдет
+  // системным шрифтом вместо Unbounded.
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(300);
   await page.screenshot({ path: OUT, type: 'jpeg', quality: 92 });
   await browser.close();
   srv.close();
