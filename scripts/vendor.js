@@ -1,51 +1,69 @@
 #!/usr/bin/env node
 /**
- * Складывает чужие библиотеки к себе.
+ * Складывает чужую библиотеку к себе.
  *
- *   node scripts/vendor.js   →   vendor/
+ *   node scripts/vendor.js   →   vendor/motion.min.js
  *
- * Зачем: пока gsap, ScrollTrigger и lenis грузятся с cdnjs и
- * jsdelivr, у страницы два чужих домена, которым разрешено
- * исполнять код в браузере посетителя. Взломают любой из них —
- * и на сайте выполнится что угодно.
+ * Анимации держит Motion (motion.dev) — та же команда, что делала
+ * Framer Motion, только без React. Пружины, scroll-привязка, inView
+ * и stagger — всё оттуда.
  *
- * После этого шага сборка подменяет адреса на локальные, и в CSP
- * остаётся script-src 'self'. Скачивание происходит один раз на
- * сборочной машине, а не у каждого посетителя.
+ * Зачем тащить к себе: пока библиотека грузится с чужого домена, у
+ * страницы есть посторонний источник, которому разрешено исполнять
+ * код в браузере посетителя. Взломают его — выполнится что угодно.
+ * После этого шага сборка подменяет адрес на локальный, и в CSP
+ * остаётся script-src 'self'.
  *
- * Версии прибиты гвоздями. Не скачалось — сборка падает, и наружу
+ * Берём из реестра npm, а не с cdnjs: cdnjs и jsdelivr отвечают
+ * 403 со сборочных машин за строгим прокси, и сборка падала на
+ * ровном месте. Реестр доступен везде, где работает npm install.
+ *
+ * Версия прибита гвоздями. Не скачалось — сборка падает, и наружу
  * едет прошлая рабочая версия сайта, а не сломанная новая.
  */
 'use strict';
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
+const { execFileSync } = require('child_process');
 
-const FILES = [
-  { name: 'gsap.min.js', url: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js' },
-  { name: 'scrolltrigger.min.js', url: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js' },
-  { name: 'lenis.min.js', url: 'https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js' }
-];
-
-const MIN_BYTES = 5000;   // меньше — значит вместо библиотеки приехала страница ошибки
+const PKG = 'motion';
+const VERSION = '13.4.0';
+/* Из пакета нужен ровно один файл: собранный UMD-бандл, который
+   кладёт себя в window.Motion. Остальное там — сборки под React,
+   three.js и исходники с картами. */
+const INSIDE = 'package/dist/motion.js';
+const OUT = 'motion.min.js';
+const MIN_BYTES = 40000;   // меньше — значит приехало не то
 
 const dir = path.join(__dirname, '..', 'vendor');
 
-(async () => {
+(() => {
   fs.mkdirSync(dir, { recursive: true });
 
-  for (const { name, url } of FILES) {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`${url} — HTTP ${res.status}`);
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'vendor-'));
+  try {
+    // npm сам разберётся с реестром, прокси и авторизацией —
+    // повторять его логику своим fetch незачем
+    const tgz = execFileSync('npm', ['pack', `${PKG}@${VERSION}`, '--silent'],
+      { cwd: tmp, encoding: 'utf8' }).trim().split('\n').pop();
 
-    const body = Buffer.from(await res.arrayBuffer());
-    if (body.length < MIN_BYTES) throw new Error(`${url} — всего ${body.length} байт`);
+    execFileSync('tar', ['-xzf', tgz, INSIDE], { cwd: tmp });
 
-    fs.writeFileSync(path.join(dir, name), body);
-    const sum = crypto.createHash('sha384').update(body).digest('base64');
-    console.log(`  ${name.padEnd(22)} ${(body.length / 1024).toFixed(1)} КБ  sha384-${sum}`);
+    const body = fs.readFileSync(path.join(tmp, INSIDE));
+    if (body.length < MIN_BYTES) {
+      throw new Error(`${INSIDE} весит ${body.length} байт — это не библиотека`);
+    }
+
+    const target = path.join(dir, OUT);
+    fs.writeFileSync(target, body);
+
+    const sha = crypto.createHash('sha256').update(body).digest('hex').slice(0, 16);
+    console.log(`→ vendor/${OUT}  ${(body.length / 1024).toFixed(0)} КБ  sha256:${sha}`);
+    console.log(`   ${PKG}@${VERSION} из реестра npm`);
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true });
   }
-
-  console.log('\nБиблиотеки лежат в vendor/ — сборка подставит их вместо CDN.');
-})().catch(err => { console.error('Библиотеки не скачались:', err.message); process.exit(1); });
+})();

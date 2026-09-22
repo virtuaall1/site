@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://bank.gov.ua https://cdn.jsdelivr.net; base-uri 'self'; form-action 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://bank.gov.ua; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="dark">
 
@@ -454,10 +454,10 @@
   </svg>
 </template>
 
-<!-- gsap, ScrollTrigger и lenis грузит уже сам app.js — и только там,
-     где анимации действительно работают. На телефоне и при
-     prefers-reduced-motion они выключены, и качать ради них 150 КБ
-     чужого кода незачем. Адреса лежат в VENDOR внутри app.js. -->
+<!-- Motion грузит уже сам app.js — и только там, где анимации
+     действительно работают. На телефоне и при prefers-reduced-motion
+     они выключены, и качать ради них 145 КБ чужого кода незачем.
+     Адрес лежит в VENDOR внутри app.js. -->
 <script src="js/content.js" defer></script>
 <script src="js/app.js" defer></script>
 </body>

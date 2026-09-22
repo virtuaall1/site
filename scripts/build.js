@@ -58,24 +58,22 @@ const version = (process.env.GITHUB_SHA || String(Date.now())).slice(0, 8);
 const HOME = 'https://vrtll.dev/';
 const site = (process.env.SITE_URL || HOME).replace(/\/*$/, '/');
 
-/* Библиотеки анимации, если их успел скачать scripts/vendor.js.
-   Есть папка — переписываем адреса на свои и убираем чужие домены
-   из CSP: на странице не останется ни одного стороннего скрипта.
-   Нет папки (обычная локальная разработка) — всё как было, с CDN. */
+/* Библиотека анимации, если её успел скачать scripts/vendor.js.
+   Есть файл — переписываем адрес на свой и убираем чужие домены из
+   CSP: на странице не останется ни одного стороннего скрипта.
+   Нет файла (сборка без сети) — всё как было, с CDN. */
 const VENDOR_SWAP = [
-  ['https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js', 'vendor/gsap.min.js'],
-  ['https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js', 'vendor/scrolltrigger.min.js'],
-  ['https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js', 'vendor/lenis.min.js']
+  ['https://cdn.jsdelivr.net/npm/motion@13.4.0/dist/motion.js', 'vendor/motion.min.js']
 ];
 
-/* Проверяем файлы, а не папку: vendor.js создаёт каталог до
+/* Проверяем файл, а не папку: vendor.js создаёт каталог до
    скачивания, и если скачать не вышло, остаётся пустая папка.
-   По ней сборка раньше решала, что библиотеки на месте, и
-   переписывала адреса на файлы, которых нет, — сайт уезжал наружу
+   По ней сборка раньше решала, что библиотека на месте, и
+   переписывала адрес на файл, которого нет, — сайт уезжал наружу
    без анимаций и молча. */
 const hasVendor = VENDOR_SWAP.every(([, local]) => {
   const file = path.join(root, local);
-  return fs.existsSync(file) && fs.statSync(file).size > 5000;
+  return fs.existsSync(file) && fs.statSync(file).size > 40000;
 });
 
 const css = new CleanCss({ level: 1, format: false });
@@ -145,7 +143,7 @@ async function shrink(file, src) {
     let stamped = src.replace(/(src|href)="((?:\.\.\/)*(?:js|css)\/[^"?]+)"/g,
       (_, attr, url) => `${attr}="${url}?v=${version}"`);
     if (hasVendor) {
-      stamped = stamped.replace("script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+      stamped = stamped.replace("script-src 'self' https://cdn.jsdelivr.net",
                                 "script-src 'self'");
     }
     /* Структурированные данные. Блок с type="application/ld+json" —
@@ -232,8 +230,8 @@ async function walk(rel) {
   console.log(`Свой код: ${codeLine} — подставлен в полосу языков.`);
   console.log(`Адрес сайта: ${site}${site === HOME ? ' (по умолчанию; переопределяется SITE_URL)' : ' — из SITE_URL'}`);
   console.log(hasVendor
-    ? '\nБиблиотеки взяты из vendor/ — сторонних скриптов на странице не осталось.'
-    : '\nvendor/ нет: gsap и lenis останутся на CDN (для локальной сборки это нормально).');
+    ? '\nMotion взят из vendor/ — сторонних скриптов на странице не осталось.'
+    : '\nvendor/ нет: Motion останется на CDN (для локальной сборки это нормально).');
   console.log(`\nСборка в dist/: ${(total / 1024).toFixed(1)} КБ текста сжато до ` +
               `${((total - saved) / 1024).toFixed(1)} КБ (−${Math.round(saved / total * 100)}%), версия ${version}.`);
 })().catch(err => { console.error('Сборка не собралась:', err.message); process.exit(1); });

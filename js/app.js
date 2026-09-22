@@ -256,12 +256,11 @@
       // браузер сбрасывает позицию уже после пересчёта раскладки,
       // поэтому возвращаемся на место следующим кадром после него
       const restore = () => {
-        if (smoothScroll) smoothScroll.scrollTo(scrollBefore, { immediate: true });
         // behavior: 'instant' обязателен: в css у html стоит
         // scroll-behavior: smooth, и обычный scrollTo уехал бы туда
         // плавной анимацией — посреди смены языка это выглядит как
         // самопроизвольная прокрутка
-        else window.scrollTo({ top: scrollBefore, behavior: 'instant' });
+        window.scrollTo({ top: scrollBefore, behavior: 'instant' });
         document.body.style.minHeight = '';
       };
       requestAnimationFrame(() => requestAnimationFrame(restore));
@@ -1181,11 +1180,10 @@
      vendor/, если папка есть, — тогда со стороннего домена на
      странице не исполняется вообще ничего.
      ======================================================= */
-  const VENDOR = {
-    gsap: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js',
-    scrollTrigger: 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js',
-    lenis: 'https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js'
-  };
+  /* Motion (motion.dev) — та же команда, что делала Framer Motion,
+     только без React. Адрес подменяет сборка на vendor/motion.min.js,
+     и тогда в CSP остаётся script-src 'self'. */
+  const VENDOR = { motion: 'https://cdn.jsdelivr.net/npm/motion@13.4.0/dist/motion.js' };
 
   function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -1200,15 +1198,34 @@
   /** Никогда не отклоняется: не доехало — сайт живёт на фоллбэке. */
   function loadVendor() {
     if (!heavyAnim) return Promise.resolve();
-    // ScrollTrigger — плагин к gsap, поэтому строго после него
-    return loadScript(VENDOR.gsap)
-      .then(() => Promise.all([loadScript(VENDOR.scrollTrigger), loadScript(VENDOR.lenis)]))
-      .catch(err => { console.warn('Анимации:', err.message); });
+    return loadScript(VENDOR.motion)
+      .catch(err => { console.warn('Анімації:', err.message); });
   }
 
   /* =======================================================
-     Анимации: GSAP + ScrollTrigger, иначе — IntersectionObserver
+     Движение
+
+     Всё держится на Motion: пружины вместо кривых Безье, привязка
+     к прокрутке через scroll(), появление через inView().
+
+     Пружина — не украшение. Кривая с фиксированной длительностью
+     одинаково долго едет и на 20 пикселей, и на 200; пружина
+     считает время от расстояния и жёсткости, поэтому мелкое
+     движение выходит быстрым, а крупное — весомым. Именно это и
+     читается как «дорого».
+
+     Ничего из этого не обязательно: не доехала библиотека, выключено
+     движение в системе, телефон — работает IntersectionObserver и
+     переходы из css. Страница живая в любом случае.
      ======================================================= */
+  const M = () => window.Motion;
+
+  /* Пружины под разные роли. Числа подобраны так, чтобы движение
+     останавливалось, а не дребезжало: перелёт меньше пяти процентов. */
+  const SPRING = { type: 'spring', stiffness: 220, damping: 30, mass: 0.9 };
+  const SPRING_SOFT = { type: 'spring', stiffness: 130, damping: 24, mass: 1 };
+  const SPRING_SNAP = { type: 'spring', stiffness: 420, damping: 34, mass: 0.7 };
+
   let observer = null;
 
   function fallbackReveals() {
@@ -1228,8 +1245,8 @@
   }
 
   /**
-   * Порядковый номер внутри своего списка — по нему css отмеряет
-   * задержку. Дальше шестого не считаем: иначе низ длинного списка
+   * Порядковый номер внутри своего списка — по нему отмеряется
+   * задержка. Дальше шестого не считаем: иначе низ длинного списка
    * ждёт своей очереди уже заметно долго.
    */
   function stagger(node) {
@@ -1239,32 +1256,109 @@
     node.style.setProperty('--i', String(i));
   }
 
-  function gsapReveals() {
-    const { gsap } = window;
+  /** Блоки проявляются, когда доезжают до экрана. */
+  function motionReveals() {
+    const { inView, animate } = M();
     $$('.reveal').forEach(node => {
       if (node.dataset.animated || node.classList.contains('in')) return;
       node.dataset.animated = '1';
       stagger(node);
-      gsap.fromTo(node,
-        { opacity: 0, y: 26 },
-        {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-          delay: Number(node.dataset.i || 0) * 0.07,
-          scrollTrigger: { trigger: node, start: 'top 88%', once: true },
-          // вытирание снимка кейса живёт в css и ждёт класс .in
-          onStart: () => node.classList.add('in')
-        }
-      );
+
+      // inView отдаёт функцию отписки — блок проявляется один раз,
+      // иначе при возврате к нему он проигрывал бы появление снова
+      const stop = inView(node, () => {
+        // класс нужен css: по нему вытирается снимок кейса
+        node.classList.add('in');
+        animate(node,
+          { opacity: [0, 1], transform: ['translateY(26px)', 'translateY(0px)'] },
+          { ...SPRING, delay: Number(node.dataset.i || 0) * 0.06 }
+        );
+        stop();
+      }, { margin: '0px 0px -10% 0px' });
     });
   }
 
   function refreshAnimations() {
-    if (heavyAnim && window.gsap && window.ScrollTrigger) {
-      gsapReveals();
-      window.ScrollTrigger.refresh();
-    } else {
-      fallbackReveals();
+    if (heavyAnim && M()) motionReveals();
+    else fallbackReveals();
+  }
+
+  /* Первый экран: строки заголовка выезжают из-под маски, всё
+     остальное подтягивается следом. */
+  function introAnimation() {
+    const { animate, stagger: every } = M();
+
+    animate('.hero-title .line-in',
+      { transform: ['translateY(115%)', 'translateY(0%)'] },
+      { ...SPRING_SOFT, delay: every(0.075) }
+    );
+
+    animate('.status',
+      { opacity: [0, 1], transform: ['translateY(14px)', 'translateY(0px)'] },
+      { ...SPRING, delay: 0.1 }
+    );
+
+    animate('.hero-bottom, .hero-figures',
+      { opacity: [0, 1], transform: ['translateY(20px)', 'translateY(0px)'] },
+      { ...SPRING, delay: every(0.09, { startDelay: 0.42 }) }
+    );
+
+    animate('.topbar',
+      { opacity: [0, 1], transform: ['translateY(-14px)', 'translateY(0px)'] },
+      { ...SPRING_SNAP }
+    );
+  }
+
+  /* Прокрутка тянет за собой три вещи: полосу прочитанного,
+     медленный отъезд первого экрана и подъём снимков кейсов.
+     Всё это считает браузер на своей стороне — скрипт только
+     описывает связь. */
+  function scrollEffects() {
+    const { scroll, animate } = M();
+
+    const bar = $('.progress i');
+    if (bar) {
+      scroll(progress => { bar.style.setProperty('--p', `${progress * 100}%`); });
     }
+
+    const hero = $('.hero');
+    if (hero) {
+      scroll(
+        animate(hero, { transform: ['translateY(0px)', 'translateY(60px)'], opacity: [1, 0.35] }),
+        { target: hero, offset: ['start start', 'end start'] }
+      );
+    }
+
+    // снимок внутри рамки едет медленнее самой карточки — глубина
+    $$('.case-frame').forEach(frame => {
+      const shot = $('.case-shot', frame);
+      if (!shot) return;
+      scroll(
+        animate(shot, { transform: ['translateY(-3%) scale(1.06)', 'translateY(3%) scale(1.06)'] }),
+        { target: frame, offset: ['start end', 'end start'] }
+      );
+    });
+  }
+
+  /* Карточки кейсов слегка наклоняются к курсору. Наклон маленький
+     нарочно: заметный поворот превращает премиальное в ярмарочное. */
+  function initTilt() {
+    if (!heavyAnim || !M()) return;
+    const { animate } = M();
+
+    $$('.case-link').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        animate(card, {
+          transform: `perspective(900px) rotateX(${-y * 4}deg) rotateY(${x * 4}deg) translateY(-4px)`
+        }, { duration: 0.25 });
+      });
+      card.addEventListener('pointerleave', () => {
+        animate(card, { transform: 'perspective(900px) rotateX(0deg) rotateY(0deg) translateY(0px)' }, SPRING_SOFT);
+      });
+    });
   }
 
   function initAnimations() {
@@ -1273,48 +1367,28 @@
       return;
     }
 
-    if (heavyAnim && window.gsap && window.ScrollTrigger) {
-      const { gsap, ScrollTrigger } = window;
-      gsap.registerPlugin(ScrollTrigger);
-
-      // строки заголовка выезжают из-под маски
-      gsap.from('.hero-title .line-in', {
-        yPercent: 115,
-        duration: 1.05,
-        ease: 'power4.out',
-        stagger: 0.09
-      });
-
-      gsap.from(['.status', '.hero-bottom'], {
-        opacity: 0,
-        y: 22,
-        duration: 0.9,
-        delay: 0.35,
-        ease: 'power3.out',
-        stagger: 0.12
-      });
-
-      gsapReveals();
+    if (heavyAnim && M()) {
+      introAnimation();
+      scrollEffects();
+      motionReveals();
+      initTilt();
     } else {
-      // CDN не ответил — включаем лёгкий фоллбэк, сайт остаётся живым
+      // библиотека не доехала или это телефон — лёгкий фоллбэк
       $$('.hero-title .line-in, .status, .hero-bottom').forEach(n => n.classList.add('in'));
       fallbackReveals();
     }
   }
 
-  let smoothScroll = null;
-
+  /**
+   * Плавная прокрутка по якорям.
+   *
+   * Раньше этим занимался Lenis: он перехватывал колесо и двигал
+   * страницу сам. От него отказались — чужая инерция дерётся с
+   * системной, на трекпаде это чувствуется сразу, а весит ещё
+   * двадцать килобайт. Плавность по якорям даёт сам браузер:
+   * scroll-behavior в css плюс scrollIntoView здесь.
+   */
   function initSmoothScroll() {
-    if (!heavyAnim || !window.Lenis) return;
-    const lenis = new window.Lenis({ duration: 1.05, smoothWheel: true });
-    smoothScroll = lenis;
-    const raf = time => { lenis.raf(time); requestAnimationFrame(raf); };
-    requestAnimationFrame(raf);
-
-    if (window.ScrollTrigger) {
-      lenis.on('scroll', window.ScrollTrigger.update);
-    }
-
     $$('a[href^="#"]').forEach(link => {
       link.addEventListener('click', e => {
         const id = link.getAttribute('href');
@@ -1322,7 +1396,8 @@
         const target = document.querySelector(id);
         if (!target) return;
         e.preventDefault();
-        lenis.scrollTo(target, { offset: -70 });
+        const top = target.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top, behavior: reduceMotion ? 'instant' : 'smooth' });
         closeMenu();
       });
     });

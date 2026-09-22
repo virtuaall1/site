@@ -361,6 +361,27 @@ srv.listen(0, '127.0.0.1', async () => {
         faq: document.querySelectorAll('#faqList .faq-item').length,
         mark: document.querySelector('#caseGrid').dataset.pre || ''
       }));
+      // Движение держит Motion; в исходниках он не доезжает (CDN
+      // закрыт), поэтому проверяем именно сборку с vendor/.
+      const motion = await page.evaluate(() => typeof window.Motion);
+      check('Motion подключён', motion === 'object', motion);
+
+      await page.evaluate(async () => {
+        const step = window.innerHeight * 0.7;
+        for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+          window.scrollTo({ top: y, behavior: 'instant' });
+          await new Promise(r => setTimeout(r, 120));
+        }
+      });
+      await page.waitForTimeout(1200);
+      const dark = await page.evaluate(() =>
+        [...document.querySelectorAll('.reveal')].filter(n => getComputedStyle(n).opacity === '0').length);
+      check('в сборке все блоки проявились', dark === 0, `${dark} шт.`);
+      const bar = await page.evaluate(() => document.querySelector('.progress i').style.getPropertyValue('--p'));
+      check('полоса прочитанного идёт за прокруткой', parseFloat(bar) > 50, bar);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(400);
+
       check('готовая разметка не задвоилась', counted.cases > 0 && counted.cases < 12, `${counted.cases} кейсів`);
       check('метка data-pre снята', counted.mark === '', counted.mark);
 
