@@ -44,18 +44,68 @@ const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&
 
 /**
  * Проверка «жива ли ручка», которую видно с телефона: открываешь
- * адрес в браузере — и сразу понятно, дошли ли до воркера настройки.
+ * адрес в браузере — и сразу понятно, что именно не так.
  *
- * Значений не отдаём, только «заданы или нет»: это не секрет, но и
- * не повод показывать наружу токен.
+ * Причин, по которым форма молчит, ровно три, и по ответу формы их
+ * не различить. Поэтому спрашиваем у самого телеграма: есть ли
+ * токен, узнаёт ли он бота и достучится ли тот до чата.
+ *
+ * Значений не отдаём — только факты. Токен наружу не уходит.
  */
-function health(env) {
+async function health(env) {
+  const token = env.TG_BOT_TOKEN;
+  const chat = env.TG_CHAT_ID;
+
+  if (!token || !chat) {
+    return json({
+      ok: true,
+      configured: false,
+      step: 'variables',
+      hint: 'Воркер не бачить TG_BOT_TOKEN і TG_CHAT_ID. Найчастіше вони задані в розділі Build, ' +
+            'а потрібні у Variables and Secrets самого воркера.'
+    });
+  }
+
+  /* Токен может быть на месте, но недействителен — например, его
+     отозвали в BotFather. getMe отвечает на этот вопрос дешевле
+     всего: ни сообщения, ни побочных действий. */
+  const me = await fetch(`https://api.telegram.org/bot${token}/getMe`)
+    .then(r => r.json())
+    .catch(() => null);
+
+  if (!me || !me.ok) {
+    return json({
+      ok: true,
+      configured: true,
+      step: 'token',
+      hint: 'Токен заданий, але телеграм його не приймає. Перевір TG_BOT_TOKEN — можливо, він відкликаний у BotFather.'
+    });
+  }
+
+  /* Бот не может написать первым: пока человек не нажал /start,
+     телеграм отвечает «chat not found». Это ловит почти всех один
+     раз, поэтому проверяем отдельно и говорим прямо. */
+  const reach = await fetch(`https://api.telegram.org/bot${token}/getChat?chat_id=${encodeURIComponent(chat)}`)
+    .then(r => r.json())
+    .catch(() => null);
+
+  if (!reach || !reach.ok) {
+    return json({
+      ok: true,
+      configured: true,
+      step: 'chat',
+      bot: `@${me.result.username}`,
+      hint: `Бот @${me.result.username} живий, але не може писати в чат ${chat}. ` +
+            'Відкрий цього бота в телеграмі й натисни /start — писати першим він не має права.'
+    });
+  }
+
   return json({
     ok: true,
-    configured: Boolean(env.TG_BOT_TOKEN && env.TG_CHAT_ID),
-    hint: env.TG_BOT_TOKEN && env.TG_CHAT_ID
-      ? 'Змінні на місці. Якщо форма все одно не працює — натисни /start своєму боту.'
-      : 'Воркер не бачить TG_BOT_TOKEN і TG_CHAT_ID. Схоже, вони задані в розділі Build, а не у самого воркера.'
+    configured: true,
+    step: 'ready',
+    bot: `@${me.result.username}`,
+    hint: 'Усе на місці: заявки з форми дійдуть.'
   });
 }
 
