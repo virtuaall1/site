@@ -15,6 +15,7 @@ import { Footer } from './components/Footer.jsx';
 import { Home } from './pages/Home.jsx';
 import { ServicePage } from './pages/ServicePage.jsx';
 import { NotFound } from './pages/NotFound.jsx';
+import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 
 const PAGES = {
   Home: () => <Home />,
@@ -35,7 +36,12 @@ export function App({ page = 'Home', path = '/' }) {
       <ScrollRail />
       <Header path={path} />
       <main id="main" className="relative z-1">
-        <Page />
+        {/* Ошибка внутри страницы не должна снимать с экрана всё:
+            шапка и подвал остаются, вместо содержимого — объяснение
+            и выходы. */}
+        <ErrorBoundary>
+          <Page />
+        </ErrorBoundary>
       </main>
       <Footer />
     </I18nProvider>
