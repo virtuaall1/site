@@ -3,7 +3,7 @@
  *
  *   NODE_PATH=/tmp/node_modules node scripts/look.js
  *   NODE_PATH=/tmp/node_modules node scripts/look.js 390 dark 0,1200,3400
- *   LOOK_PAGE=preview/print/index.html … node scripts/look.js 1280 light 0
+ *   LOOK_PAGE=cases/booking/index.html … node scripts/look.js 1280 light 0
  *
  * Поднимает статику из корня репозитория, открывает страницу
  * (по умолчанию index.html) в заданной ширине и теме и складывает

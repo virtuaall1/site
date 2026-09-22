@@ -2,7 +2,7 @@
  * Снимок страницы целиком — чтобы отдать вариант оформления
  * картинкой, а не ссылкой.
  *
- *   NODE_PATH=/tmp/node_modules node scripts/shot.js preview/work/index.html варіант-04.jpg
+ *   NODE_PATH=/tmp/node_modules node scripts/shot.js cases/booking/index.html booking.jpg
  *
  * Ширину и тему можно задать третьим и четвёртым аргументом.
  */

@@ -31,11 +31,8 @@ const root = path.join(__dirname, '..');
 const out = path.join(root, 'dist');
 
 /* Что берём. Всё остальное на сервер не едет. */
-/* preview/ — черновики оформления. Они выкладываются вместе с сайтом
-   (иначе их не посмотреть с телефона), но закрыты от поиска в
-   robots.txt и не значатся в sitemap. */
 const INCLUDE = ['index.html', 'robots.txt', 'sitemap.xml', '_headers', 'sw.js',
-  'css', 'js', 'img', 'fonts', 'cases', 'preview'];
+  'css', 'js', 'img', 'fonts', 'cases'];
 
 /* Временно снятые кейсы. Исходники остаются в репозитории — они ещё
    пригодятся, — но в dist не попадают, иначе страница осталась бы

@@ -49,8 +49,3 @@
 # старой версии кеша.
 /sw.js
   Cache-Control: no-cache
-
-# Черновики оформления не должны попадать в поиск, даже если на них
-# кто-то сошлётся: robots.txt от чужой ссылки не спасает.
-/preview/*
-  X-Robots-Tag: noindex, nofollow

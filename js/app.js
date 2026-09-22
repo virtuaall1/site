@@ -123,27 +123,9 @@
   let skipReveal = false;
   const t = key => (I18N[lang] && I18N[lang][key]) || I18N.uk[key] || key;
 
-  /* =======================================================
-     Тема: тёмная по умолчанию, светлая — по выбору или системной
-     ======================================================= */
+  /* Сайт тёмный и только тёмный: светлую тему убрали намеренно —
+     премиальность держится на глубине фона, а не на выборе. */
   const root = document.documentElement;
-
-  function detectTheme() {
-    try {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'light' || saved === 'dark') return saved;
-    } catch (e) { /* приватный режим */ }
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  }
-
-  function applyTheme(next) {
-    const theme = next === 'light' ? 'light' : 'dark';
-    root.dataset.theme = theme;
-    try { localStorage.setItem('theme', theme); } catch (e) { /* noop */ }
-
-    const btn = $('#themeBtn');
-    if (btn) btn.setAttribute('aria-pressed', String(theme === 'light'));
-  }
 
   /** Ссылка на Telegram с уже готовым текстом сообщения */
   function tgLink(text) {
@@ -1406,13 +1388,6 @@
       btn.addEventListener('click', () => applyLang(btn.dataset.lang));
     });
 
-    const themeBtn = $('#themeBtn');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', () => {
-        applyTheme(root.dataset.theme === 'light' ? 'dark' : 'light');
-      });
-    }
-
     const year = $('#year');
     if (year) year.textContent = String(new Date().getFullYear());
 
@@ -1541,7 +1516,6 @@
      Старт
      ======================================================= */
   function boot() {
-    applyTheme(detectTheme());
     applyLang(lang);
     initFaqToggles();
     initLeadForm();

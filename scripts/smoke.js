@@ -58,7 +58,7 @@ srv.listen(0, '127.0.0.1', async () => {
   {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: 'uk-UA' });
     await ctx.addInitScript(`try{localStorage.clear();localStorage.setItem('lang','uk');
-      localStorage.setItem('theme','light');localStorage.setItem('currency','uah');}catch(e){}`);
+      localStorage.setItem('currency','uah');}catch(e){}`);
     const page = await ctx.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
@@ -67,27 +67,16 @@ srv.listen(0, '127.0.0.1', async () => {
 
     check('без ошибок js', errors.length === 0, errors.join('; '));
 
-    // Тему сайт держит атрибутом data-theme на <html> — по нему и
-    // проверяем. Классов ds-* тут нет: они были у варианта на
-    // apple-ds, который откатили.
-    const theme = () => page.evaluate(() => document.documentElement.dataset.theme);
-    check('стартовая тема светлая', (await theme()) === 'light', await theme());
-
-    await page.click('#themeBtn');
-    await page.waitForTimeout(300);
-    const dark = await page.evaluate(() => ({
-      attr: document.documentElement.dataset.theme,
-      bg: getComputedStyle(document.body).backgroundColor
+    // Светлой темы больше нет: сайт тёмный всегда, и переключателя
+    // в шапке быть не должно.
+    const look = await page.evaluate(() => ({
+      bg: getComputedStyle(document.body).backgroundColor,
+      toggle: !!document.getElementById('themeBtn')
     }));
-    check('тема переключилась в тёмную', dark.attr === 'dark', `${dark.attr} / ${dark.bg}`);
-    // Точный цвет фона зависит от палитры — проверяем не значение,
-    // а что он действительно тёмный.
-    const rgb = (dark.bg.match(/\d+/g) || []).slice(0, 3).map(Number);
+    const rgb = (look.bg.match(/\d+/g) || []).slice(0, 3).map(Number);
     const lum = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
-    check('фон реально потемнел', lum < 0.12, `${dark.bg}, яркость ${lum.toFixed(2)}`);
-
-    await page.click('#themeBtn');
-    await page.waitForTimeout(300);
+    check('фон тёмный', lum < 0.12, `${look.bg}, яркость ${lum.toFixed(2)}`);
+    check('переключателя темы нет', !look.toggle);
 
     // валюта
     const priceBefore = await page.textContent('.price-value');

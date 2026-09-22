@@ -1,8 +1,4 @@
 User-agent: *
 Allow: /
 
-# Черновики оформления — их не надо в поиске: там нарочно
-# упрощённые тексты и они меняются каждый заход.
-Disallow: /preview/
-
 Sitemap: https://vrtll.dev/sitemap.xml
