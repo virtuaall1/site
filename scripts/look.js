@@ -14,7 +14,7 @@ const http = require('http');
 const path = require('path');
 const { chromium } = require('playwright-core');
 
-const ROOT = path.resolve(__dirname, '..');
+const ROOT = path.join(path.resolve(__dirname, '..'), 'dist');
 const OUT = process.env.LOOK_OUT || '/tmp/look';
 const WIDTH = Number(process.argv[2] || 1280);
 const THEME = process.argv[3] || 'light';

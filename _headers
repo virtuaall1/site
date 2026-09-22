@@ -23,17 +23,15 @@
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
 
-# К css и js сборка дописывает ?v=<версия>, и при каждой правке
-# адрес меняется. Значит, старый можно держать вечно: браузер сам
-# придёт за новым, когда поменяется номер.
+# У собранных css и js в имени хеш: поменялся файл — поменялся
+# адрес. Значит, старый можно держать вечно.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# css/fonts.css меняется только вместе со шрифтами, а у тех хеш в
+# имени — отдельной версии файлу не нужно.
 /css/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/js/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/vendor/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=604800
 
 # В имени шрифта его же хеш: поменяется файл — поменяется адрес.
 # Поэтому вечный кеш здесь не врёт.

@@ -18,9 +18,11 @@ const VERSION = 'v1';
 const PAGES = `pages-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 
-/* Первый экран кладём в кеш сразу при установке: тогда даже самый
-   первый офлайн-заход что-то покажет. */
-const PRECACHE = ['./', './css/style.css', './js/content.js', './js/app.js'];
+/* Раньше здесь лежал список файлов первого экрана. Теперь у css и
+   js имена с хешем — они меняются при каждой сборке, и перечислить
+   их заранее нельзя. Кладём только саму страницу: остальное
+   попадёт в кеш при первой же загрузке, стратегией ниже. */
+const PRECACHE = ['./'];
 
 self.addEventListener('install', event => {
   event.waitUntil(

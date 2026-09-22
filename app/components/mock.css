@@ -1,0 +1,21 @@
+/* Заливки и обводки мини-макетов. Расположение задаёт сам svg,
+   здесь только цвет — и он берётся из общих токенов, поэтому
+   макет не разойдётся с оформлением сайта. */
+.mock { display: block; width: 100%; height: auto; }
+
+.m-plate { fill: rgba(242, 239, 232, 0.05); stroke: rgba(255, 255, 255, 0.08); stroke-width: 1; }
+.m-frame { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 1; }
+.m-frame-line { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 1; }
+.m-rule { stroke: rgba(255, 255, 255, 0.045); stroke-width: 1; }
+.m-rule-fill { fill: rgba(242, 239, 232, 0.05); stroke: rgba(255, 255, 255, 0.08); stroke-width: 1; }
+.m-line { fill: rgba(242, 239, 232, 0.55); }
+.m-dim { fill: rgba(242, 239, 232, 0.2); }
+.m-fill { fill: rgba(242, 239, 232, 0.1); }
+.m-field { fill: rgba(242, 239, 232, 0.05); stroke: rgba(255, 255, 255, 0.045); stroke-width: 1; }
+.m-bubble { fill: rgba(242, 239, 232, 0.1); }
+.m-acid, .m-acid-fill { fill: #d8ff3e; }
+.m-acid-frame { fill: none; stroke: #d8ff3e; stroke-width: 1.2; }
+.m-acid-stroke { fill: none; stroke: #d8ff3e; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.m-arrow { fill: none; stroke: rgba(242, 239, 232, 0.2); stroke-width: 1.2; }
+.m-arrow-head { fill: none; stroke: rgba(242, 239, 232, 0.2); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.m-broken { stroke-dasharray: 4 3; }

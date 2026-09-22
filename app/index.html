@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Строгая политика с одной уступкой: style-src 'unsafe-inline'.
+     Движение делает Motion, а он анимирует через атрибут style —
+     без этого разрешения любая анимация просто не применится.
+     Скриптам вольности не даём: script-src остался 'self', и
+     именно он защищает от выполнения чужого кода. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://bank.gov.ua https://*.ingest.sentry.io https://*.ingest.de.sentry.io; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="color-scheme" content="dark">
+
+<title><!--title--></title>
+<meta name="description" content="<!--desc-->">
+<link rel="canonical" href="<!--canonical-->">
+<meta property="og:type" content="website">
+<meta property="og:title" content="<!--og-title-->">
+<meta property="og:description" content="<!--desc-->">
+<meta property="og:url" content="<!--canonical-->">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://vrtll.dev/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="v.studio — сайти, сервіси і Telegram-боти">
+<meta property="og:locale" content="uk_UA">
+<meta property="og:site_name" content="v.studio">
+
+<!--JSON-LD-->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a0a0b'/%3E%3Cpath d='M6 9.5h4.2l3.6 9.2 3.6-9.2H21l-5.6 13h-3.8z' fill='%23d8ff3e'/%3E%3Crect x='22.5' y='19' width='3.5' height='3.5' fill='%23d8ff3e'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://api.github.com">
+
+<!-- Шрифты лежат рядом с сайтом, а не на чужих доменах: иначе
+     браузер идёт сперва за css на googleapis и только оттуда
+     узнаёт адреса файлов — два рукопожатия, пока текст ждёт.
+     Собирает fonts/ и css/fonts.css скрипт scripts/fonts.py. -->
+<link rel="preload" href="/fonts/unbounded-cyrillic-771afeae.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/onest-cyrillic-9543c778.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/fonts.css">
+</head>
+<body data-page="Home" data-path="/">
+<div id="root"><!--app-html--></div>
+<script type="module" src="/entry-client.jsx"></script>
+</body>
+</html>

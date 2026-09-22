@@ -2,10 +2,9 @@
   "name": "v-studio-site",
   "private": true,
   "scripts": {
+    "dev": "vite",
     "check": "node scripts/check.js",
-    "vendor": "node scripts/vendor.js",
-    "build": "npm run check && npm run vendor && node scripts/build.js",
-    "build:offline": "node scripts/build.js",
+    "build": "node scripts/build-app.js && node scripts/check.js",
     "deploy": "npm run build",
     "images": "python3 scripts/images.py",
     "fonts": "python3 scripts/fonts.py",
@@ -13,12 +12,21 @@
     "look": "node scripts/look.js",
     "smoke": "node scripts/smoke.js",
     "perf": "node scripts/perfcheck.js",
-    "html": "node scripts/htmlcheck.js index.html",
-    "verify": "npm run check && npm run html && npm run smoke"
+    "verify": "npm run build && npm run smoke"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.1",
     "clean-css": "^5.3.3",
     "html-minifier-terser": "^7.2.0",
-    "terser": "^5.51.2"
+    "tailwindcss": "^4.3.3",
+    "terser": "^5.51.2",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "@sentry/react": "^10.75.2",
+    "motion": "13.4.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   }
 }

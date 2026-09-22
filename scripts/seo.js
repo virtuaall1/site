@@ -13,19 +13,17 @@
  */
 
 /**
- * content.js писан для браузера: он кладёт данные в window.SITE.
- * Подставляем фальшивое окно и забираем оттуда — так файл остаётся
- * один и для страницы, и для сборки.
+ * Данные сайта лежат обычным модулем в app/lib/content.js. Файл
+ * этот — CommonJS, поэтому забираем через динамический импорт:
+ * одна правда и для страниц, и для структурированных данных.
  */
-function loadSite(root) {
+async function loadSite(root) {
   const path = require('path');
-  const fake = {};
-  global.window = fake;
-  delete require.cache[require.resolve(path.join(root, 'js', 'content.js'))];
-  require(path.join(root, 'js', 'content.js'));
-  delete global.window;
-  if (!fake.SITE) throw new Error('content.js не отдал window.SITE');
-  return fake.SITE;
+  const url = require('url');
+  const file = url.pathToFileURL(path.join(root, 'app', 'lib', 'content.js')).href;
+  const mod = await import(file);
+  if (!mod.SITE) throw new Error('app/lib/content.js не отдал SITE');
+  return mod.SITE;
 }
 
 /** Гривна в USD по тому же курсу, что записан в app.js как запасной. */
@@ -103,15 +101,19 @@ function jsonLd(site, home, rate = RATE) {
 }
 
 /**
- * Карта сайта из того, что действительно уехало в сборку: читаем
- * готовый dist, а не список в голове. Снятый кейс туда не попадает —
- * значит, и в карте его не будет, без отдельной строчки.
+ * Карта сайта: страницы из общего списка плюс то, что реально
+ * уехало в dist. Снятый кейс туда не попадает — значит, и в карте
+ * его не будет, без отдельной строчки.
  */
-function sitemap(distDir, home) {
+function sitemap(distDir, home, pages = ['/']) {
   const fs = require('fs');
   const path = require('path');
 
-  const urls = [{ loc: home, priority: '1.0', freq: 'weekly' }];
+  const urls = pages.map(p => ({
+    loc: home.replace(/\/$/, '') + p,
+    priority: p === '/' ? '1.0' : '0.8',
+    freq: 'weekly'
+  }));
 
   const casesDir = path.join(distDir, 'cases');
   if (fs.existsSync(casesDir)) {
