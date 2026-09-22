@@ -146,4 +146,25 @@ ${body}
 `;
 }
 
-module.exports = { loadSite, jsonLd, sitemap, RATE };
+/**
+ * Хлебные крошки для страницы услуги.
+ *
+ * Поисковик показывает их вместо голого адреса в выдаче: вместо
+ * «vrtll.dev › boty» человек видит «v.studio › Telegram-боти». На
+ * кликабельность это влияет заметно, а стоит две строчки.
+ *
+ * На главной крошек нет намеренно: цепочка из одного звена —
+ * шум, и разметка без второго уровня всё равно не показывается.
+ */
+function breadcrumbs(home, route, name) {
+  if (!route.nav) return null;
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'v.studio', item: home },
+      { '@type': 'ListItem', position: 2, name, item: home.replace(/\/$/, '') + route.path }
+    ]
+  };
+}
+
+module.exports = { loadSite, jsonLd, sitemap, breadcrumbs, RATE };

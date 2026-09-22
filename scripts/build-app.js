@@ -83,17 +83,24 @@ const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
     { cwd: root, stdio: 'inherit' });
 
   const { render } = await import(path.join(SSR, 'entry-server.js'));
-  const { ROUTES } = await import(path.join(root, 'app', 'lib', 'routes.js'));
-  const { loadSite, jsonLd, sitemap } = require('./seo.js');
+  const { ROUTES, NOT_FOUND } = await import(path.join(root, 'app', 'lib', 'routes.js'));
+  const { loadSite, jsonLd, sitemap, breadcrumbs } = require('./seo.js');
   const data = await loadSite(root);
-  const ld = JSON.stringify(jsonLd(data, site));
+  const graph = jsonLd(data, site);
 
   const template = fs.readFileSync(path.join(CLIENT, 'index.html'), 'utf8');
 
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
 
-  for (const route of ROUTES) {
+  for (const route of [...ROUTES, NOT_FOUND]) {
+    /* Структурированные данные у каждой страницы свои: общий граф
+       плюс хлебные крошки там, где есть второй уровень. */
+    const crumbs = breadcrumbs(site, route, route.nav ? data.I18N.uk[route.nav] : '');
+    const ld = JSON.stringify(crumbs
+      ? { ...graph, '@graph': [...graph['@graph'], crumbs] }
+      : graph);
+
     const html = template
       .replace('<!--app-html-->', render(route.page, route.path))
       .replace('<!--title-->', esc(route.uk.title))

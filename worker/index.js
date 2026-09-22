@@ -173,10 +173,27 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
     if (pathname === '/api/lead') return lead(request, env);
+    if (!env.ASSETS) return new Response('Not found', { status: 404 });
 
-    // Всё остальное — статика. Сюда попадаем только если файла нет,
-    // но на всякий случай отдаём через биндинг, а не 404 руками.
-    if (env.ASSETS) return env.ASSETS.fetch(request);
-    return new Response('Not found', { status: 404 });
+    const res = await env.ASSETS.fetch(request);
+
+    /* Файла нет — отдаём свою страницу вместо пустоты платформы.
+       Код при этом остаётся 404: с двухсотым поисковик решит, что
+       это обычная страница, и начнёт её индексировать.
+
+       Запрашиваем 404.html как отдельный адрес, а не подменяем
+       тело: так страница проходит через тот же биндинг и получает
+       правильные заголовки. */
+    if (res.status === 404) {
+      const page = await env.ASSETS.fetch(new Request(new URL('/404.html', request.url)));
+      if (page.ok) {
+        return new Response(page.body, {
+          status: 404,
+          headers: { 'content-type': 'text/html; charset=utf-8' }
+        });
+      }
+    }
+
+    return res;
   }
 };

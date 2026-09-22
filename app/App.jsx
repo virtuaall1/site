@@ -14,12 +14,14 @@ import { Header } from './components/Header.jsx';
 import { Footer } from './components/Footer.jsx';
 import { Home } from './pages/Home.jsx';
 import { ServicePage } from './pages/ServicePage.jsx';
+import { NotFound } from './pages/NotFound.jsx';
 
 const PAGES = {
   Home: () => <Home />,
   Boty: () => <ServicePage name="boty" services={['bot', 'shop-bot']} cases={['guard', 'shop-bot', 'booking', 'spend']} />,
   Sajty: () => <ServicePage name="sajty" services={['landing', 'webapp']} cases={null} />,
-  Backend: () => <ServicePage name="backend" services={['backend', 'automation', 'custom']} cases={null} />
+  Backend: () => <ServicePage name="backend" services={['backend', 'automation', 'custom']} cases={null} />,
+  NotFound: () => <NotFound />
 };
 
 export function App({ page = 'Home', path = '/' }) {
