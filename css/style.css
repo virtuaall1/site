@@ -1,24 +1,49 @@
 /* =========================================================
-   virtuaall1 — дизайн-система
-   Ink + бумага + один кислотный акцент. Никаких градиентных
-   пятен и одинаковых стеклянных карточек: структуру держат
-   линейки, крупная типографика и сетка.
+   v.studio — чёрное стекло
+   =========================================================
+
+   Одна плоскость — чёрная. Всё, что над ней, поднято не рамкой,
+   а светом: полупрозрачный слой плюс волосяная линия по верхней
+   кромке, там где на поверхность падал бы свет. Отсюда название.
+
+   Три правила, из которых собрано остальное:
+
+   1. Цвет почти не используется. Кислотный #d8ff3e — сигнал, а не
+      заливка: квадрат в знаке, точка статуса, одна кнопка, фокус.
+      Больше трёх акцентов на экране — значит что-то пошло не так.
+   2. Глубина делается прозрачностью, а не тенью. Заметная тень
+      читается как наклейка.
+   3. Воздух важнее плотности. Пустота между секциями и создаёт
+      ощущение, что работа стоит дорого.
+
+   Светлой темы нет намеренно: сайт тёмный всегда.
    ========================================================= */
 
 :root {
+  /* ── плоскости ───────────────────────────────────────── */
+  --void: #08080a;            /* самый низ, фон документа */
   --ink: #0a0a0b;
-  --ink-2: #111113;
-  --ink-3: #17171a;
-  --paper: #f2efe8;
+  --ink-2: #0e0e10;
+  --ink-3: #131316;
+
+  /* Стекло: не цвет, а слой света поверх фона. Проценты низкие
+     нарочно — на чёрном даже 5 % читаются как объём. */
+  --glass: rgba(255, 255, 255, 0.035);
+  --glass-2: rgba(255, 255, 255, 0.055);
+  --glass-hi: rgba(255, 255, 255, 0.09);   /* блик по верхней кромке */
+
   --text: #f2efe8;
-  --muted: #8d8d94;
-  --faint: #5a5a61;
-  --rule: rgba(242, 239, 232, 0.14);
-  --rule-soft: rgba(242, 239, 232, 0.07);
+  --muted: #8f8f97;
+  --faint: #5c5c64;
+
+  --rule: rgba(255, 255, 255, 0.08);
+  --rule-soft: rgba(255, 255, 255, 0.045);
+
   --acid: #d8ff3e;
   --acid-ink: #0a0a0b;
+  --bad: #ff6b52;
 
-  --bg: var(--ink);
+  --bg: var(--void);
   --surface: var(--ink-2);
 
   /* точки фоновой сетки и заливки в макетах примеров */
@@ -31,8 +56,22 @@
   --f-display: 'Unbounded', 'Onest', system-ui, sans-serif;
   --f-text: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --pad: clamp(20px, 5vw, 90px);
-  --maxw: 1400px;
+  /* Шаг отступов — четвёрка. «На глаз» ничего не ставим: одно
+     случайное число тянет за собой десяток подгонок. */
+  --s1: 4px;  --s2: 8px;    --s3: 12px; --s4: 16px;
+  --s5: 24px; --s6: 32px;   --s7: 48px; --s8: 64px;
+  --s9: 96px; --s10: 128px;
+
+  --r-sm: 6px;
+  --r: 12px;
+  --r-lg: 18px;
+  --r-xl: 26px;
+
+  /* Тени едва заметны. Видно тень саму по себе — она лишняя. */
+  --sh-lg: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+
+  --pad: clamp(20px, 5vw, 88px);
+  --maxw: 1320px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: dark;
@@ -42,21 +81,22 @@
 
 [hidden] { display: none !important; }
 
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: var(--f-text);
-  font-weight: 400;
-  line-height: 1.55;
-  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.62;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-h1, h2, h3, p, ul, ol, figure { margin: 0; padding: 0; }
-ul, ol { list-style: none; }
+h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.12; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 img { display: block; max-width: 100%; }
@@ -65,185 +105,179 @@ img { display: block; max-width: 100%; }
 :focus-visible {
   outline: 2px solid var(--acid);
   outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .skip-link {
   position: absolute;
   left: -9999px;
-  top: 12px;
-  z-index: 999;
-  padding: 10px 16px;
+  top: 0;
+  z-index: 200;
+  padding: 12px 20px;
   background: var(--acid);
   color: var(--acid-ink);
+  font-weight: 600;
 }
-.skip-link:focus { left: 12px; }
+.skip-link:focus { left: 8px; top: 8px; }
 
-/* ---------- фон: реагирующая на курсор сетка ---------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Фоновая сетка точек: рисует канвас, живёт под всем остальным.
+   На телефоне канвас не запускается — точек просто нет. */
 #grid-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
-  opacity: 0.85;
-}
-
-/* Поднимаем содержимое над фоновой сеткой.
-   Раньше здесь стояло body > *:not(#grid-canvas) — и это молча
-   ломало шапку: :not() берёт вес своего аргумента, то есть id, и
-   правило перебивало .topbar { position: fixed }. Шапка не липла
-   никогда и ни на чём, а вся логика вокруг неё — фон при прокрутке,
-   размытие, отступы у якорей — работала вхолостую.
-   Селектор без id весит меньше класса, и .topbar снова главнее. */
-body > * { position: relative; z-index: 1; }
-#grid-canvas { z-index: 0; }
-
-/* На сенсорных экранах курсора нет, а покадровая отрисовка фона сажает
-   батарею и дёргает прокрутку. Рисуем ту же сетку одной статичной
-   картинкой — выглядит так же, стоит ноль. */
-@media (hover: none), (pointer: coarse) {
-  #grid-canvas { display: none; }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background-image: radial-gradient(circle, rgba(var(--dot), 0.16) 1px, transparent 1px);
-    background-size: 34px 34px;
-  }
-
-  /* без Lenis плавность к якорям даёт сам браузер */
-  html { scroll-behavior: smooth; }
+  opacity: 0.55;
 }
 
 /* =========================================================
-   Шапка
+   Шапка — стеклянная полоса
    ========================================================= */
-/* якорь не должен уезжать под липкую шапку */
-html { scroll-padding-top: 92px; }
-
 .topbar {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 50;
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  padding: 16px var(--pad);
-  border-bottom: 1px solid transparent;
-  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
-}
-.topbar.is-stuck {
-  background: color-mix(in srgb, var(--bg) 86%, transparent);
-  backdrop-filter: blur(14px);
-  border-bottom-color: var(--rule-soft);
+  gap: var(--s5);
+  padding: var(--s3) var(--pad);
+  background: rgba(8, 8, 10, 0.72);
+  border-bottom: 1px solid var(--rule-soft);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
 }
 
 .brand {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: 1.06rem;
+  font-size: 1.05rem;
   letter-spacing: -0.03em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}
+/* Точка в имени — единственный кислотный пиксель в шапке */
+.brand-dot {
+  display: inline-block;
+  width: 0.26em;
+  height: 0.26em;
+  background: var(--acid);
+  color: transparent;
+  overflow: hidden;
 }
 
-/* Крапка з назви — не пунктуація, а знак: в Unbounded вона квадратна,
-   тож збігається за формою з акцентними блоками сайта. */
-.brand-dot { color: var(--acid); }
-
-
-.nav { display: flex; gap: 6px; }
-.nav a {
-  position: relative;
-  padding: 7px 13px;
+.nav {
+  display: flex;
+  gap: var(--s5);
+  margin-left: auto;
   font-size: 0.88rem;
   color: var(--muted);
+}
+.nav a {
+  position: relative;
+  padding: 4px 0;
   transition: color 0.25s var(--ease);
 }
 .nav a::after {
   content: '';
   position: absolute;
-  left: 13px;
-  right: 13px;
-  bottom: 3px;
+  left: 0; right: 0; bottom: 0;
   height: 1px;
   background: var(--acid);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.35s var(--ease);
+  opacity: 0;
+  transition: transform 0.35s var(--ease), opacity 0.35s var(--ease);
 }
 .nav a:hover { color: var(--text); }
-.nav a:hover::after { transform: scaleX(1); }
-
-/* Раздел, в котором человек сейчас находится. Отметка та же, что при
-   наведении, только приглушённая: заводить ради этого ещё один приём
-   незачем, а без неё в длинной странице теряешься. */
+.nav a:hover::after { transform: scaleX(1); opacity: 1; }
+/* раздел, в котором человек находится прямо сейчас */
 .nav a[aria-current] { color: var(--text); }
-.nav a[aria-current]::after { transform: scaleX(1); opacity: 0.45; }
+.nav a[aria-current]::after { transform: scaleX(1); opacity: 0.4; }
 .nav a[aria-current]:hover::after { opacity: 1; }
 
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; align-items: center; gap: var(--s3); }
 
 .lang {
   display: flex;
-  border: 1px solid var(--rule);
+  padding: 2px;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
 }
 .lang-btn {
+  min-width: 34px;
   padding: 5px 10px;
+  border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--faint);
-  transition: color 0.2s, background 0.2s;
+  transition: color 0.25s var(--ease), background 0.25s var(--ease);
 }
-.lang-btn[aria-pressed="true"] {
-  background: var(--acid);
-  color: var(--acid-ink);
-}
+.lang-btn[aria-pressed="true"] { background: var(--glass-2); color: var(--text); }
 .lang-btn:not([aria-pressed="true"]):hover { color: var(--text); }
 
-.visually-hidden {
+/* Полоса прочитанного — нить поверх нижней кромки шапки */
+.progress {
   position: absolute;
-  width: 1px;
+  left: 0; right: 0; bottom: -1px;
   height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  pointer-events: none;
+}
+.progress i {
+  display: block;
+  height: 100%;
+  width: var(--p, 0%);
+  background: linear-gradient(90deg, transparent, var(--acid));
 }
 
-.burger { display: none; flex-direction: column; gap: 5px; padding: 8px 4px; }
+.burger {
+  display: none;
+  width: 40px; height: 40px;
+  place-items: center;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--rule);
+}
 .burger span {
   display: block;
-  width: 22px;
-  height: 1.5px;
+  width: 17px; height: 1.5px;
   background: var(--text);
-  transition: transform 0.3s var(--ease), opacity 0.3s;
+  transition: transform 0.35s var(--ease), opacity 0.2s;
 }
-.burger[aria-expanded="true"] span:first-child { transform: translateY(3.2px) rotate(45deg); }
-.burger[aria-expanded="true"] span:last-child { transform: translateY(-3.2px) rotate(-45deg); }
+.burger span + span { margin-top: 5px; }
+.burger[aria-expanded="true"] span:first-child { transform: translateY(3.25px) rotate(45deg); }
+.burger[aria-expanded="true"] span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
 
+/* Открыто/закрыто держит атрибут hidden, который ставит скрипт:
+   [hidden] выше в файле прячет элемент. Поэтому здесь display
+   всегда flex, а на широком экране меню выключено отдельно. */
 .mobile-menu {
   position: fixed;
-  inset: 58px 0 auto 0;
-  z-index: 45;
+  inset: 62px 0 0;
+  z-index: 99;
   display: flex;
   flex-direction: column;
-  padding: 10px var(--pad) 26px;
-  background: var(--bg);
-  border-bottom: 1px solid var(--rule);
-}
-.mobile-menu a {
-  padding: 14px 0;
+  padding: var(--s7) var(--pad);
+  background: rgba(8, 8, 10, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   font-family: var(--f-display);
-  font-size: 1.3rem;
+  font-size: 1.7rem;
   font-weight: 600;
-  border-bottom: 1px solid var(--rule-soft);
+  letter-spacing: -0.03em;
 }
+.mobile-menu a { padding: var(--s3) 0; border-bottom: 1px solid var(--rule-soft); }
 
 /* =========================================================
    Кнопки
@@ -251,923 +285,779 @@ html { scroll-padding-top: 92px; }
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 24px;
-  font-family: var(--f-text);
+  justify-content: center;
+  gap: var(--s2);
+  min-height: 44px;                  /* палец, а не курсор */
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
   font-size: 0.92rem;
   font-weight: 500;
-  border: 1px solid transparent;
-  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  white-space: nowrap;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease),
+              border-color 0.3s var(--ease);
   will-change: transform;
 }
-.btn-sm { padding: 8px 16px; font-size: 0.82rem; }
-.btn-lg { padding: 17px 32px; font-size: 1rem; }
+.btn-sm { min-height: 34px; padding: 7px 16px; font-size: 0.82rem; }
+.btn-lg { min-height: 52px; padding: 15px 30px; font-size: 1rem; }
 
-.btn-solid { background: var(--acid); color: var(--acid-ink); }
-.btn-solid:hover { background: var(--text); color: var(--bg); }
+.btn-solid { background: var(--acid); color: var(--acid-ink); font-weight: 600; }
+.btn-solid:hover { background: #e6ff6b; }
 
-.btn-line { border-color: var(--rule); color: var(--text); }
-.btn-line:hover { border-color: var(--acid); color: var(--acid); }
+/* Стеклянная кнопка: слой света плюс блик по верхней кромке */
+.btn-line {
+  background: var(--glass);
+  border-color: var(--rule);
+  color: var(--text);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+}
+.btn-line:hover { background: var(--glass-2); border-color: rgba(255, 255, 255, 0.16); }
 
 .link-arrow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 34px;
+  gap: var(--s2);
+  margin-top: var(--s6);
   font-size: 0.9rem;
   color: var(--muted);
-  border-bottom: 1px solid var(--rule);
-  padding-bottom: 3px;
-  transition: color 0.25s, border-color 0.25s;
+  transition: color 0.25s var(--ease);
 }
-.link-arrow::after { content: '→'; transition: transform 0.3s var(--ease); }
-.link-arrow:hover { color: var(--acid); border-color: var(--acid); }
-.link-arrow:hover::after { transform: translateX(5px); }
+.link-arrow::after { content: '\2192'; transition: transform 0.25s var(--ease); }
+.link-arrow:hover { color: var(--text); }
+.link-arrow:hover::after { transform: translateX(3px); }
 
 /* =========================================================
-   Hero
+   Каркас страницы
    ========================================================= */
-.hero {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 36px;
-  padding: clamp(96px, 12vh, 140px) var(--pad) clamp(48px, 7vh, 76px);
+main { position: relative; z-index: 1; }
+
+.section {
   max-width: var(--maxw);
   margin: 0 auto;
+  padding: var(--s10) var(--pad);
+}
+@media (max-width: 760px) { .section { padding: var(--s9) var(--pad); } }
+
+/* Секция «утоплена»: та же плоскость, но чуть светлее, с
+   волосяными линиями по краям — граница без рамки. */
+.section-alt {
+  max-width: none;
+  background:
+    linear-gradient(180deg, transparent, var(--glass) 12%, var(--glass) 88%, transparent),
+    var(--ink);
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.section-alt > * { max-width: var(--maxw); margin-inline: auto; }
+
+.section-head { margin-bottom: var(--s8); }
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: var(--s4);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.kicker::before { content: ''; width: 6px; height: 6px; background: var(--acid); }
+
+.section-title {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(2rem, 4.6vw, 3.5rem);
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+
+.section-lead {
+  margin-top: var(--s4);
+  max-width: 62ch;
+  font-size: 1.02rem;
+  color: var(--muted);
+}
+
+/* =========================================================
+   Появление блоков
+   Анимирует скрипт; без него всё видно сразу (css/nojs.css).
+   ========================================================= */
+.reveal { opacity: 0; transform: translateY(20px); }
+.reveal.in {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+/* снимок проявляется вытиранием, а не прозрачностью */
+.reveal .case-frame { clip-path: inset(0 100% 0 0); transition: clip-path 0.9s var(--ease); }
+.reveal.in .case-frame { clip-path: inset(0 0 0 0); }
+
+/* =========================================================
+   Первый экран
+   ========================================================= */
+.hero {
+  position: relative;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: clamp(72px, 12vh, 140px) var(--pad) var(--s10);
 }
 
 .status {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  gap: var(--s2);
+  padding: 7px 14px 7px 10px;
+  border-radius: 999px;
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  font-size: 0.8rem;
   color: var(--muted);
-  text-transform: lowercase;
 }
 .status-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px; height: 7px;
   border-radius: 50%;
   background: var(--acid);
-  animation: blip 2.4s infinite;
+  box-shadow: 0 0 0 0 rgba(216, 255, 62, 0.45);
+  animation: pulse 2.6s var(--ease) infinite;
 }
-@keyframes blip {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
+@keyframes pulse {
+  70% { box-shadow: 0 0 0 9px rgba(216, 255, 62, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(216, 255, 62, 0); }
 }
 
 .hero-title {
+  margin: var(--s6) 0 0;
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(2.4rem, 7.4vw, 6.6rem);
-  line-height: 0.94;
-  letter-spacing: -0.045em;
-  text-wrap: balance;
+  font-size: clamp(2.6rem, 8vw, 6.6rem);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
 }
 .hero-title .line { display: block; overflow: hidden; }
 .hero-title .line-in { display: block; }
 .hero-title .accent { color: var(--acid); }
-.hero-title .accent::after {
-  content: '';
-  display: inline-block;
-  width: 0.19em;
-  height: 0.19em;
-  margin-left: 0.14em;
-  background: var(--acid);
-  vertical-align: baseline;
-}
 
 .hero-bottom {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 40px;
   align-items: end;
-  padding-top: 34px;
-  border-top: 1px solid var(--rule);
+  gap: var(--s7);
+  margin-top: var(--s8);
+  padding-top: var(--s6);
+  border-top: 1px solid var(--rule-soft);
 }
-.hero-lead {
-  max-width: 54ch;
-  font-size: clamp(0.98rem, 1.15vw, 1.1rem);
-  color: var(--muted);
-}
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-lead { max-width: 54ch; font-size: 1.05rem; color: var(--muted); }
+.hero-actions { display: flex; gap: var(--s3); flex-wrap: wrap; }
 
 .hero-figures {
   display: flex;
-  gap: 34px;
+  gap: var(--s6);
   flex-wrap: wrap;
+  margin-top: var(--s7);
   font-size: 0.8rem;
   color: var(--faint);
 }
 
-/* =========================================================
-   Секции
-   ========================================================= */
-.section {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: clamp(80px, 11vw, 160px) var(--pad);
-}
-.section-alt { background: var(--surface); max-width: none; }
-.section-alt > * { max-width: var(--maxw); margin-inline: auto; }
-
-.section-head { margin-bottom: clamp(38px, 5vw, 68px); }
-.kicker {
-  font-size: 0.74rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--acid);
-  margin-bottom: 14px;
-}
-.section-title {
-  font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(1.9rem, 4.6vw, 3.6rem);
-  line-height: 1;
-  letter-spacing: -0.035em;
-}
-.section-title::after,
-.contact-title::after {
-  content: '';
-  display: inline-block;
-  width: 0.22em;
-  height: 0.22em;
-  margin-left: 0.11em;
-  background: var(--acid);
-  vertical-align: baseline;
-}
-.section-lead {
-  margin-top: 18px;
-  max-width: 62ch;
-  color: var(--muted);
-  font-size: 1rem;
+@media (max-width: 860px) {
+  .hero-bottom { grid-template-columns: 1fr; align-items: start; }
 }
 
 /* =========================================================
    Живые кейсы
-
-   Те же линейки и сдвиг при наведении, что и в списке работ:
-   блок новый, а язык прежний — рамка в волос, подпись
-   дисплейным шрифтом, акцент только на ховере.
    ========================================================= */
 .case-grid {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: grid;
-  gap: clamp(20px, 3vw, 38px);
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  gap: var(--s5);
 }
 
 .case-link {
-  display: grid;
-  align-content: start;
+  display: block;
   height: 100%;
-  text-decoration: none;
-  transition: padding-left 0.4s var(--ease);
+  padding: var(--s4) var(--s4) var(--s5);
+  border-radius: var(--r-lg);
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  transition: background 0.4s var(--ease), border-color 0.4s var(--ease);
 }
-.case-link:hover { padding-left: 10px; }
+.case-link:hover { background: var(--glass-2); border-color: var(--rule); }
 
 .case-frame {
   display: block;
   overflow: hidden;
-  border: 1px solid var(--rule);
-  background: var(--surface);
+  border-radius: var(--r);
+  background: var(--ink-3);
+  border: 1px solid var(--rule-soft);
 }
-/* <picture> по умолчанию строчный — без этого под снимком остаётся
-   лишняя полоска в несколько пикселей. Вид не меняется, чинится
-   только шов. */
 .case-frame picture { display: block; }
 .case-shot {
-  display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 8 / 5;
   object-fit: cover;
-  transition: transform 0.6s var(--ease), filter 0.4s;
-  filter: grayscale(0.25);
+  transition: transform 0.8s var(--ease);
 }
-.case-link:hover .case-shot { transform: scale(1.03); filter: none; }
+.case-link:hover .case-shot { transform: scale(1.03); }
 
 .case-name {
-  margin: 18px 0 0;
-  min-height: 2.4em;
+  margin-top: var(--s5);
   font-family: var(--f-display);
   font-weight: 600;
-  font-size: clamp(1rem, 1.6vw, 1.18rem);
-  letter-spacing: -0.025em;
-  line-height: 1.25;
-  transition: color 0.3s;
+  font-size: 1.12rem;
+  letter-spacing: -0.03em;
+  transition: color 0.25s var(--ease);
 }
 .case-link:hover .case-name { color: var(--acid); }
 
-.case-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 10px;
-  font-size: 0.74rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.case-tags { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s3); }
+.case-tags span {
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  font-size: 0.72rem;
   color: var(--faint);
 }
 
 .case-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 16px;
-  font-size: 0.85rem;
-  color: var(--muted);
-  transition: color 0.3s;
-}
-.case-open span:last-child { transition: transform 0.3s var(--ease); }
-.case-link:hover .case-open { color: var(--acid); }
-.case-link:hover .case-open span:last-child { transform: translate(4px, -4px); }
-
-/* подпись про языки живёт внутри блока, который появляется с данными */
-.langs-note { margin-top: 14px; font-size: 0.8rem; color: var(--faint); }
-
-/* ссылка на живой кейс в примере услуги — обычная стрелка, без нового вида */
-.ex-case { margin-top: 18px; }
-
-/* =========================================================
-   Прайс-лист (строки, а не карточки)
-   ========================================================= */
-/* перемикач валюти — той самий рисунок, що й перемикач мови в шапці */
-.cur-switch {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 22px;
-  flex-wrap: wrap;
+  gap: var(--s2);
+  margin-top: var(--s4);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.85rem;
+  color: var(--muted);
+  transition: color 0.25s var(--ease);
 }
-.cur-btn {
-  min-width: 34px;
-  padding: 5px 10px;
-  border: 1px solid var(--rule);
-  font-family: var(--f-display);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--faint);
-  transition: color 0.2s, background 0.2s, border-color 0.2s;
-}
-.cur-btn[aria-pressed="true"] {
-  background: var(--acid);
-  border-color: var(--acid);
-  color: var(--acid-ink);
-}
-.cur-btn:not([aria-pressed="true"]):hover { color: var(--text); border-color: var(--acid); }
-.cur-note { margin-left: 6px; font-size: 0.76rem; color: var(--muted); }
+.case-link:hover .case-open { color: var(--text); }
 
-.price-list { border-top: 1px solid var(--rule); }
+/* =========================================================
+   Услуги и цены
+   ========================================================= */
+.cur-switch { display: flex; align-items: center; gap: var(--s2); margin-top: var(--s5); }
+.cur-btn {
+  width: 38px; height: 34px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--rule-soft);
+  background: var(--glass);
+  color: var(--faint);
+  font-size: 0.9rem;
+  transition: color 0.25s var(--ease), background 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.cur-btn[aria-pressed="true"] { background: var(--glass-2); color: var(--text); border-color: var(--rule); }
+.cur-btn:not([aria-pressed="true"]):hover { color: var(--text); }
+.cur-note { margin-left: var(--s2); font-size: 0.76rem; color: var(--faint); }
+
+.price-list { display: grid; gap: var(--s3); }
 
 .price-row {
-  position: relative;
-  border-bottom: 1px solid var(--rule);
-  transition: color 0.4s var(--ease);
+  border-radius: var(--r-lg);
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  transition: background 0.35s var(--ease), border-color 0.35s var(--ease);
 }
-.price-head { position: relative; }
-.price-head::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--acid);
-  transform: scaleY(0);
-  transform-origin: bottom;
-  transition: transform 0.45s var(--ease);
-  z-index: 0;
-}
-.price-row:hover .price-head::before,
-.price-row:focus-within .price-head::before { transform: scaleY(1); }
-.price-row:hover .price-head,
-.price-row:focus-within .price-head { color: var(--acid-ink); }
+.price-row:hover { background: var(--glass-2); }
+.price-row.open { background: var(--glass-2); border-color: var(--rule); }
+
+.price-head { padding: var(--s5) var(--s6); }
+@media (max-width: 760px) { .price-head { padding: var(--s5) var(--s4); } }
 
 .price-inner {
-  position: relative;
-  z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.35fr) auto;
-  align-items: center;
-  gap: 28px;
-  padding: 30px 4px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'name right' 'desc right';
+  align-items: start;
+  column-gap: var(--s6);
+  row-gap: var(--s2);
 }
 .price-name {
+  grid-area: name;
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  flex-wrap: wrap;
   font-family: var(--f-display);
   font-weight: 600;
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  letter-spacing: -0.025em;
+  font-size: 1.22rem;
+  letter-spacing: -0.03em;
 }
 .price-featured {
-  display: inline-block;
-  margin-left: 10px;
-  padding: 3px 8px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--acid);
+  color: var(--acid-ink);
   font-family: var(--f-text);
-  font-size: 0.63rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  border: 1px solid currentColor;
-  vertical-align: middle;
 }
-.price-desc { font-size: 0.93rem; color: var(--muted); transition: color 0.4s var(--ease); }
-.price-row:hover .price-desc,
-.price-row:focus-within .price-desc { color: color-mix(in srgb, var(--acid-ink) 72%, transparent); }
+.price-desc { grid-area: desc; max-width: 56ch; color: var(--muted); font-size: 0.95rem; }
 
-.price-right { display: flex; align-items: center; gap: 22px; }
-/* дві валюти одна під одною: гривня великою, друга дрібним рядком —
-   поруч вони не влізали в колонку й ламали ряд */
-.price-money { display: grid; justify-items: end; gap: 2px; }
+.price-right {
+  grid-area: right;
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.price-money { display: grid; text-align: right; }
 .price-value {
   font-family: var(--f-display);
-  font-weight: 800;
-  font-size: clamp(1.2rem, 2.3vw, 1.8rem);
+  font-weight: 600;
+  font-size: 1.28rem;
   letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.price-value.is-quote { font-size: clamp(0.95rem, 1.5vw, 1.15rem); font-weight: 600; }
-.price-alt {
-  font-size: 0.78rem;
-  color: var(--muted);
-  white-space: nowrap;
-  transition: color 0.4s var(--ease);
-}
-.price-row:hover .price-alt,
-.price-row:focus-within .price-alt { color: color-mix(in srgb, var(--acid-ink) 62%, transparent); }
+.price-value.is-quote { font-size: 1rem; color: var(--muted); }
+.price-alt { font-size: 0.78rem; color: var(--faint); font-variant-numeric: tabular-nums; }
+
 .price-cta {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 9px 18px;
-  font-size: 0.84rem;
-  border: 1px solid currentColor;
-  opacity: 0;
-  transform: translateX(-8px);
-  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--glass);
+  font-size: 0.86rem;
+  white-space: nowrap;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
-.price-row:hover .price-cta,
-.price-row:focus-within .price-cta { opacity: 1; transform: none; }
+.price-cta:hover { background: var(--acid); color: var(--acid-ink); border-color: var(--acid); }
 
 .price-bullets {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 20px;
-  padding: 0 4px 26px;
-  font-size: 0.82rem;
+  gap: var(--s2) var(--s5);
+  margin-top: var(--s5);
+  padding-top: var(--s4);
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.85rem;
   color: var(--faint);
-  transition: color 0.4s var(--ease);
 }
-.price-row:hover .price-bullets,
-.price-row:focus-within .price-bullets { color: color-mix(in srgb, var(--acid-ink) 62%, transparent); }
-.price-bullets li { display: flex; align-items: center; gap: 7px; }
-.price-bullets li::before { content: '—'; opacity: 0.5; }
+.price-bullets li { display: flex; align-items: center; gap: var(--s2); }
+.price-bullets li::before {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--acid);
+  opacity: 0.6;
+}
 
-/* ---------- Пример под услугой ---------- */
 .price-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  font-size: 0.8rem;
-  color: inherit;
-  border: 1px solid currentColor;
-  opacity: 0.55;
-  transition: opacity 0.3s var(--ease);
+  gap: var(--s2);
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  font-size: 0.84rem;
+  color: var(--muted);
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
 }
-.price-toggle:hover { opacity: 1; }
-.price-row.open .price-toggle { opacity: 1; }
-
-.toggle-sign {
-  position: relative;
-  width: 9px;
-  height: 9px;
-  flex: none;
-}
-.toggle-sign::before,
-.toggle-sign::after {
+.price-toggle:hover { color: var(--text); border-color: var(--rule); }
+.toggle-sign { position: relative; width: 10px; height: 10px; }
+.toggle-sign::before, .toggle-sign::after {
   content: '';
   position: absolute;
-  inset: 50% 0 auto 0;
-  height: 1.4px;
+  inset: 50% 0 auto;
+  height: 1px;
   background: currentColor;
   transition: transform 0.35s var(--ease);
 }
 .toggle-sign::after { transform: rotate(90deg); }
 .price-row.open .toggle-sign::after { transform: rotate(0deg); }
 
+/* Раскрытие примера: сетка 0fr -> 1fr. Высота анимируется без
+   единого замера в скрипте и не ломается на длинном тексте. */
 .price-example {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.5s var(--ease);
-  background: var(--ink-2);
 }
 .price-example > div { overflow: hidden; }
 .price-row.open .price-example { grid-template-rows: 1fr; }
 
 .ex-body {
   display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-  gap: clamp(20px, 4vw, 48px);
-  align-items: center;
-  padding: 30px 26px 34px;
-  border-left: 2px solid var(--acid);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--s6);
+  padding: 0 var(--s6) var(--s6);
 }
-
+@media (max-width: 860px) {
+  .ex-body { grid-template-columns: 1fr; padding: 0 var(--s4) var(--s5); }
+}
 .ex-mock {
+  border-radius: var(--r);
   border: 1px solid var(--rule-soft);
   background: var(--ink);
-  padding: 10px;
+  overflow: hidden;
 }
-.ex-mock svg { display: block; width: 100%; height: auto; }
+.ex-mock .mock { display: block; width: 100%; height: auto; }
+.ex-side { display: flex; flex-direction: column; justify-content: center; }
+.ex-text { color: var(--muted); font-size: 0.92rem; }
+.ex-case { margin-top: var(--s4); }
 
-.ex-text {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: var(--muted);
-  max-width: 56ch;
-}
-
-/* ---------- Части макетов ---------- */
-.mock .m-plate { fill: var(--ink-2); stroke: var(--rule-soft); }
-.mock .m-frame { fill: none; stroke: var(--rule); }
-.mock .m-frame-line { fill: none; stroke: var(--rule); }
-.mock .m-acid-frame { fill: none; stroke: var(--acid); }
-.mock .m-acid-stroke { fill: none; stroke: var(--acid); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.mock .m-rule { stroke: var(--rule-soft); }
-.mock .m-rule-fill { fill: var(--mock-field); stroke: var(--rule); }
-.mock .m-line { fill: var(--mock-strong); }
-.mock .m-dim { fill: var(--mock-dim); }
-.mock .m-fill { fill: var(--mock-fill); }
-.mock .m-field { fill: var(--mock-field); stroke: var(--rule-soft); }
-.mock .m-bubble { fill: var(--mock-field); }
-.mock .m-acid { fill: var(--acid); }
-.mock .m-acid-fill { fill: var(--acid); }
-.mock .m-arrow { stroke: var(--rule); fill: none; }
-.mock .m-arrow-head { stroke: var(--acid); fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.mock .m-broken { stroke-dasharray: 4 3; }
-
-/* макет собирается на глазах, когда пример разворачивают */
-.price-row.open .mock > * {
-  animation: mock-in 0.5s var(--ease) both;
-}
-.price-row.open .mock > *:nth-child(n+4) { animation-delay: 0.05s; }
-.price-row.open .mock > *:nth-child(n+8) { animation-delay: 0.1s; }
-.price-row.open .mock > *:nth-child(n+12) { animation-delay: 0.15s; }
-@keyframes mock-in {
-  from { opacity: 0; transform: translateY(5px); }
-  to { opacity: 1; transform: none; }
-}
-
-@media (max-width: 860px) {
-  .ex-body { grid-template-columns: 1fr; padding: 22px 16px 26px; }
-}
+/* Мини-макеты в примерах */
+.m-plate { fill: var(--mock-field); stroke: var(--rule); stroke-width: 1; }
+.m-frame { fill: none; stroke: var(--rule); stroke-width: 1; }
+.m-frame-line { fill: none; stroke: var(--rule); stroke-width: 1; }
+.m-rule { stroke: var(--rule-soft); stroke-width: 1; }
+.m-rule-fill { fill: var(--mock-field); stroke: var(--rule); stroke-width: 1; }
+.m-line { fill: var(--mock-strong); }
+.m-dim { fill: var(--mock-dim); }
+.m-fill { fill: var(--mock-fill); }
+.m-field { fill: var(--mock-field); stroke: var(--rule-soft); stroke-width: 1; }
+.m-bubble { fill: var(--mock-fill); }
+.m-acid { fill: var(--acid); }
+.m-acid-fill { fill: var(--acid); }
+.m-acid-frame { fill: none; stroke: var(--acid); stroke-width: 1.2; }
+.m-acid-stroke { fill: none; stroke: var(--acid); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.m-arrow { fill: none; stroke: var(--mock-dim); stroke-width: 1.2; }
+.m-arrow-head { fill: none; stroke: var(--mock-dim); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.m-broken { stroke-dasharray: 4 3; }
 
 /* =========================================================
    Шаги
    ========================================================= */
-.steps { display: grid; gap: 0; }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--s5);
+}
 .step {
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr);
-  gap: 26px;
-  padding: 30px 0;
-  border-top: 1px solid var(--rule);
-  align-items: start;
+  align-content: start;
+  gap: var(--s4);
+  padding: var(--s6) var(--s5);
+  border-radius: var(--r-lg);
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+  transition: background 0.35s var(--ease);
 }
-.step:last-child { border-bottom: 1px solid var(--rule); }
+.step:hover { background: var(--glass-2); }
 .step-num {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(1.7rem, 3.4vw, 2.6rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
+  font-size: 2.2rem;
+  letter-spacing: -0.05em;
   color: transparent;
   -webkit-text-stroke: 1px var(--rule);
-  transition: color 0.4s var(--ease), -webkit-text-stroke-color 0.4s var(--ease);
+  transition: color 0.35s var(--ease), -webkit-text-stroke-color 0.35s var(--ease);
 }
 .step:hover .step-num { color: var(--acid); -webkit-text-stroke-color: transparent; }
 .step-title {
   font-family: var(--f-display);
   font-weight: 600;
-  font-size: clamp(1.05rem, 1.9vw, 1.35rem);
+  font-size: 1.02rem;
   letter-spacing: -0.02em;
-  margin-bottom: 8px;
 }
-.step-desc { color: var(--muted); font-size: 0.95rem; max-width: 60ch; }
+.step-desc { margin-top: var(--s2); font-size: 0.92rem; color: var(--muted); }
+
+/* «Три речі» — тот же компонент, но без обводки у цифры */
+.creed .step-num { -webkit-text-stroke: 0; color: var(--acid); font-size: 1.1rem; }
 
 /* =========================================================
-   Статистика и репозитории
+   GitHub: цифры и репозитории
    ========================================================= */
 .stats-row {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1px;
-  margin-bottom: 56px;
-  background: var(--rule-soft);
-  border: 1px solid var(--rule-soft);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--s3);
+  margin-bottom: var(--s7);
 }
 .stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 22px 20px;
-  background: var(--bg);
-  font-size: 0.8rem;
-  color: var(--muted);
+  display: grid;
+  gap: var(--s1);
+  padding: var(--s5);
+  border-radius: var(--r);
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  font-size: 0.82rem;
+  color: var(--faint);
 }
-.section-alt .stat { background: var(--surface); }
 .stat-num {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
-  line-height: 1;
+  font-size: 1.9rem;
   letter-spacing: -0.04em;
   color: var(--text);
+  font-variant-numeric: tabular-nums;
 }
 
-.repos { border-top: 1px solid var(--rule); }
+.repos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s3);
+}
 .repo {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 20px;
-  align-items: baseline;
-  padding: 24px 4px;
-  border-bottom: 1px solid var(--rule);
-  transition: padding-left 0.4s var(--ease), color 0.3s;
+  align-content: start;
+  gap: var(--s2);
+  padding: var(--s5);
+  border-radius: var(--r);
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  transition: background 0.35s var(--ease), border-color 0.35s var(--ease);
 }
-.repo:hover { padding-left: 18px; }
+.repo:hover { background: var(--glass-2); border-color: var(--rule); }
 .repo-name {
   font-family: var(--f-display);
   font-weight: 600;
-  font-size: clamp(1rem, 1.7vw, 1.25rem);
-  letter-spacing: -0.025em;
-  transition: color 0.3s;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  transition: color 0.25s var(--ease);
 }
 .repo:hover .repo-name { color: var(--acid); }
-.repo-desc { margin-top: 6px; color: var(--muted); font-size: 0.9rem; max-width: 65ch; }
-.repo-meta {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-size: 0.78rem;
-  color: var(--faint);
-  white-space: nowrap;
-}
-.repo-lang { display: inline-flex; align-items: center; gap: 7px; }
-.lang-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.repo-desc { font-size: 0.88rem; color: var(--muted); }
+.repo-meta { display: flex; align-items: center; gap: var(--s4); font-size: 0.78rem; color: var(--faint); }
+.repo-lang { display: inline-flex; align-items: center; gap: 6px; }
+.lang-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-.state-msg { padding: 28px 4px; color: var(--muted); font-size: 0.92rem; }
+.state-msg { color: var(--faint); font-size: 0.9rem; }
+
+/* Заглушка, пока ответ не приехал */
 .skeleton {
-  height: 14px;
-  margin: 26px 4px;
-  background: linear-gradient(90deg, var(--rule-soft), var(--rule), var(--rule-soft));
-  background-size: 200% 100%;
-  animation: shimmer 1.4s linear infinite;
+  min-height: 116px;
+  border-radius: var(--r);
+  background: linear-gradient(90deg, var(--glass), var(--glass-2), var(--glass));
+  background-size: 220% 100%;
+  animation: shimmer 1.5s linear infinite;
 }
-@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes shimmer { to { background-position: -220% 0; } }
 
 /* =========================================================
    Стек
    ========================================================= */
-.stack-wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 5vw, 70px); align-items: start; }
-
-.lang-bar {
+.stack-wrap { display: grid; gap: var(--s5); }
+.langs {
   display: flex;
-  height: 10px;
+  height: 8px;
+  border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 26px;
+  background: var(--glass);
 }
-.lang-bar span { height: 100%; transition: flex-grow 0.8s var(--ease); }
+.lang-bar { height: 100%; }
+.lang-legend { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5); font-size: 0.82rem; color: var(--muted); }
+.lang-legend .x { display: inline-flex; align-items: center; gap: 7px; }
+.lang-legend .pct { color: var(--faint); font-variant-numeric: tabular-nums; }
+.langs-note { font-size: 0.8rem; color: var(--faint); max-width: 70ch; }
 
-.lang-legend { display: grid; gap: 14px; }
-.lang-legend li {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--rule-soft);
-  font-size: 0.9rem;
-}
-.lang-legend .pct { color: var(--muted); font-variant-numeric: tabular-nums; }
-
-.chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
 .chips li {
-  padding: 8px 15px;
-  border: 1px solid var(--rule);
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-soft);
+  background: var(--glass);
   font-size: 0.82rem;
   color: var(--muted);
-  transition: color 0.25s, border-color 0.25s, transform 0.25s var(--ease);
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
 }
-.chips li:hover { color: var(--acid); border-color: var(--acid); transform: translateY(-2px); }
+.chips li:hover { color: var(--acid); border-color: var(--rule); }
 
 /* =========================================================
-   FAQ
+   Вопросы
    ========================================================= */
-.faq-list { border-top: 1px solid var(--rule); }
-.faq-item { border-bottom: 1px solid var(--rule); }
+.faq-list { max-width: 900px; border-top: 1px solid var(--rule-soft); }
+.faq-item { border-bottom: 1px solid var(--rule-soft); }
 .faq-q {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--s5);
   width: 100%;
-  padding: 26px 4px;
+  min-height: 44px;
+  padding: var(--s5) 0;
   text-align: left;
   font-family: var(--f-display);
-  font-weight: 600;
-  font-size: clamp(0.98rem, 1.7vw, 1.2rem);
+  font-weight: 500;
+  font-size: 1.05rem;
   letter-spacing: -0.02em;
-  transition: color 0.25s;
+  transition: color 0.25s var(--ease);
 }
 .faq-q:hover { color: var(--acid); }
-.faq-sign {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  position: relative;
-}
+.faq-sign { position: relative; flex: none; width: 12px; height: 12px; }
 .faq-sign::before, .faq-sign::after {
   content: '';
   position: absolute;
-  inset: 50% 0 auto 0;
-  height: 1.5px;
+  inset: 50% 0 auto;
+  height: 1px;
   background: currentColor;
   transition: transform 0.35s var(--ease);
 }
 .faq-sign::after { transform: rotate(90deg); }
-.faq-q[aria-expanded="true"] .faq-sign::after { transform: rotate(0deg); }
+.faq-item.open .faq-sign::after { transform: rotate(0deg); }
 
 .faq-a {
   display: grid;
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.45s var(--ease);
+  color: var(--muted);
 }
 .faq-a > div { overflow: hidden; }
+.faq-a p { max-width: 74ch; padding-bottom: var(--s5); font-size: 0.95rem; }
 .faq-item.open .faq-a { grid-template-rows: 1fr; }
-.faq-a p {
-  padding: 0 4px 26px;
-  max-width: 70ch;
-  color: var(--muted);
-  font-size: 0.95rem;
-}
 
 /* =========================================================
-   Контакты и подвал
+   Контакт и форма
    ========================================================= */
 .contact { text-align: left; }
 .contact-title {
   font-family: var(--f-display);
   font-weight: 800;
-  font-size: clamp(2rem, 6.4vw, 5rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  font-size: clamp(2rem, 6vw, 4.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.05em;
   max-width: 16ch;
-  margin-bottom: 8px;
+  margin-bottom: var(--s2);
 }
-.contact-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+.contact-title::after {
+  content: '';
+  display: inline-block;
+  width: 0.2em; height: 0.2em;
+  margin-left: 0.1em;
+  background: var(--acid);
+  vertical-align: baseline;
+}
 
-/* =========================================================
-   Форма заявки
-   Ни рамок-коробок, ни скруглений: поле — это линейка снизу,
-   как и всё остальное на сайте. Активное поле подсвечивается
-   кислотным, и только оно.
-   ========================================================= */
-.lead { margin-top: 44px; max-width: 760px; }
-.lead-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+/* Форма — стеклянная плита. Поля внутри без рамок: их держит
+   волосяная линия снизу, как и весь остальной каркас. */
+.lead {
+  margin-top: var(--s7);
+  max-width: 820px;
+  padding: var(--s7);
+  border-radius: var(--r-xl);
+  background: var(--glass);
+  border: 1px solid var(--rule-soft);
+  box-shadow: inset 0 1px 0 var(--glass-hi), var(--sh-lg);
+}
+@media (max-width: 760px) { .lead { padding: var(--s5); } }
 
-.field { display: block; margin-bottom: 26px; }
+.lead-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s6); }
+@media (max-width: 720px) { .lead-grid { grid-template-columns: 1fr; gap: 0; } }
+
+.field { display: block; margin-bottom: var(--s6); }
 .field-label {
   display: block;
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
+  margin-bottom: var(--s2);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
+  color: var(--faint);
 }
 .field-input {
   display: block;
   width: 100%;
-  padding: 12px 0;
+  padding: 11px 0;
   font: inherit;
   font-size: 1rem;
   color: var(--text);
   background: none;
   border: 0;
   border-bottom: 1px solid var(--rule);
-  border-radius: 0;                 /* ios сам скругляет поля */
+  border-radius: 0;                  /* ios скругляет поля сам */
   transition: border-color 0.25s var(--ease);
 }
 .field-input::placeholder { color: var(--faint); }
-.field-input:hover { border-bottom-color: var(--rule-soft); }
-.field-input:focus {
-  outline: none;                    /* вместо рамки — своя линейка */
-  border-bottom-color: var(--acid);
-}
+.field-input:hover { border-bottom-color: rgba(255, 255, 255, 0.14); }
+.field-input:focus { outline: none; border-bottom-color: var(--acid); }
 .field-input:focus-visible { outline: none; }
-.field-area { resize: vertical; min-height: 118px; line-height: 1.5; }
-
+.field-area { resize: vertical; min-height: 116px; line-height: 1.55; }
 /* поле, которое человек оставил пустым, отмечаем после отправки */
-.field-input.is-bad { border-bottom-color: #ff6b52; }
+.field-input.is-bad { border-bottom-color: var(--bad); }
 
 /* ловушка для ботов: не display:none — часть автоматов такие поля
    пропускает, — а вынос за пределы экрана */
-.lead-trap {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
+.lead-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-.lead-foot {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-.lead-note { font-size: 0.82rem; color: var(--faint); max-width: 34ch; line-height: 1.5; }
+.lead-foot { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; margin-top: var(--s2); }
+.lead-note { max-width: 34ch; font-size: 0.82rem; line-height: 1.5; color: var(--faint); }
 
-.lead-status {
-  margin-top: 18px;
-  font-size: 0.9rem;
-  color: var(--muted);
-  min-height: 1.2em;
-}
+.lead-status { min-height: 1.3em; margin-top: var(--s4); font-size: 0.9rem; color: var(--muted); }
 .lead-status.is-ok { color: var(--acid); }
-.lead-status.is-bad { color: #ff6b52; }
-
-.lead-or {
-  margin-top: 46px;
-  font-size: 0.82rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--faint);
-}
+.lead-status.is-bad { color: var(--bad); }
 
 /* пока заявка летит, кнопка не должна кликаться второй раз */
 .lead.is-sending .btn-solid { opacity: 0.55; pointer-events: none; }
 
-@media (max-width: 720px) {
-  .lead-grid { grid-template-columns: 1fr; gap: 0; }
+.lead-or {
+  margin-top: var(--s7);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
 }
+.contact-actions { display: flex; gap: var(--s3); flex-wrap: wrap; margin-top: var(--s4); }
 
-.foot-tg { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; transition: color 0.25s var(--ease), border-color 0.25s var(--ease); }
-.foot-tg:hover { color: var(--acid); border-bottom-color: var(--acid); }
-
+/* =========================================================
+   Подвал
+   ========================================================= */
 .footer {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--s5);
   flex-wrap: wrap;
-  padding: 26px var(--pad);
-  border-top: 1px solid var(--rule);
-  font-size: 0.8rem;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: var(--s6) var(--pad);
+  border-top: 1px solid var(--rule-soft);
+  font-size: 0.82rem;
   color: var(--faint);
 }
+.foot-tg { transition: color 0.25s var(--ease); }
+.foot-tg:hover { color: var(--acid); }
 
 /* =========================================================
-   Появление при скролле (фоллбэк, если GSAP не загрузился)
+   Телефон
    ========================================================= */
-.reveal { opacity: 0; transform: translateY(24px); }
-.reveal.in {
-  opacity: 1;
-  transform: none;
-  /* Лесенка: соседи в списке выезжают не разом, а по очереди.
-     Индекс проставляет js, когда впервые берёт элемент на карандаш;
-     дальше шестого не считаем, иначе низ списка заметно отстаёт. */
-  transition: opacity 0.7s var(--ease) calc(var(--i, 0) * 70ms),
-              transform 0.7s var(--ease) calc(var(--i, 0) * 70ms);
-}
-.js-off .reveal { opacity: 1; transform: none; }
-
-/* Снимок кейса не просто всплывает, а вытирается снизу вверх —
-   так он читается как открывающийся кадр, а не как всплывашка. */
-.reveal .case-frame {
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path 0.9s var(--ease) calc(var(--i, 0) * 70ms + 140ms);
-}
-.reveal.in .case-frame { clip-path: inset(0 0 0 0); }
-.js-off .case-frame { clip-path: none; }
-
-/* Полоса прочитанного по нижней кромке шапки. Считает её сам
-   браузер по позиции скролла — ни одного кадра на js. Где
-   scroll-таймлайнов нет, полоса просто остаётся пустой. */
-.progress {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  overflow: hidden;
-  pointer-events: none;
-}
-.progress i {
-  display: block;
-  height: 100%;
-  background: var(--acid);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-@keyframes progress-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes hero-lift { to { opacity: 0.12; transform: translateY(-30px); } }
-
-@supports (animation-timeline: scroll()) {
-  .progress i {
-    animation: progress-grow linear both;
-    animation-timeline: scroll(root block);
-  }
-}
-/* Заголовок первого экрана уходит вверх и гаснет, пока его
-   пролистывают. Тоже без js: таймлайн привязан к самому элементу. */
-@supports (animation-timeline: view()) {
-  .hero-title {
-    animation: hero-lift linear both;
-    animation-timeline: view(block);
-    animation-range: exit 0% exit 100%;
-  }
+@media (min-width: 901px) {
+  .mobile-menu { display: none !important; }
 }
 
-/* На тачскрине нет наведения — тот же отклик вешаем на нажатие */
-@media (hover: none) {
-  .price-row:active .price-head::before { transform: scaleY(1); }
-  .price-row:active .price-head { color: var(--acid-ink); }
-}
-
-/* =========================================================
-   Адаптив
-   ========================================================= */
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
   .nav { display: none; }
-  .burger { display: flex; }
-  .hero-bottom { grid-template-columns: 1fr; align-items: start; }
-  .stack-wrap { grid-template-columns: 1fr; }
-  .stats-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .burger { display: grid; }
+  .topbar .btn-sm { display: none; }
+  .topbar-right { margin-left: auto; }
 }
 
 @media (max-width: 760px) {
-  .price-inner {
-    /* minmax(0, 1fr), а не 1fr: у колонки грида минимальная ширина по
-       умолчанию — по содержимому, и ряд с ценой и кнопкой распирал
-       страницу шире экрана. На 390 px её уводило вбок на полсотни
-       пикселей, и весь сайт скроллился по горизонтали. */
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 24px 4px 6px;
-  }
-  /* Не ряд с переносом, а сетка из двух ячеек: цена своей строкой,
-     под ней две кнопки. Перенос зависел от ширины цены, а она растёт
-     вместе с системным размером шрифта — на телефоне с крупным
-     текстом «Приклад» и «Замовити» уезжали в столбик и налезали на
-     список пунктов. Сетка кладёт их одинаково при любом кегле. */
-  .price-right {
-    display: grid;
-    grid-template-columns: auto auto;
-    justify-content: start;
-    align-items: center;
-    gap: 14px;
-    width: 100%;
-  }
-  .price-money { order: -1; grid-column: 1 / -1; justify-items: start; }
-  .price-name, .price-desc { overflow-wrap: anywhere; }
-  .price-cta { opacity: 1; transform: none; }
-  .step { grid-template-columns: 56px minmax(0, 1fr); gap: 16px; }
-  .repo { grid-template-columns: 1fr; gap: 10px; }
-  .topbar .btn-sm { display: none; }
+  .price-inner { grid-template-columns: 1fr; grid-template-areas: 'name' 'desc' 'right'; row-gap: var(--s4); }
+  .price-right { justify-content: flex-start; }
+  .price-money { text-align: left; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
 }
 
+/* =========================================================
+   Кому движение мешает
+   ========================================================= */
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
   .reveal { opacity: 1; transform: none; }
-  /* animation-duration: 0.001ms выше не выключает анимацию, а
-     мгновенно доигрывает её до конца: с fill: both заголовок так и
-     остался бы полупрозрачным, а полоса — во всю ширину. Гасим их
-     целиком. */
-  .progress i, .hero-title { animation: none !important; }
   .reveal .case-frame, .case-frame { clip-path: none !important; }
-  #grid-canvas { display: none; }
 }
 
-/* =========================================================
-   Переход между страницами
-
-   Сайт и кейсы лежат на одном домене, поэтому браузер умеет
-   перетекать между ними вместо белой вспышки. Где API нет —
-   переход обычный, ничего не ломается. Оформление то же:
-   меняется не вид страницы, а то, как она появляется.
-   ========================================================= */
+/* Переход между страницами: браузер сам разводит кадр «до» и
+   «после». Где API нет — обычная перезагрузка, как всегда. */
 @view-transition { navigation: auto; }
-
 @media (prefers-reduced-motion: reduce) {
   @view-transition { navigation: none; }
 }
