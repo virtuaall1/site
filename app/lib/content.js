@@ -236,20 +236,20 @@ export const SITE = {
       price: 4500,
       uk: {
         name: "Бекенд і API",
-        desc: "Серверна частина на Java зі Spring Boot або на Python: REST API, база, інтеграції із зовнішніми сервісами.",
+        desc: "Серверна частина на Python або Node.js: REST API, база, інтеграції із зовнішніми сервісами.",
         bullets: [
-          "Java · Spring Boot",
           "Python · FastAPI",
+          "Node.js · TypeScript",
           "REST API",
           "Docker і деплой"
         ]
       },
       en: {
         name: "Backend and APIs",
-        desc: "Server side in Java with Spring Boot or in Python: REST APIs, database, third-party integrations.",
+        desc: "Server side in Python or Node.js: REST APIs, database, third-party integrations.",
         bullets: [
-          "Java · Spring Boot",
           "Python · FastAPI",
+          "Node.js · TypeScript",
           "REST API",
           "Docker and deploy"
         ]
@@ -407,10 +407,10 @@ export const SITE = {
     }
   ],
   EXTRA_STACK: [
-    "Java",
-    "Spring Boot",
     "Python",
     "FastAPI",
+    "TypeScript",
+    "Node.js",
     "REST API",
     "Telegram Bot API",
     "aiogram",
@@ -470,8 +470,8 @@ export const SITE = {
   },
   I18N: {
     uk: {
-      "meta.title": "v.studio — сайти, сервіси і Telegram-боти на Python, Java, Spring",
-      "meta.desc": "Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.",
+      "meta.title": "v.studio — сайти, сервіси і Telegram-боти на Python і TypeScript",
+      "meta.desc": "Вебзастосунки, бекенд на Python і Node.js, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.",
           "nav.bots": "Боти",
     "nav.websites": "Сайти",
     "nav.backend": "Бекенд",
@@ -483,7 +483,7 @@ export const SITE = {
     "page.websites.lead": "Від однієї швидкої сторінки під послугу до вебзастосунку з кабінетами, ролями і звітами. Адаптив, швидкість і SEO — не окремою опцією.",
     "page.backend.kicker": "Бекенд і автоматизація",
     "page.backend.title": ["Сервер, який", "тримає навантаження", "і рутину"],
-    "page.backend.lead": "REST API на Java зі Spring Boot або на Python, база, інтеграції з чужими сервісами. Плюс скрипти, які роблять рутину за розкладом.",
+    "page.backend.lead": "REST API на Python або Node.js, база, інтеграції з чужими сервісами. Плюс скрипти, які роблять рутину за розкладом.",
     "work.fail": "GitHub зараз не відповідає — роботи вище нікуди не поділись.",
         "nf.title": "Такої сторінки немає",
     "nf.lead": "Можливо, адреса застаріла або в ній загубилася літера. Сайт на місці — ось куди можна піти.",
@@ -500,7 +500,7 @@ export const SITE = {
       "hero.title.1": "Сайти, сервіси",
       "hero.title.2": "і боти, які",
       "hero.title.3": "працюють за вас",
-      "hero.lead": "Пишемо вебзастосунки, бекенд і Telegram-ботів: Python, Java, Spring Boot, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.",
+      "hero.lead": "Пишемо вебзастосунки, бекенд і Telegram-ботів: Python, TypeScript, бази даних, інтеграції з чужими API. Фіксована ціна, вихідники на руки, місяць підтримки після запуску.",
       "hero.cta": "Обговорити задачу",
       "hero.cta2": "Код на GitHub",
       "hero.figures": [
@@ -545,7 +545,7 @@ export const SITE = {
       "studio.2.t": "Код і доступи — твої",
       "studio.2.d": "Віддаємо вихідники, репозиторій і всі акаунти. Захочеш продовжити з іншими — нічого не лишається в заручниках.",
       "studio.3.t": "Без конструкторів",
-      "studio.3.d": "Пишемо руками: Python, Java, Spring Boot. Тому проєкт не впирається в ліміти шаблону, коли задача виростає.",
+      "studio.3.d": "Пишемо руками: Python, TypeScript, Node.js. Тому проєкт не впирається в ліміти шаблону, коли задача виростає.",
       "faq.kicker": "Без сюрпризів",
       "faq.title": "Часті питання",
       "contact.kicker": "Далі",
@@ -567,7 +567,7 @@ export const SITE = {
     },
     en: {
       "meta.title": "v.studio — web apps, backends and Telegram bots",
-      "meta.desc": "Web applications, Java and Spring Boot backends, landing pages, Telegram bots and automation. Fixed price, source code included, a month of support.",
+      "meta.desc": "Web applications, Python and Node.js backends, landing pages, Telegram bots and automation. Fixed price, source code included, a month of support.",
           "nav.bots": "Bots",
     "nav.websites": "Sites",
     "nav.backend": "Backend",
@@ -579,7 +579,7 @@ export const SITE = {
     "page.websites.lead": "From one fast page for a single service to a web app with accounts, roles and reports. Responsive layout, speed and SEO are not extras.",
     "page.backend.kicker": "Backend and automation",
     "page.backend.title": ["A server that", "holds the load", "and the routine"],
-    "page.backend.lead": "A REST API in Java with Spring Boot or in Python, a database, integrations with third-party services. Plus scripts that run the routine on a schedule.",
+    "page.backend.lead": "A REST API in Python or Node.js, a database, integrations with third-party services. Plus scripts that run the routine on a schedule.",
     "work.fail": "GitHub is not answering right now — the work above has not gone anywhere.",
         "nf.title": "This page does not exist",
     "nf.lead": "The address may be out of date, or a letter got lost in it. The site is fine — here is where to go.",
@@ -596,7 +596,7 @@ export const SITE = {
       "hero.title.1": "Sites, services",
       "hero.title.2": "and bots that",
       "hero.title.3": "work for you",
-      "hero.lead": "We build web apps, backends and Telegram bots: Python, Java, Spring Boot, databases, third-party API integrations. Fixed price, source code included, a month of support after launch.",
+      "hero.lead": "We build web apps, backends and Telegram bots: Python, TypeScript, databases, third-party API integrations. Fixed price, source code included, a month of support after launch.",
       "hero.cta": "Discuss your project",
       "hero.cta2": "Code on GitHub",
       "hero.figures": [
@@ -641,7 +641,7 @@ export const SITE = {
       "studio.2.t": "The code and accounts are yours",
       "studio.2.d": "You get the source, the repository and every account. If you carry on with someone else, nothing stays hostage.",
       "studio.3.t": "No page builders",
-      "studio.3.d": "We write it by hand: Python, Java, Spring Boot. So the project does not hit a template ceiling once the task grows.",
+      "studio.3.d": "We write it by hand: Python, TypeScript, Node.js. So the project does not hit a template ceiling once the task grows.",
       "faq.kicker": "No surprises",
       "faq.title": "Frequently asked",
       "contact.kicker": "Next",
