@@ -115,11 +115,20 @@ function sitemap(distDir, home, pages = ['/']) {
     freq: 'weekly'
   }));
 
+  /* Страницы кейсов — это демо, и каждая помечена noindex: они
+     сделаны под вымышленного клиента, и в выдаче по запросу
+     «барбершоп Крива» им делать нечего.
+
+     Звать туда поисковик картой сайта, когда сама страница просит
+     её не индексировать, — прямое противоречие. Поэтому такие
+     страницы в карту не попадают: читаем каждую и проверяем. */
   const casesDir = path.join(distDir, 'cases');
   if (fs.existsSync(casesDir)) {
     for (const name of fs.readdirSync(casesDir).sort()) {
       if (name.startsWith('_')) continue;                       // общие стили кейсов
-      if (!fs.existsSync(path.join(casesDir, name, 'index.html'))) continue;
+      const file = path.join(casesDir, name, 'index.html');
+      if (!fs.existsSync(file)) continue;
+      if (/name="robots"[^>]*noindex/.test(fs.readFileSync(file, 'utf8'))) continue;
       urls.push({ loc: `${home}cases/${name}/`, priority: '0.7', freq: 'monthly' });
     }
   }

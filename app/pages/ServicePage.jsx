@@ -19,9 +19,16 @@ import { PROJECTS } from '../lib/content.js';
 
 export function ServicePage({ name, services, cases }) {
   const { t } = useI18n();
+  /* Показываем только те кейсы, что относятся к теме страницы.
+     `cases: null` — значит подходящих демо пока нет, и раздел не
+     появляется вовсе.
+
+     Соблазн показать все четыре везде большой, но на странице про
+     сайты четыре демо телеграм-ботов — это обещание не того, за
+     чем человек пришёл. Появится демо сайта — добавится сюда. */
   const shown = cases
     ? PROJECTS.filter(p => cases.some(part => (p.link || '').includes(part)))
-    : PROJECTS;
+    : [];
 
   return (
     <>
