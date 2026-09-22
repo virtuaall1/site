@@ -151,6 +151,39 @@
   opacity: 0.35;
 }
 
+/* Смена языка.
+
+   Браузер снимает кадр «до» и кадр «после» и накладывает их друг
+   на друга. По умолчанию он их просто растворяет — получается
+   мыльный переход, какой бывает везде. Здесь старый кадр уходит
+   влево и размывается, новый приходит справа: движение совпадает с
+   направлением чтения, и смена читается как «строки перебрались»,
+   а не как «страница мигнула».
+
+   Метку [data-lang-swap] ставит сам переход (app/lib/i18n.jsx) и
+   снимает, когда кадр доигран: всё остальное время правила ниже
+   не действуют, и переходы между страницами остаются обычными. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+[data-lang-swap]::view-transition-old(root) {
+  animation: lang-out 0.42s var(--ease-out-quint) both;
+}
+[data-lang-swap]::view-transition-new(root) {
+  animation: lang-in 0.52s var(--ease-out-quint) 0.08s both;
+}
+
+@keyframes lang-out {
+  to { opacity: 0; transform: translateX(-2.5%); filter: blur(7px); }
+}
+@keyframes lang-in {
+  from { opacity: 0; transform: translateX(3%); filter: blur(9px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+
 /* Кому движение мешает — выключаем всё разом. Motion читает ту же
    системную настройку сам, это страховка для css-переходов. */
 @media (prefers-reduced-motion: reduce) {

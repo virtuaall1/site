@@ -10,6 +10,7 @@
 import { I18nProvider } from './lib/i18n.jsx';
 import { GridCanvas } from './components/GridCanvas.jsx';
 import { ScrollRail } from './components/ScrollRail.jsx';
+import { LangSweep } from './components/LangSweep.jsx';
 import { Header } from './components/Header.jsx';
 import { Footer } from './components/Footer.jsx';
 import { Home } from './pages/Home.jsx';
@@ -34,6 +35,7 @@ export function App({ page = 'Home', path = '/' }) {
       </a>
       <GridCanvas />
       <ScrollRail />
+      <LangSweep />
       <Header path={path} />
       <main id="main" className="relative z-1">
         {/* Ошибка внутри страницы не должна снимать с экрана всё:

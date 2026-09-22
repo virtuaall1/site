@@ -9,9 +9,11 @@
  * разойдутся, и React перерисует страницу целиком.
  */
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { I18N, PLURALS } from './content.js';
 
 const LANGS = ['uk', 'en'];
+const SUPPORTED = LANGS;
 const CURRENCIES = ['uah', 'usd'];
 const LOCALES = { uk: 'uk-UA', en: 'en-GB' };
 
@@ -34,6 +36,9 @@ export function I18nProvider({ children }) {
   const [lang, setLang] = useState('uk');
   const [currency, setCurrency] = useState('uah');
   const [rate, setRate] = useState({ usd: FALLBACK_RATE, date: null });
+  /* Идёт ли переход прямо сейчас — по этому рисуется полоса,
+     которая пробегает по экрану вместе со сменой языка. */
+  const [swapping, setSwapping] = useState(false);
 
   // Первый кадр обязан совпасть с тем, что нарисовала сборка.
   // Всё, что зависит от браузера, подхватываем следующим шагом.
@@ -54,6 +59,44 @@ export function I18nProvider({ children }) {
     try { localStorage.setItem('currency', currency); } catch (e) { /* noop */ }
   }, [currency]);
 
+  /**
+   * Смена языка.
+   *
+   * Просто заменить текст — значит моргнуть всей страницей: меняются
+   * все строки разом, высота блоков едет, глаз не успевает понять,
+   * что произошло.
+   *
+   * Поэтому переход отдаём браузеру: startViewTransition снимает
+   * кадр «до», даёт нам поменять состояние и сам разводит два кадра.
+   * Как именно разводит — описано в main.css под [data-lang-swap].
+   *
+   * flushSync обязателен: браузер ждёт синхронного изменения DOM
+   * внутри колбэка, а React по умолчанию откладывает перерисовку
+   * на потом — и снимок «после» вышел бы тем же, что и «до».
+   */
+  const switchLang = next => {
+    if (next === lang || !SUPPORTED.includes(next)) return;
+
+    const apply = () => flushSync(() => setLang(next));
+    const still = typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (still || typeof document === 'undefined' || !document.startViewTransition) {
+      apply();
+      return;
+    }
+
+    const root = document.documentElement;
+    root.dataset.langSwap = '1';
+    setSwapping(true);
+
+    const view = document.startViewTransition(apply);
+    view.finished.finally(() => {
+      delete root.dataset.langSwap;
+      setSwapping(false);
+    });
+  };
+
   const value = useMemo(() => {
     const t = key => (I18N[lang] && I18N[lang][key]) || I18N.uk[key] || key;
 
@@ -68,8 +111,12 @@ export function I18nProvider({ children }) {
       return forms[rule] || forms.other || '';
     };
 
-    return { lang, setLang, currency, setCurrency, rate, setRate, t, money, plural, locale: LOCALES[lang] };
-  }, [lang, currency, rate]);
+    return {
+      lang, setLang: switchLang, swapping,
+      currency, setCurrency, rate, setRate,
+      t, money, plural, locale: LOCALES[lang]
+    };
+  }, [lang, currency, rate, swapping]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

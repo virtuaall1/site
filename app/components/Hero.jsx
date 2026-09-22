@@ -16,6 +16,7 @@ import { useI18n } from '../lib/i18n.jsx';
 import { Button } from './ui/Button.jsx';
 import { Magnetic } from './ui/Magnetic.jsx';
 import { SPRING, SPRING_SOFT } from './ui/Reveal.jsx';
+import { Scramble } from './ui/Scramble.jsx';
 import { LINKS } from '../lib/content.js';
 
 export function Hero({ title, lead, cta, kicker, figures = [] }) {
@@ -49,7 +50,7 @@ export function Hero({ title, lead, cta, kicker, figures = [] }) {
               animate={{ y: '0%' }}
               transition={{ ...SPRING_SOFT, delay: i * 0.075 }}
             >
-              {line}
+              <Scramble text={line} />
             </motion.span>
           </span>
         ))}

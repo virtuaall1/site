@@ -28,10 +28,15 @@ export function Scramble({ text, as: Tag = 'span', className, ...rest }) {
   const still = useReducedMotion();
   const [shown, setShown] = useState(text);
 
-  useEffect(() => { setShown(text); }, [text]);
+  /* Перебор запускается дважды: когда строка доехала до экрана и
+     когда текст поменялся — то есть при смене языка. Второй случай
+     и делает переключение языка не подменой, а расшифровкой.
 
+     Первый кадр обязан совпасть с тем, что нарисовала сборка,
+     поэтому до появления на экране показываем текст как есть. */
   useEffect(() => {
-    if (!seen || still) return;
+    if (!seen || still) { setShown(text); return; }
+
     let frame = 0;
     const total = Math.ceil(text.length * PER_CHAR) + 6;
 
@@ -45,7 +50,7 @@ export function Scramble({ text, as: Tag = 'span', className, ...rest }) {
       if (frame > total) { clearInterval(id); setShown(text); }
     }, STEP);
 
-    return () => clearInterval(id);
+    return () => { clearInterval(id); setShown(text); };
   }, [seen, still, text]);
 
   return <Tag ref={ref} className={className} {...rest}>{shown}</Tag>;
