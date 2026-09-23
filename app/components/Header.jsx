@@ -45,7 +45,18 @@ export function Header({ path = '/' }) {
   const label = link => t(link.key) === link.key ? link.fallback : t(link.key);
   const current = href => (href.startsWith('/#') ? path === '/' && false : path === href);
 
+  /* Пока меню открыто, страница под ним не ездит. Иначе палец
+     листает фон сквозь панель, и, закрыв меню, человек оказывается
+     не там, где был. */
+  useEffect(() => {
+    if (!open) return;
+    const was = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = was; };
+  }, [open]);
+
   return (
+    <>
     <motion.header
       initial={{ opacity: 0, y: -14 }}
       animate={{ opacity: 1, y: 0 }}
@@ -130,28 +141,57 @@ export function Header({ path = '/' }) {
           onClick={() => setOpen(v => !v)}
           className="grid size-10 place-items-center rounded-md border border-rule lg:hidden"
         >
-          <span className={cn('block h-[1.5px] w-[17px] bg-paper transition-transform duration-300',
-            open && 'translate-y-[3.25px] rotate-45')} />
-          <span className={cn('mt-[5px] block h-[1.5px] w-[17px] bg-paper transition-transform duration-300',
-            open && '-translate-y-[3.25px] -rotate-45')} />
+          {/* Обе полоски лежат в одной ячейке сетки, поэтому
+              place-items-center сводит их в одну точку — центр
+              кнопки. Закрытое состояние разводит их на три пикселя
+              вверх и вниз, открытое просто поворачивает вокруг того
+              же центра, и получается крест.
+           
+              Раньше полоски стояли в разных строках сетки и
+              расходились на двадцать один пиксель, а навстречу им
+              давали по три — крест не сходился, выходил знак «>». */}
+          <span className={cn('col-start-1 row-start-1 h-[1.5px] w-[17px] bg-paper transition-transform duration-300',
+            open ? 'rotate-45' : '-translate-y-[3px]')} />
+          <span className={cn('col-start-1 row-start-1 h-[1.5px] w-[17px] bg-paper transition-transform duration-300',
+            open ? '-rotate-45' : 'translate-y-[3px]')} />
         </button>
       </div>
 
-      <motion.div
-        ref={menu}
-        id="mobileMenu"
-        hidden={!open}
-        className="fixed inset-x-0 bottom-0 top-[62px] z-99 flex flex-col bg-void/95 px-5 py-12
-                   font-display text-[1.7rem] font-semibold tracking-[-0.03em] backdrop-blur-2xl sm:px-8 lg:hidden"
-      >
-        {LINKS.concat({ href: '/#contact', key: 'nav.contact', fallback: 'Контакти' }).map(link => (
-          <a key={link.href} href={link.href} onClick={() => setOpen(false)}
-             className="border-b border-rule-soft py-3">
-            {label(link)}
-          </a>
-        ))}
-      </motion.div>
     </motion.header>
+
+    {/* Меню — сосед шапки, а не её потомок, и это не вкусовщина.
+     
+        Пока оно лежало внутри, его ломало любое свойство шапки,
+        создающее точку отсчёта для position: fixed — transform,
+        filter, backdrop-filter, will-change. Так и вышло: у шапки
+        было backdrop-filter, и «от края до края экрана» превратилось
+        в «от края до края шапки». Панель схлопывалась в 96 пикселей,
+        фон красил только эту полоску, а пункты вываливались наружу
+        и висели поверх первого экрана без подложки.
+     
+        Снаружи отсчёт всегда от экрана, и починить это заново
+        нельзя — что бы потом ни появилось на шапке.
+     
+        Размытия здесь тоже нет: под непрозрачной плоскостью размывать
+        нечего, а на телефоне это заметная цена ни за что. Панель
+        кроет весь экран, отступ сверху оставляет шапку на виду, и
+        она остаётся выше по слою — из меню всегда видно, чем его
+        закрыть. */}
+    <motion.div
+      ref={menu}
+      id="mobileMenu"
+      hidden={!open}
+      className="fixed inset-0 z-90 flex flex-col overflow-y-auto bg-void px-5 pb-12 pt-[84px]
+                 font-display text-[1.7rem] font-semibold tracking-[-0.03em] sm:px-8 lg:hidden"
+    >
+      {LINKS.concat({ href: '/#contact', key: 'nav.contact', fallback: 'Контакти' }).map(link => (
+        <a key={link.href} href={link.href} onClick={() => setOpen(false)}
+           className="border-b border-rule-soft py-3">
+          {label(link)}
+        </a>
+      ))}
+    </motion.div>
+    </>
   );
 }
 
