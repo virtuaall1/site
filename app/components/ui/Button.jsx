@@ -18,7 +18,7 @@ const VARIANTS = {
   /* Единственная сплошная кнопка на экран — та, которую мы хотим,
      чтобы нажали. Остальные стеклянные. */
   solid: 'bg-acid text-acid-ink font-semibold hover:bg-acid-hi',
-  glass: 'glass-plate text-paper hover:bg-glass-2 hover:border-white/15',
+  glass: 'sweep glass-plate text-paper hover:bg-glass-2 hover:border-white/15',
   ghost: 'text-muted hover:text-paper'
 };
 
