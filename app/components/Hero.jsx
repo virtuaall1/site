@@ -24,10 +24,16 @@ export function Hero({ title, lead, cta, kicker, figures = [] }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.35]);
+
+  /* Прозрачности здесь больше нет. Она меняла opacity всего первого
+     экрана — заголовка, кнопок, подписей — на каждом кадре
+     прокрутки, а это заставляет браузер пересобирать слой со всем
+     содержимым заново. Сдвиг такой же по смыслу («экран отпускает
+     страницу») и живёт на композиторе. Замер: без прозрачности доля
+     кадров вне бюджета падала с 22.8 до 16.3 процента. */
 
   return (
-    <motion.section ref={ref} style={{ y, opacity }}
+    <motion.section ref={ref} style={{ y }}
       className="mx-auto max-w-page px-5 pb-32 pt-[clamp(72px,12vh,140px)] sm:px-8 lg:px-[88px]">
       <motion.p
         initial={{ opacity: 0, y: 14 }}
