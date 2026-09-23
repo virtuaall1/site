@@ -423,7 +423,7 @@
     ctx.font = `400 ${size * 0.15}px Onest, sans-serif`;
     ctx.fillStyle = rgba(DOT_DARK, 0.42);
     ctx.textBaseline = 'top';
-    ctx.fillText('Python · Java · Spring Boot · Telegram', left, ruleY + size * 0.2);
+    ctx.fillText('Python · TypeScript · Node.js · Telegram', left, ruleY + size * 0.2);
 
     const v = ctx.createRadialGradient(W * 0.4, H * 0.5, S * 0.3, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.7);
     v.addColorStop(0, 'rgba(0,0,0,0)');

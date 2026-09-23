@@ -40,7 +40,7 @@ function jsonLd(site, home, rate = RATE) {
     description: site.I18N.uk['meta.desc'],
     areaServed: 'UA',
     availableLanguage: ['uk', 'en'],
-    knowsAbout: ['Python', 'Java', 'Spring Boot', 'Telegram Bot API', 'SQLite', 'PostgreSQL'],
+    knowsAbout: ['Python', 'TypeScript', 'Node.js', 'Telegram Bot API', 'SQLite', 'PostgreSQL'],
     sameAs: [LINKS.github, LINKS.telegram].filter(Boolean),
     email: LINKS.email ? `mailto:${LINKS.email}` : undefined
   };

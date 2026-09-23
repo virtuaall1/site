@@ -16,8 +16,11 @@ export function ScrollRail() {
 
   useEffect(() => {
     if (still) return;
+    /* Отдаём долю от нуля до единицы, а не проценты: в css из неё
+       получаются и масштаб линии, и сдвиг квадрата — обе величины
+       браузер умеет двигать, не трогая раскладку. */
     return scrollYProgress.on('change', v => {
-      if (ref.current) ref.current.style.setProperty('--read', `${(v * 100).toFixed(1)}%`);
+      if (ref.current) ref.current.style.setProperty('--read', v.toFixed(4));
     });
   }, [scrollYProgress, still]);
 

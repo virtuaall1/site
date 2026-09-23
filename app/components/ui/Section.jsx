@@ -8,6 +8,7 @@
 import { cn } from '../../lib/cn.js';
 import { Kicker } from './Kicker.jsx';
 import { Scramble } from './Scramble.jsx';
+import { Rule } from './Rule.jsx';
 
 export function Section({ id, sunken = false, className, children }) {
   const inner = (
@@ -29,8 +30,15 @@ export function Section({ id, sunken = false, className, children }) {
   );
 }
 
-/** Шапка секции: надзаголовок, заголовок, подводка. */
-export function SectionHead({ kicker, title, lead, children, className }) {
+/**
+ * Шапка секции: надзаголовок, заголовок, подводка.
+ *
+ * Снизу линия, которая прочерчивается, когда шапка доехала до
+ * экрана. Она отделяет обещание от того, чем мы его подкрепляем, и
+ * заодно задаёт ритм: глаз цепляется за начало секции, а не плывёт
+ * по сплошной ленте.
+ */
+export function SectionHead({ kicker, title, lead, children, className, rule = true }) {
   return (
     <div className={cn('mb-16', className)}>
       {kicker && <Kicker className="mb-4">{kicker}</Kicker>}
@@ -43,6 +51,7 @@ export function SectionHead({ kicker, title, lead, children, className }) {
       )}
       {lead && <p className="mt-4 max-w-[62ch] text-[1.02rem] text-muted">{lead}</p>}
       {children}
+      {rule && <Rule className="mt-10" delay={0.15} />}
     </div>
   );
 }

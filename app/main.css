@@ -103,8 +103,19 @@
   grid-template-rows: 0fr;
   transition: grid-template-rows 0.45s var(--ease-out-quint);
 }
-.collapsible > * { overflow: hidden; }
+.collapsible > * {
+  overflow: hidden;
+  /* Высоту разводит сетка, но одного роста мало: текст «проявляется»
+     из ниоткуда ровно в тот момент, когда место под него уже
+     освободилось. Небольшой сдвиг сверху привязывает появление к
+     самому раскрытию — ответ выезжает из-под вопроса. */
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.3s var(--ease-out-quint),
+              transform 0.45s var(--ease-out-quint);
+}
 .collapsible[data-open="true"] { grid-template-rows: 1fr; }
+.collapsible[data-open="true"] > * { opacity: 1; transform: none; }
 
 
 /* Пятно света под курсором на стеклянной плите. Рисует браузер по
@@ -126,6 +137,31 @@
   );
 }
 
+/* Блик, проходящий по стеклянной кнопке под курсором.
+
+   Здесь это не украшение, а продолжение правила: глубина на сайте
+   делается светом, а не тенью. Стекло, по которому скользит свет,
+   читается как стекло. Полоса узкая и слабая — заметный блик
+   превратил бы кнопку в кнопку из игры.
+
+   Едет transform, а не фон: фон заставляет браузер перерисовывать
+   кнопку каждый кадр, сдвиг — нет. */
+.sweep { position: relative; overflow: hidden; }
+.sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -45%;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.09), transparent);
+  transform: translateX(0);
+  transition: transform 0.75s var(--ease-out-quint);
+}
+.sweep:hover::after,
+.sweep:focus-visible::after { transform: translateX(330%); }
+
 /* Бегущая строка. Содержимое продублировано, поэтому уезжаем ровно
    на половину — шва не видно. */
 .marquee {
@@ -137,18 +173,61 @@
   to { transform: translateX(calc(-50% - 0.25rem)); }
 }
 
-/* Волосяная линия, которая растёт по левому краю вместе с
-   прокруткой: видно, сколько страницы позади. */
+/* Шкала прочитанного по левому краю.
+
+   Два знака вместо одного. Линия отвечает на вопрос «сколько
+   позади», квадрат — «где именно я сейчас». Линия приглушена: это
+   фон, справка. Квадрат в полную силу, потому что он и есть ответ.
+
+   Квадрат здесь не случайная фигура. Это тот же знак, что стоит
+   точкой в «v.studio» и меткой перед каждым надзаголовком секции.
+   Одна форма — одно значение на весь сайт: «вот это место». Когда
+   у фигуры есть работа, она перестаёт быть украшением.
+
+   Обе части рисует браузер по одной переменной, которую ставит
+   обработчик прокрутки. React в этом не участвует: перерисовывать
+   дерево на каждый кадр прокрутки — самый дорогой способ показать
+   полоску. */
 .rail {
   position: fixed;
   left: 0;
   top: 0;
   bottom: 0;
-  width: 1px;
+  width: 5px;
   z-index: 50;
   pointer-events: none;
-  background: linear-gradient(180deg, var(--color-acid) var(--read, 0%), transparent var(--read, 0%));
+}
+
+/* Обе части двигаются трансформацией, и это здесь не придирка.
+
+   Первая версия растила градиент и сажала квадрат на `top`. И то и
+   другое браузер пересчитывает заново каждый кадр прокрутки —
+   замер показал худший кадр 41 мс вместо 22. Масштаб и сдвиг живут
+   на композиторе: раскладку они не трогают, перерисовку не
+   вызывают, и шкала снова бесплатная.
+
+   --read приходит из ScrollRail числом от 0 до 1. */
+.rail::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: var(--color-acid);
   opacity: 0.35;
+  transform-origin: top;
+  transform: scaleY(var(--read, 0));
+}
+.rail::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 5px;
+  background: var(--color-acid);
+  transform: translateY(calc(var(--read, 0) * 100vh - 2px));
 }
 
 /* Смена языка.

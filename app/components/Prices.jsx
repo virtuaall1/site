@@ -11,6 +11,7 @@ import { useI18n, FALLBACK_RATE } from '../lib/i18n.jsx';
 import { Section, SectionHead } from './ui/Section.jsx';
 import { Reveal, step } from './ui/Reveal.jsx';
 import { Collapsible, ToggleSign } from './ui/Collapsible.jsx';
+import { Roll } from './ui/Roll.jsx';
 import { Mock } from './Mock.jsx';
 import { SERVICES, LINKS } from '../lib/content.js';
 import { cn } from '../lib/cn.js';
@@ -64,13 +65,19 @@ function PriceRow({ service, index, openFirst }) {
                 </button>
               )}
 
-              <span className="grid text-left md:text-right">
+              {/* Цена перекатывается при смене валюты: иначе нажал ₴/$
+                  и не понял, сработало ли — число просто другое. */}
+              <span className="grid justify-items-start text-left md:justify-items-end md:text-right">
                 {service.price ? (
                   <>
-                    <span className="tabular whitespace-nowrap font-display text-[1.28rem] font-semibold tracking-[-0.03em]">
-                      {t('services.from')} {money(service.price)}
-                    </span>
-                    <span className="tabular text-[0.78rem] text-faint">≈ {money(service.price, other)}</span>
+                    <Roll
+                      value={`${t('services.from')} ${money(service.price)}`}
+                      className="tabular font-display text-[1.28rem] font-semibold tracking-[-0.03em]"
+                    />
+                    <Roll
+                      value={`≈ ${money(service.price, other)}`}
+                      className="tabular text-[0.78rem] text-faint"
+                    />
                   </>
                 ) : (
                   <span className="text-base text-muted">{t('services.custom')}</span>

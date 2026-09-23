@@ -17,12 +17,12 @@ export const ROUTES = [
     file: 'index.html',
     page: 'Home',
     uk: {
-      title: 'v.studio — сайти, сервіси і Telegram-боти на Python, Java, Spring',
-      desc: 'Вебзастосунки, бекенд на Java і Spring Boot, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.'
+      title: 'v.studio — сайти, сервіси і Telegram-боти на Python і TypeScript',
+      desc: 'Вебзастосунки, бекенд на Python і Node.js, сайти, Telegram-боти та автоматизація. Фіксована ціна, вихідники та місяць підтримки.'
     },
     en: {
-      title: 'v.studio — websites, services and Telegram bots in Python, Java, Spring',
-      desc: 'Web apps, backends in Java and Spring Boot, websites, Telegram bots and automation. Fixed price, source code and a month of support.'
+      title: 'v.studio — websites, services and Telegram bots in Python and TypeScript',
+      desc: 'Web apps, backends in Python and Node.js, websites, Telegram bots and automation. Fixed price, source code and a month of support.'
     }
   },
   {
@@ -62,12 +62,12 @@ export const ROUTES = [
     nav: 'nav.backend',
     services: ['backend', 'automation', 'custom'],
     uk: {
-      title: 'Бекенд, API та автоматизація — Java, Spring Boot, Python | v.studio',
-      desc: 'Серверна частина на Java зі Spring Boot або Python: REST API, база, інтеграції. Парсинг і рутина за розкладом.'
+      title: 'Бекенд, API та автоматизація — Python, Node.js, TypeScript | v.studio',
+      desc: 'Серверна частина на Python або Node.js: REST API, база, інтеграції. Парсинг і рутина за розкладом.'
     },
     en: {
-      title: 'Backend, APIs and automation — Java, Spring Boot, Python | v.studio',
-      desc: 'Server side in Java with Spring Boot or Python: REST APIs, a database, integrations. Scraping and routine work on a schedule.'
+      title: 'Backend, APIs and automation — Python, Node.js, TypeScript | v.studio',
+      desc: 'Server side in Python or Node.js: REST APIs, a database, integrations. Scraping and routine work on a schedule.'
     }
   }
 ];
